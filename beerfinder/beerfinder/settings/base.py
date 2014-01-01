@@ -120,3 +120,5 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
 )
+
+LOGIN_REDIRECT_URL = 'sightings_near_user'
