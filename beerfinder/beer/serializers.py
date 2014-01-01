@@ -12,9 +12,9 @@ class BrewerySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'slug',)
 
 
-class BeerSerializer(serializers.ModelSerializer):
+class BeerSerializer(serializers.HyperlinkedModelSerializer):
     brewery = BrewerySerializer()
 
     class Meta:
         model = Beer
-        fields = ('id', 'name', 'brewery', 'slug',)
+        fields = ('url', 'id', 'name', 'brewery', 'slug',)

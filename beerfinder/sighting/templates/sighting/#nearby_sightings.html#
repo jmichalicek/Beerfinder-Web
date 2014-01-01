@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container" data-bind="foreach: sightings">
+  <div class="row">
+    <div class="col-md-12"><br />
+      <span data-bind="text: date_sighted"></span><br />
+    </div>
+  </div>
+</div>
+{% endblock body %}
+{% block javascript %}
+<script src="{% static 'js/sighting/nearby_sightings.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new ViewModel();
+    ko.applyBindings(vm);
+    vm.initialize();
+});
+</script>
+{% endblock javascript %}

@@ -91,16 +91,20 @@ class SightingViewSetTestCase(TestCase):
 
         self.assertEqual(response_objects[0]['id'], self.beer1_sighting1.id)
         self.assertEqual(response_objects[0]['sighted_by'], self.beer1_sighting1.user.email)
-        self.assertEqual(response_objects[0]['beer'], 'http://testserver/api/beer/{0}/'.format(self.beer1.slug))
+        self.assertEqual(response_objects[0]['beer']['slug'], self.beer1.slug)
+        self.assertEqual(response_objects[0]['beer']['url'], 'http://testserver/api/beer/{0}/'.format(self.beer1.slug))
+
         self.assertEqual(response_objects[1]['id'], self.beer2_sighting1.id)
         self.assertEqual(response_objects[1]['sighted_by'], self.beer2_sighting1.user.email)
-        self.assertEqual(response_objects[1]['beer'], 'http://testserver/api/beer/{0}/'.format(self.beer2.slug))
+        self.assertEqual(response_objects[1]['beer']['slug'], self.beer2.slug)
+
         self.assertEqual(response_objects[2]['id'], self.beer1_sighting2.id)
         self.assertEqual(response_objects[2]['sighted_by'], self.beer1_sighting2.user.email)
-        self.assertEqual(response_objects[2]['beer'], 'http://testserver/api/beer/{0}/'.format(self.beer1.slug))
+        self.assertEqual(response_objects[2]['beer']['slug'], self.beer1.slug)
+
         self.assertEqual(response_objects[3]['id'], self.beer2_sighting2.id)
         self.assertEqual(response_objects[3]['sighted_by'], 'Anonymous')
-        self.assertEqual(response_objects[3]['beer'], 'http://testserver/api/beer/{0}/'.format(self.beer2.slug))
+        self.assertEqual(response_objects[3]['beer']['slug'], self.beer2.slug)
 
     def test_get_list_by_beer(self):
         """
@@ -117,7 +121,10 @@ class SightingViewSetTestCase(TestCase):
 
         self.assertEqual(response_objects[0]['id'], self.beer1_sighting1.id)
         self.assertEqual(response_objects[0]['sighted_by'], self.beer1_sighting1.user.email)
-        self.assertEqual(response_objects[0]['beer'], 'http://testserver/api/beer/{0}/'.format(self.beer1.slug))
+        self.assertEqual(response_objects[0]['beer']['slug'], self.beer1.slug)
+        self.assertEqual(response_objects[0]['beer']['url'], 'http://testserver/api/beer/{0}/'.format(self.beer1.slug))
+
         self.assertEqual(response_objects[1]['id'], self.beer1_sighting2.id)
         self.assertEqual(response_objects[1]['sighted_by'], self.beer1_sighting2.user.email)
-        self.assertEqual(response_objects[1]['beer'], 'http://testserver/api/beer/{0}/'.format(self.beer1.slug))
+        self.assertEqual(response_objects[1]['beer']['slug'], self.beer1.slug)
+
