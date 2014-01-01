@@ -7,7 +7,7 @@ class Beer(models.Model):
     brewery = models.ForeignKey('Brewery')
     date_created = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
-    slug = models.SlugField(max_length=250)
+    slug = models.SlugField(max_length=150)
 
     class Meta:
         unique_together = (('name', 'brewery'),)
@@ -28,9 +28,9 @@ class Beer(models.Model):
         super(Beer, self).save(*args, **kwargs)
 
 class Brewery(models.Model):
-    name = models.CharField(max_length=250, unique=True)
+    name = models.CharField(max_length=75, unique=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    slug = models.SlugField(max_length=50)
+    slug = models.SlugField(max_length=75)
 
     class Meta:
         ordering = ('name', )
