@@ -5,10 +5,10 @@ from rest_framework.response import Response
 
 import foursquare
 
-from .models import Sighting
+from .models import Venue
 from .serializers import VenueSerializer
 
 class VenueViewSet(viewsets.ModelViewSet):
     queryset = Venue.objects.all()
-    serializer_class = SightingSerializer
+    serializer_class = VenueSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
