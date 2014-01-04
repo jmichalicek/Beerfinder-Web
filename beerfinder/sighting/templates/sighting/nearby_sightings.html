@@ -4,8 +4,8 @@
 <div class="container" data-bind="foreach: sightings">
   <div class="row">
     <div class="col-md-12">
-      <span data-bind="text: beer().name"></span> at <span data-bind="text: venue"></span><!-- venue will become an object --><br />
-      <span data-bind="text: date_sighted"></span><br />
+      <span data-bind="text: beer().name"></span> at <span data-bind="text: venue().name"></span><br>
+      <span data-bind="text: date_sighted"></span><br>
     </div>
   </div>
 </div>
