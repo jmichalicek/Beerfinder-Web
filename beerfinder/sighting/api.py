@@ -57,9 +57,6 @@ class SightingViewSet(viewsets.ModelViewSet):
         venue_ids = []
         import itertools
         for group in venues['groups']:
-            for item in group['items']:
-                print item['venue']
-                print '\n\n'
             venue_ids = itertools.chain(venue_ids, (item['venue']['id'] for item in group['items']))
 
         venue_ids = list(venue_ids)
