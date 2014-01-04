@@ -12,4 +12,4 @@ class SightingSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Sighting
-        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', )
+        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment',)

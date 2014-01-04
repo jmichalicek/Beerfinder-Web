@@ -8,7 +8,8 @@ class Sighting(models.Model):
     venue = models.ForeignKey('venue.Venue')
     beer = models.ForeignKey('beer.Beer')
     image = models.ImageField(upload_to='sighting_images/%Y/%m/%d', blank=True, null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
+    comment = models.TextField(blank=True)
 
     class Meta:
         ordering = ('date_sighted', 'beer', 'venue',)
