@@ -11,7 +11,7 @@ from .serializers import SightingSerializer
 class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.all()
     serializer_class = SightingSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
     def pre_save(self, obj):
         obj.user = self.request.user
@@ -63,7 +63,8 @@ class SightingViewSet(viewsets.ModelViewSet):
             venue_ids = itertools.chain(venue_ids, (item['venue']['id'] for item in group['items']))
 
         venue_ids = list(venue_ids)
-        print venue_ids
 
-        return Response(queryset.filter(venue__foursquare_id__in=venue_ids))
+        #queryset = queryset.filter(venue__foursquare_id__in=venue_ids)
+        response_data = SightingSerializer(queryset)
+        return Response(response_data.data)
         #print venues['groups'][0]['items'][3]['venue']['id']

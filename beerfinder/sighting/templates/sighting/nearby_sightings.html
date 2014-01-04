@@ -4,13 +4,15 @@
 <div class="container" data-bind="foreach: sightings">
   <div class="row">
     <div class="col-md-12">
-      <span data-bind="text: beer().name"></span> at <span data-bind="text: beer().venue"></span><!-- venue will become an object --><br />
+      <span data-bind="text: beer().name"></span> at <span data-bind="text: venue"></span><!-- venue will become an object --><br />
       <span data-bind="text: date_sighted"></span><br />
     </div>
   </div>
 </div>
 {% endblock body %}
 {% block javascript %}
+<script src="{% static 'js/beer/models.js' %}"></script>
+<script src="{% static 'js/venue/models.js' %}"></script>
 <script src="{% static 'js/sighting/models.js' %}"></script>
 <script src="{% static 'js/sighting/nearby_sightings.js' %}"></script>
 <script type="text/javascript">
