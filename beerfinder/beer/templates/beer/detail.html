@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <span data-bind="text: beer().name"></span><br>
+      <span data-bind="text: beer().brewery().name"></span>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-12">
+        <a data-bind="attr: {href: beer().addSightingUrl }" class="btn btn-primary">Add Sighting</a>
+      </div>
+  </div>
+</div>
+{% endblock body %}
+{% block javascript %}
+<script src="{% static 'js/beer/models.js' %}"></script>
+<script src="{% static 'js/venue/models.js' %}"></script>
+<script src="{% static 'js/beer/beer_detail.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new ViewModel({beer: {{ beer|safe }}});
+    ko.applyBindings(vm);
+});
+</script>
+{% endblock javascript %}

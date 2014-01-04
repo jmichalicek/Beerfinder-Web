@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container" data-bind="foreach: beers">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-2">
+      <span data-bind="text: name"></span><br>
+      <span data-bind="text: brewery().name"></span>
+      </div>
+      <div class="col-md-4">
+      <a data-bind="attr: { href: detailUrl }" class="btn btn-default">View</a> <a data-bind="attr: {href: addSightingUrl }" class="btn btn-primary">Add Sighting</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+{% block javascript %}
+<script src="{% static 'js/beer/models.js' %}"></script>
+<script src="{% static 'js/beer/beer_list.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new ViewModel();
+    ko.applyBindings(vm);
+    vm.initialize();
+});
+</script>
+{% endblock javascript %}

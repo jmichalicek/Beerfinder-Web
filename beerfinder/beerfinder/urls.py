@@ -12,6 +12,7 @@ urlpatterns = patterns('',
                        url(r'api/', include('beer.routers')),
                        url(r'api/', include('sighting.routers')),
                        url(r'accounts/', include('django.contrib.auth.urls')),
+                       url(r'beer/', include('beer.urls')),
                        url(r'sightings/', include('sighting.urls')),
 
 )
