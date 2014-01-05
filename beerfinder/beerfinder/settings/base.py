@@ -121,7 +121,7 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
 )
 
-LOGIN_REDIRECT_URL = 'sightings_near_user'
+LOGIN_REDIRECT_URL = 'sightings_list'
 
 FOURSQUARE_CLIENT_ID = os.environ.get('FOURSQUARE_CLIENT_ID')
 FOURSQUARE_CLIENT_SECRET = os.environ.get('FOURSQUARE_CLIENT_SECRET')

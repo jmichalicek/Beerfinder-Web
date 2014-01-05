@@ -1,13 +1,17 @@
-var ViewModel = function (data) {
-    var self = this;
-    this.activeNavSection = ko.observable('beer_list');
-    this.beer = ko.observable(new BeerModel(data.beer));
-    this.sightings = ko.observableArray();
+// Be sure to load js/sightings/models.js first
 
-    this.getSightings = function () {
+var ViewModel = function () {
+    var self = this;
+
+    this.location = {}; // TODO: populate this.
+
+    this.sightings = ko.observableArray();
+    this.activeNavSection = ko.observable('sightings_list');
+
+    this.getSightings = function() {
+        // TODO: pagination
         $.ajax({url: '/api/sightings/',
                 method: 'GET',
-                data: {beer_slug: self.beer().slug()}
                }).done(function (data) {
                    ko.utils.arrayForEach(data, function(item) {
                        self.sightings.push(new SightingModel(item));

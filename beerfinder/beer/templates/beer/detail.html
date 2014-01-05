@@ -4,7 +4,7 @@
 <div class="container">
   <div class="row">
     <div class="col-xs-12">
-      <span data-bind="text: beer().name"></span><br>
+      <span data-bind="text: beer().name()"></span><br>
       <span data-bind="text: beer().brewery().name"></span>
     </div>
   </div>
@@ -15,12 +15,14 @@
   </div>
 </div>
 <div class="container" data-bind="foreach: sightings">
-  <div class="row">
-    <div class="col-xs-12">
-      <span data-bind="text: venue().name"></span><br>
-      <span data-bind="text: sighted_by"></span> on <span data-bind="text: date_sighted"></span>
-    </div>
+  <a style="display: block" data-bind="attr: {href: webUrl }">
+    <div class="row">
+      <div class="col-xs-12">
+        <span data-bind="text: venue().name"></span><br>
+        <span data-bind="text: sighted_by"></span> on <span data-bind="text: date_sighted"></span>
+      </div>
   </div>
+  </a>
 </div>
   
 {% endblock body %}

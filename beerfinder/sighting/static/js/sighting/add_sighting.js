@@ -4,7 +4,7 @@
 
 var ViewModel = function (data) {
     var self = this;
-
+    this.activeNavSection = ko.observable('');
     this.selectedVenue = ko.observable(null);
     this.location = {}; // TODO: populate this.
     this.venues = ko.observableArray();

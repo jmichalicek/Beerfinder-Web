@@ -1,6 +1,6 @@
 var ViewModel = function () {
     var self = this;
-
+    this.activeNavSection = ko.observable('beer_list');
     this.beers = ko.observableArray();
 
     this.getBeerList = function() {

@@ -1,8 +1,14 @@
 var SightingModel = function (data) {
+    var self = this;
+
     this.id = ko.observable(data.id);
     this.beer = ko.observable(data.beer);
     this.date_sighted = ko.observable(data.date_sighted);
     this.venue = ko.observable(data.venue);
     this.sighted_by = ko.observable(data.sighted_by);
     this.image = ko.observable(data.image);
+    this.url = ko.observable(data.url);
+    this.webUrl = ko.computed(function () {
+        return '/sightings/' + self.id();
+    });
 };

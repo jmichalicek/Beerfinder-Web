@@ -4,4 +4,5 @@ urlpatterns = patterns('sighting.views',
                        url(r'nearby/', 'sightings_near_user', name='sightings_near_user'),
                        url(r'add_sighting/', 'add_sighting', name='add_sighting'),
                        url(r'(?P<sighting_id>\d+)/$', 'sighting_detail', name='sighting_detail'),
+                       url(r'^$', 'sightings_list', name='sightings_list'),
 )

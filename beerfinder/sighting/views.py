@@ -9,6 +9,15 @@ from beer.serializers import BeerSerializer
 from .models import Sighting
 from .serializers import SightingSerializer
 
+
+def sightings_list(request):
+    """
+    All sightings sorted by date
+    """
+    return render_to_response('sighting/sightings_list.html',
+                              {},
+                              context_instance=RequestContext(request))
+
 def sightings_near_user(request):
     """
     Display a list of sightings near the user's current location ordered by time.

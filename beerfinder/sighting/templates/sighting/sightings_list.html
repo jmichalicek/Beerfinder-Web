@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container" data-bind="foreach: sightings">
+  <div class="row">
+    <div class="col-md-12">
+      <a style="display: block" data-bind="attr: {href: webUrl }">
+        <span data-bind="text: beer().name"></span><br>
+        <small><span data-bind="text: beer().brewery.name"></span></small>
+        Seen at at <span data-bind="text: venue().name"></span><br>
+        <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock body %}
+{% block javascript %}
+<script src="{% static 'js/beer/models.js' %}"></script>
+<script src="{% static 'js/venue/models.js' %}"></script>
+<script src="{% static 'js/sighting/models.js' %}"></script>
+<script src="{% static 'js/sighting/sightings_list.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new ViewModel();
+    ko.applyBindings(vm);
+    vm.getSightings();
+});
+</script>
+{% endblock javascript %}
