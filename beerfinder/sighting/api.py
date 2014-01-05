@@ -34,7 +34,8 @@ class SightingViewSet(viewsets.ModelViewSet):
             venue = Venue.retrieve_from_foursquare(foursquare_id)
             venue.save()
 
-        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id}
+        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id, 'comment': request.DATA.get('comment', '')}
+
         sighting_form = SightingModelForm(form_data, request.FILES)
         if sighting_form.is_valid():
             sighting = sighting_form.save()

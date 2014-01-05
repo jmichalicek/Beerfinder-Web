@@ -21,8 +21,11 @@ var ViewModel = function (data) {
         formData.append('foursquare_venue_id', self.selectedVenue().id());
         formData.append('comment', self.comment());
         formData.append('beer', self.beer().slug);
+
+        // probably need to do this differently for it to work
+        // since it's currently not working.
         if(self.image()) {
-            formData.append('sighting_image', self.image());
+            formData.append('image', self.image());
         }
 
         $.ajax({url: '/api/sightings/',
