@@ -37,16 +37,14 @@ class SightingViewSet(viewsets.ModelViewSet):
         form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id, 'comment': request.DATA.get('comment', '')}
 
         sighting_form = SightingModelForm(form_data, request.FILES)
+        # This should be doable using the serializer as the form, but I'm missing something
+        # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
         if sighting_form.is_valid():
             sighting = sighting_form.save()
             serialized = SightingSerializer(sighting)
             return Response(serialized.data, status=201) #201, created
         else:
             return Response({'form_errors': sighting_form.errors}, status=400)
-
-
-
-        #serializer = self.get_serializer(data=request.DATA, files=request.FILES)
 
     def pre_save(self, obj):
         obj.user = self.request.user

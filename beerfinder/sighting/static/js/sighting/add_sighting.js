@@ -17,16 +17,13 @@ var ViewModel = function (data) {
     });
 
     this.submitSighting = function () {
+        var i = $('#sighting_image');
+        var im = document.getElementById('sighting_image');
         var formData = new FormData();
         formData.append('foursquare_venue_id', self.selectedVenue().id());
         formData.append('comment', self.comment());
         formData.append('beer', self.beer().slug);
-
-        // probably need to do this differently for it to work
-        // since it's currently not working.
-        if(self.image()) {
-            formData.append('image', self.image());
-        }
+        formData.append('image', $('#sighting_image')[0].files[0]);
 
         $.ajax({url: '/api/sightings/',
                 method: 'POST',
