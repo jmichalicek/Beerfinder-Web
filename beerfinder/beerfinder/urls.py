@@ -15,6 +15,7 @@ urlpatterns = patterns('',
                        url(r'accounts/', include('django.contrib.auth.urls')),
                        url(r'beer/', include('beer.urls')),
                        url(r'sightings/', include('sighting.urls')),
+                       url(r'^$', 'sighting.views.sightings_list', name='index'),
 
 )
 
