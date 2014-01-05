@@ -8,3 +8,9 @@ var VenueModel = function (data) {
     this.foursquareId = ko.observable(data.foursquare_id);
     this.url = ko.observable(data.url);
 };
+
+var FoursquareVenueModel = function (data) {
+    this.id = ko.observable(data.id);
+    this.name = ko.observable(data.name);
+    this.location = ko.observable(data.location);
+};

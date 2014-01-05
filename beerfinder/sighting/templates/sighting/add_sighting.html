@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div id="select_venue" class="container" data-bind="foreach: venues, visible: !selectedVenue()">
+  <div class="row">
+    <div class="col-xs-12" data-bind="click: $parent.setSelectedVenue">
+      <span data-bind="text: name"></span><br>
+      <span data-bind="text: location().address"></span><br>
+      <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+      <span data-bind="text: location().postalCode"></span>
+    </div>
+  </div>
+</div>
+<div id="selected_venue" class="container" data-bind="visible: selectedVenue">
+ <div class="row">
+    <div class="col-xs-12" data-bind="if: selectedVenue">
+      <span><b>Selected Location:</b></span><br>
+      <span data-bind="text: selectedVenue().name"></span><br>
+      <span data-bind="text: selectedVenue().location().address"></span><br>
+      <span data-bind="text: selectedVenue().location().city"></span>, <span data-bind="text: selectedVenue().location().state"></span><br>
+      <span data-bind="text: selectedVenue().location().postalCode"></span><br>
+      <a href="#" data-bind="click: clearSelectedVenue"><small>Select a different location</small></a>
+    </div>
+  </div>
+</div>
+<div id="add_photo" class="container" data-bind="visible: selectedVenue">
+  <div class="row">
+    <div class="col-xs-12">
+      <textarea data-bind="value: comment"></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <label for="sighting_image">Attach an image:</label><br>
+      <input id="sighting_image"  type="file" name="sighting_image" data-bind="value: image" /><br>
+      <button class="btn btn-primary" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
+      {% csrf_token %}
+    </div>
+  </div>
+</div>
+{% endblock body %}
+{% block javascript %}
+<script src="{% static 'js/venue/models.js' %}"></script>
+<script src="{% static 'js/sighting/add_sighting.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new ViewModel({beer: {{ beer|safe }}});
+    ko.applyBindings(vm);
+    vm.getLocation();
+});
+</script>
+{% endblock javascript %}

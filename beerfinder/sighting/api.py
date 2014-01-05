@@ -5,6 +5,10 @@ from rest_framework.response import Response
 
 import foursquare
 
+from beer.models import Beer
+from venue.models import Venue
+
+from .forms import SightingModelForm
 from .models import Sighting
 from .serializers import SightingSerializer
 
@@ -12,6 +16,36 @@ class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.all()
     serializer_class = SightingSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+
+    def create(self, request, *args, **kwargs):
+        """
+        Does a whole bunch of extra special stuff
+        """
+
+        try:
+            beer = Beer.objects.get(slug=request.DATA.get('beer'))
+        except Beer.DoesNotExist:
+            return Response({'error': 'Beer does not exist'}, status=400)
+
+        foursquare_id = request.DATA.get('foursquare_venue_id')
+        try:
+            venue = Venue.objects.get(foursquare_id=foursquare_id)
+        except Venue.DoesNotExist:
+            venue = Venue.retrieve_from_foursquare(foursquare_id)
+            venue.save()
+
+        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id}
+        sighting_form = SightingModelForm(form_data, request.FILES)
+        if sighting_form.is_valid():
+            sighting = sighting_form.save()
+            serialized = SightingSerializer(sighting)
+            return Response(serialized.data, status=201) #201, created
+        else:
+            return Response({'form_errors': sighting_form.errors}, status=400)
+
+
+
+        #serializer = self.get_serializer(data=request.DATA, files=request.FILES)
 
     def pre_save(self, obj):
         obj.user = self.request.user

@@ -15,6 +15,6 @@ var BeerModel = function (data) {
     });
 
     this.addSightingUrl = ko.computed(function () {
-        return '/add_sighting/?beer=' + self.slug();
+        return '/sightings/add_sighting/?beer=' + self.slug();
     });
 };
