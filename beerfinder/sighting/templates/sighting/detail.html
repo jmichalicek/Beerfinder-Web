@@ -9,7 +9,7 @@
       <small><span data-bind="text: sighting().date_sighted()"></small></span><br>
       <small>Sighted by <span data-bind="text: sighting().sighted_by()"></small></span><br>
       <div data-bind="if: sighting().image()"> 
-        <img data-bind="attr:{src: '{{ MEDIA_URL }}' + sighting().image() }" />
+        <img data-bind="attr:{src: '{{ MEDIA_URL }}' + sighting().image() }" width="375"/>
       </div>
     </div>
   </div>
