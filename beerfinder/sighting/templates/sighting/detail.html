@@ -8,7 +8,9 @@
       <small><span data-bind="text: sighting().beer().brewery.name"></span></small><br>
       <small><span data-bind="text: sighting().date_sighted()"></small></span><br>
       <small>Sighted by <span data-bind="text: sighting().sighted_by()"></small></span><br>
-      <img data-bind="attr:{src: '{{ MEDIA_URL }}' + sighting().image() }" />
+      <div data-bind="if: sighting().image()"> 
+        <img data-bind="attr:{src: '{{ MEDIA_URL }}' + sighting().image() }" />
+      </div>
     </div>
   </div>
 </div>
