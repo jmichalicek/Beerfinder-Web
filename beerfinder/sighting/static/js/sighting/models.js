@@ -4,4 +4,5 @@ var SightingModel = function (data) {
     this.date_sighted = ko.observable(data.date_sighted);
     this.venue = ko.observable(data.venue);
     this.sighted_by = ko.observable(data.sighted_by);
+    this.image = ko.observable(data.image);
 };

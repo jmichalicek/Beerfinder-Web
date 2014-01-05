@@ -1,1 +1,29 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<div class="container" id="sighting_container">
+  <div class="row">
+    <div class="col-xs-12">
+      <span data-bind="text: sighting().beer().name"></span><br>
+      <small><span data-bind="text: sighting().beer().brewery.name"></span></small><br>
+      <small><span data-bind="text: sighting().date_sighted()"></small></span><br>
+      <small>Sighted by <span data-bind="text: sighting().sighted_by()"></small></span><br>
+      <img data-bind="attr:{src: '{{ MEDIA_URL }}' + sighting().image() }" />
+    </div>
+  </div>
+</div>
+{% endblock body %}
+
+{% block javascript %}
+<script src="{% static 'js/venue/models.js' %}"></script>
+<script src="{% static 'js/beer/models.js' %}"></script>
+<script src="{% static 'js/sighting/models.js' %}"></script>
+<script src="{% static 'js/sighting/sighting_detail.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new ViewModel({sighting: {{ sighting|safe }}});
+    ko.applyBindings(vm);
+});
+</script>
+{% endblock javascript %}
+
