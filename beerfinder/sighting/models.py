@@ -12,7 +12,7 @@ class Sighting(models.Model):
     comment = models.TextField(blank=True)
 
     class Meta:
-        ordering = ('date_sighted', 'beer', 'venue',)
+        ordering = ('-date_sighted', 'beer', 'venue__name',)
 
     def __unicode__(self):
         return u'{0} sighted at {1} on {2}'.format(self.beer, self.venue, self.date_sighted)
