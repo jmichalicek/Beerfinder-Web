@@ -7,7 +7,7 @@ from .serializers import BeerSerializer, BrewerySerializer
 class BeerViewSet(viewsets.ModelViewSet):
     queryset = Beer.objects.all()
     serializer_class = BeerSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'slug'
 
     def pre_save(self, obj):
