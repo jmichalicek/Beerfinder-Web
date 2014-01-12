@@ -26,6 +26,7 @@ class FoursquareVenueViewSet(viewsets.ViewSet):
         """
         latitude = request.QUERY_PARAMS.get('latitude', None)
         longitude = request.QUERY_PARAMS.get('longitude', None)
+        offset = request.QUERY_PARAMS.get('offset', 0)
 
         client_id = settings.FOURSQUARE_CLIENT_ID
         client_secret = settings.FOURSQUARE_CLIENT_SECRET
@@ -34,6 +35,7 @@ class FoursquareVenueViewSet(viewsets.ViewSet):
         venues = client.venues.explore({'ll': '{0},{1}'.format(latitude, longitude),
                                         'sortByDistance': 1,
                                         'limit': 50,
+                                        'offset': offset,
                                         })
 
         return Response(venues)

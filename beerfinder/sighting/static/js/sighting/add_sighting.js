@@ -4,13 +4,65 @@
 
 var ViewModel = function (data) {
     var self = this;
+
+    this.watchScroll = true;  // for determining whether or not to request more data based on scrolling
+    this.venuesPerRequest = 50;
+    this.maxResults = null;
+
     this.activeNavSection = ko.observable('');
     this.selectedVenue = ko.observable(null);
     this.location = {}; // TODO: populate this.
+
+    this.venue_list = ko.observableArray();
     this.venues = ko.observableArray();
+//    this.filteredVenues = ko.observableArray();
+
     this.comment = ko.observable("");
     this.beer = ko.observable(data.beer);
     this.image = ko.observable(null);
+
+    // stuff to enable infinite scroll
+    this.venues.extend({
+        infinitescroll: {}
+    });
+
+    // detect resize
+    $(window).resize(function() {
+        updateViewportDimensions();
+    });
+
+    // detect scroll
+    $(venue_list).scroll(function() {
+        if(self.watchScroll) {
+            // we need to pause watching this while an ajax request is being made
+            // or we make a bunch of requests for the same data and make a mess of things
+            self.venues.infinitescroll.scrollY($(venue_list).scrollTop());
+        
+            // add more items if scroll reaches the last 15 items
+            if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 50) {
+                self.getNearbyVenues();
+            }
+        }
+    });
+
+    // update dimensions of infinite-scroll viewport and item
+    function updateViewportDimensions() {
+        var itemsRef = $('#venue_list'),
+        itemRef = $('.venue_item').first(),
+        itemsWidth = itemsRef.width(),
+        itemsHeight = itemsRef.height(),
+        itemWidth = itemRef.outerWidth(),
+        itemHeight = itemRef.outerHeight();
+
+        self.venues.infinitescroll.viewportWidth(itemsWidth);
+        self.venues.infinitescroll.viewportHeight(itemsHeight);
+        self.venues.infinitescroll.itemWidth(itemWidth);
+        self.venues.infinitescroll.itemHeight(itemHeight);
+
+    }
+    updateViewportDimensions();
+
+    // end infinite scroll stuff
 
     this.sightingReady = ko.computed(function () {
         return self.selectedVenue() && self.beer(); // probably will add more checks/conditions here
@@ -49,31 +101,46 @@ var ViewModel = function (data) {
     };
 
     this.getLocation = function () {
-        navigator.geolocation.getCurrentPosition(self.getNearbyVenues);
+        navigator.geolocation.getCurrentPosition(self.geoLocationCallback);
     };
 
-    this.getNearbyVenues = function (position) {
-        // to be used as a callback for html5 geolocation
+    this.geoLocationCallback = function (position) {
         self.location = position;
-        requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
+        self.getNearbyVenues();
+    };
 
-//        var searchName = searchName || null;
-//        if(searchName != null) {
-//            requestParams[name] = searchName;
-//        }
+    this.getNearbyVenues = function () { 
+        var offset = self.venues.peek().length;
+        if(self.maxResults == null || offset < self.maxResults) {
+            self.watchScroll = false;
 
-        $.ajax({url: '/api/foursquare_venues/',
-                method: 'GET',
-                data: requestParams,
-               }).done(function (data) {
-                   ko.utils.arrayForEach(data['groups'], function(group) {
-                       // this is an ugly mess of stuff
+           
+            requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
+                             offset: offset};
+            
+            //        var searchName = searchName || null;
+            //        if(searchName != null) {
+            //            requestParams[name] = searchName;
+            //        }
+            
+            $.ajax({url: '/api/foursquare_venues/',
+                    method: 'GET',
+                    data: requestParams,
+                   }).done(function (data) {
+                       var existingItems = self.venues();
+                       self.maxResults = data['totalResults'];
+                       ko.utils.arrayForEach(data['groups'], function(group) {
+                           // this is an ugly mess of stuff
                        ko.utils.arrayForEach(group['items'], function(item) {
                            var v = item['venue'];
-                           self.venues.push(new FoursquareVenueModel(v));
+                           existingItems.push(new FoursquareVenueModel(v));
                        });
+                       });
+                       self.venues(existingItems);
+                   }).complete(function () {
+                       self.watchScroll = true;
                    });
-               });
+        }
     };
 
     this.searchVenues = function (name) {

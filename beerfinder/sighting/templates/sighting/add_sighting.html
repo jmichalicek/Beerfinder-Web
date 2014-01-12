@@ -1,14 +1,43 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block stylesheets %}
+{{ block.super }}
+<!-- so that an inner div can be set to always full screen -->
+<style type="text/css">
+  html, body {
+  height: 95%;
+  margin: 0;
+  }
+
+  #venue_list {
+      overflow-y: auto;
+      height: 100%;
+      position: absolute;
+      width: 100%;
+}
+  .venue_item {
+      display: block;
+      position: relative;
+      height: 105px;
+  }
+</style>
+{% endblock stylesheets %}
 {% block body %}
-<div id="select_venue" class="container" data-bind="foreach: venues, visible: !selectedVenue()">
+<div id="venue_list_container" class="container" data-bind="visible: !selectedVenue()">
   <div class="row">
-    <div class="col-xs-12" data-bind="click: $parent.setSelectedVenue">
-      <span data-bind="text: name"></span><br>
-      <span data-bind="text: location().address"></span><br>
-      <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-      <span data-bind="text: location().postalCode"></span>
-    </div>
+    <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems">
+      <li class="venue_item">
+        {# magic to not draw the items which are not visible which makes this far more scalable #}
+        <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" data-bind="click: $parent.setSelectedVenue" style="border: 2px solid black; height: 105px; min-height:105px;">
+          <span data-bind="text: name"></span><br>
+          <span data-bind="text: location().address"></span><br>
+          <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+          <span data-bind="text: location().postalCode"></span>
+        </div>
+        <!-- /ko -->
+      </li>
+    </ul>
   </div>
 </div>
 <div id="selected_venue" class="container" data-bind="visible: selectedVenue">
@@ -42,6 +71,8 @@
 </div>
 {% endblock body %}
 {% block javascript %}
+<script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
+{# <script src="http://rawgithub.com/thinkloop/knockout-js-infinite-scroll/master/infinitescroll.js"></script> #}
 <script src="{% static 'js/venue/models.js' %}"></script>
 <script src="{% static 'js/sighting/add_sighting.js' %}"></script>
 <script type="text/javascript">
