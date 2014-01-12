@@ -20,24 +20,37 @@
       position: relative;
       height: 105px;
   }
+
+  .full-height {
+      height: 100%;
+  }
 </style>
 {% endblock stylesheets %}
 {% block body %}
-<div id="venue_list_container" class="container" data-bind="visible: !selectedVenue()">
+<div id="venue_list_container" class="container full-height" data-bind="visible: !selectedVenue()">
   <div class="row">
-    <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems">
-      <li class="venue_item">
-        {# magic to not draw the items which are not visible which makes this far more scalable #}
-        <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
-        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4" data-bind="click: $parent.setSelectedVenue" style="border: 2px solid black; height: 105px; min-height:105px;">
-          <span data-bind="text: name"></span><br>
-          <span data-bind="text: location().address"></span><br>
-          <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-          <span data-bind="text: location().postalCode"></span>
-        </div>
-        <!-- /ko -->
-      </li>
-    </ul>
+    <div class="col-xs-12">
+      <form>
+        <input type="text" placeholder="Place to search for..."><button type="submit" class="btn">Search</button>
+      </form>
+    </div>
+  </div>
+  <div class="row full-height">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
+      <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" style="padding-left: 0px">
+        <li class="venue_item">
+          {# magic to not draw the items which are not visible which makes this far more scalable #}
+          <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
+          <div data-bind="click: $parent.setSelectedVenue" style="border: 2px solid black; height: 105px; min-height:105px;">
+            <span data-bind="text: name"></span><br>
+            <span data-bind="text: location().address"></span><br>
+            <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+            <span data-bind="text: location().postalCode"></span>
+          </div>
+          <!-- /ko -->
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 <div id="selected_venue" class="container" data-bind="visible: selectedVenue">
