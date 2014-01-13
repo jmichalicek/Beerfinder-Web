@@ -5,9 +5,11 @@
 var ViewModel = function (data) {
     var self = this;
 
-    this.watchScroll = true;  // for determining whether or not to request more data based on scrolling
+    this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
     this.venuesPerRequest = 50;
     this.maxResults = null;
+
+    this.searchTerm = ko.observable('');
 
     this.activeNavSection = ko.observable('');
     this.selectedVenue = ko.observable(null);
@@ -15,11 +17,19 @@ var ViewModel = function (data) {
 
     this.venue_list = ko.observableArray();
     this.venues = ko.observableArray();
-//    this.filteredVenues = ko.observableArray();
+    this.searchVenues = ko.observableArray(); // for venues returned via search
 
     this.comment = ko.observable("");
     this.beer = ko.observable(data.beer);
     this.image = ko.observable(null);
+
+    this.discoverView = ko.observable(true); // determine whether to show discover or search lists
+    this.searchListVisible = ko.computed(function () {
+        return !self.selectedVenue() && !self.discoverView();
+    });
+    this.venueListVisible = ko.computed(function () {
+        return !self.selectedVenue() && self.discoverView();
+    });
 
     // stuff to enable infinite scroll
     this.venues.extend({
@@ -33,15 +43,13 @@ var ViewModel = function (data) {
 
     // detect scroll
     $(venue_list).scroll(function() {
-        if(self.watchScroll) {
-            // we need to pause watching this while an ajax request is being made
-            // or we make a bunch of requests for the same data and make a mess of things
-            self.venues.infinitescroll.scrollY($(venue_list).scrollTop());
+        // we need to pause watching this while an ajax request is being made
+        // or we make a bunch of requests for the same data and make a mess of things
+        self.venues.infinitescroll.scrollY($(venue_list).scrollTop());
         
-            // add more items if scroll reaches the last 15 items
-            if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 50) {
-                self.getNearbyVenues();
-            }
+        // add more items if scroll reaches the last 15 items
+        if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 50) {
+            self.getNearbyVenues();
         }
     });
 
@@ -78,7 +86,7 @@ var ViewModel = function (data) {
         formData.append('image', $('#sighting_image')[0].files[0]);
 
         $.ajax({url: '/api/sightings/',
-                method: 'POST',
+                type: 'POST',
                 data: formData,
                 cache: false,
                 contentType: false,
@@ -111,20 +119,15 @@ var ViewModel = function (data) {
 
     this.getNearbyVenues = function () { 
         var offset = self.venues.peek().length;
-        if(self.maxResults == null || offset < self.maxResults) {
-            self.watchScroll = false;
+        if(!self.requestInProgress && (self.maxResults == null || offset < self.maxResults)) {
+            self.requestInProgress = true;
 
            
             requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
                              offset: offset};
             
-            //        var searchName = searchName || null;
-            //        if(searchName != null) {
-            //            requestParams[name] = searchName;
-            //        }
-            
             $.ajax({url: '/api/foursquare_venues/',
-                    method: 'GET',
+                    type: 'GET',
                     data: requestParams,
                    }).done(function (data) {
                        var existingItems = self.venues();
@@ -138,12 +141,35 @@ var ViewModel = function (data) {
                        });
                        self.venues(existingItems);
                    }).complete(function () {
-                       self.watchScroll = true;
+                       self.requestInProgress = false;
                    });
         }
     };
 
-    this.searchVenues = function (name) {
-        //self
+    this.submitSearchHandler = function () {
+        if(self.searchTerm().length < 1) {
+            // just do regular explore if the search term was empty
+            self.discoverView(true);
+            self.getNearbyVenues();
+        } else {
+            self.discoverView(false);
+            self.searchForVenue();
+        }
+    };
+
+    this.searchForVenue = function () {
+        requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
+                         query: self.searchTerm()};
+
+        $.ajax({url: '/api/foursquare_venues/search/',
+                type: 'GET',
+                data: requestParams,
+               }).done(function (data) {
+                   var resultItems = [];
+                   ko.utils.arrayForEach(data['venues'], function(venue) {
+                       resultItems.push(new FoursquareVenueModel(venue));
+                   });
+                   self.searchVenues(resultItems);
+               });
     };
 };

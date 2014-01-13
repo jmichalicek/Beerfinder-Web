@@ -2,6 +2,7 @@ from django.conf import settings
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.decorators import link
 
 import foursquare
 
@@ -24,6 +25,7 @@ class FoursquareVenueViewSet(viewsets.ViewSet):
         """
         Uses foursquare venue explore to get nearby venues
         """
+
         latitude = request.QUERY_PARAMS.get('latitude', None)
         longitude = request.QUERY_PARAMS.get('longitude', None)
         offset = request.QUERY_PARAMS.get('offset', 0)
@@ -41,7 +43,25 @@ class FoursquareVenueViewSet(viewsets.ViewSet):
         return Response(venues)
 
     def search(self, request):
-        pass
+        """
+        User the Foursquare venue search endpoint and return the results
+        """
+
+        latitude = request.QUERY_PARAMS.get('latitude', None)
+        longitude = request.QUERY_PARAMS.get('longitude', None)
+        query = request.QUERY_PARAMS.get('query', '')
+
+        client_id = settings.FOURSQUARE_CLIENT_ID
+        client_secret = settings.FOURSQUARE_CLIENT_SECRET
+        client = foursquare.Foursquare(client_id=client_id, client_secret=client_secret)
+
+        venues = client.venues.search({'ll': '{0},{1}'.format(latitude, longitude),
+                                       'radius': 3000,
+                                       'limit': 50,
+                                       'query': query,
+                                       'intent': 'browse',
+                                       })
+        return Response(venues)
 
     def create(self, request):
         pass

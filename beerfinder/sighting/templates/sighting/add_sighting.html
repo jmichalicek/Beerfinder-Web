@@ -9,7 +9,7 @@
   margin: 0;
   }
 
-  #venue_list {
+  #venue_list, #search_list {
       overflow-y: auto;
       height: 100%;
       position: absolute;
@@ -27,14 +27,16 @@
 </style>
 {% endblock stylesheets %}
 {% block body %}
-<div id="venue_list_container" class="container full-height" data-bind="visible: !selectedVenue()">
+<div id="search_box_container" class="container">
   <div class="row">
     <div class="col-xs-12">
-      <form>
-        <input type="text" placeholder="Place to search for..."><button type="submit" class="btn">Search</button>
+      <form data-bind="submit: submitSearchHandler">
+        <input type="text" placeholder="Place to search for..." data-bind="value: searchTerm"><button type="submit" class="btn">Search</button>
       </form>
     </div>
   </div>
+</div>
+<div id="venue_list_container" class="container full-height" data-bind="visible: venueListVisible">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
       <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" style="padding-left: 0px">
@@ -48,6 +50,23 @@
             <span data-bind="text: location().postalCode"></span>
           </div>
           <!-- /ko -->
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div id="search_list_container" class="container full-height" data-bind="visible: searchListVisible">
+  <div class="row full-height">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
+      <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
+      <ul id="search_list" data-bind="foreach: searchVenues" style="padding-left: 0px">
+        <li class="venue_item">
+          <div data-bind="click: $parent.setSelectedVenue" style="border: 2px solid black; height: 105px; min-height:105px;">
+            <span data-bind="text: name"></span><br>
+            <span data-bind="text: location().address"></span><br>
+            <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+            <span data-bind="text: location().postalCode"></span>
+          </div>
         </li>
       </ul>
     </div>
