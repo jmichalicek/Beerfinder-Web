@@ -9,7 +9,7 @@ var ViewModel = function (data) {
                 method: 'GET',
                 data: {beer_slug: self.beer().slug()}
                }).done(function (data) {
-                   ko.utils.arrayForEach(data, function(item) {
+                   ko.utils.arrayForEach(data.results, function(item) {
                        self.sightings.push(new SightingModel(item));
                    });
                });

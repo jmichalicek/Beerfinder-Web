@@ -9,7 +9,7 @@ var ViewModel = function () {
                 method: 'GET',
                 data: {},
                }).done(function (data) {
-                   ko.utils.arrayForEach(data, function(item) {
+                   ko.utils.arrayForEach(data.results, function(item) {
                        self.beers.push(new BeerModel(item));
                    });
                });

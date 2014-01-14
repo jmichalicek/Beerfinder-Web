@@ -16,6 +16,8 @@ class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.all()
     serializer_class = SightingSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    paginate_by = 10
+    paginate_by_param = 'page_size'
 
     def create(self, request, *args, **kwargs):
         """
