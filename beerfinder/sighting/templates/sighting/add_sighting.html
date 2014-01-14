@@ -18,7 +18,7 @@
   .venue_item {
       display: block;
       position: relative;
-      height: 105px;
+      height: 125px;
   }
 
   .full-height {
@@ -43,11 +43,12 @@
         <li class="venue_item">
           {# magic to not draw the items which are not visible which makes this far more scalable #}
           <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
-          <div data-bind="click: $parent.setSelectedVenue" style="border: 2px solid black; height: 105px; min-height:105px;">
+          <div style="border: 2px solid black; height: 125px;">
             <span data-bind="text: name"></span><br>
-            <span data-bind="text: location().address"></span><br>
+            <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
             <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-            <span data-bind="text: location().postalCode"></span>
+            <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+            <button data-bind="click: $parent.setSelectedVenue" class="btn">Select Location</button>
           </div>
           <!-- /ko -->
         </li>
@@ -61,11 +62,12 @@
       <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
       <ul id="search_list" data-bind="foreach: searchVenues" style="padding-left: 0px">
         <li class="venue_item">
-          <div data-bind="click: $parent.setSelectedVenue" style="border: 2px solid black; height: 105px; min-height:105px;">
+          <div style="border: 2px solid black; height: 125px;">
             <span data-bind="text: name"></span><br>
-            <span data-bind="text: location().address"></span><br>
+            <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
             <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-            <span data-bind="text: location().postalCode"></span>
+            <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+            <button data-bind="click: $parent.setSelectedVenue" class="btn">Select Location</button>
           </div>
         </li>
       </ul>
