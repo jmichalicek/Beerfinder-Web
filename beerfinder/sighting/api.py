@@ -13,10 +13,10 @@ from .models import Sighting
 from .serializers import SightingSerializer
 
 class SightingViewSet(viewsets.ModelViewSet):
-    queryset = Sighting.objects.all()
+    queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
     serializer_class = SightingSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    paginate_by = 10
+    paginate_by = 25
     paginate_by_param = 'page_size'
 
     def create(self, request, *args, **kwargs):

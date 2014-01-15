@@ -13,7 +13,7 @@ var ViewModel = function () {
         $.ajax({url: '/api/sightings/',
                 method: 'GET',
                }).done(function (data) {
-                   ko.utils.arrayForEach(data, function(item) {
+                   ko.utils.arrayForEach(data.results, function(item) {
                        self.sightings.push(new SightingModel(item));
                    });
                });

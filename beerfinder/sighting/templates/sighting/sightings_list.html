@@ -1,20 +1,52 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block stylesheets %}
+{{ block.super }}
+<!-- so that an inner div can be set to always full screen -->
+<style type="text/css">
+  html, body {
+  height: 95%;
+  margin: 0;
+  }
+
+  #sighting_list {
+      overflow-y: auto;
+      height: 100%;
+      position: absolute;
+      width: 100%;
+}
+  .sighting_item {
+      display: block;
+      position: relative;
+      height: 75px;
+  }
+
+  .full-height {
+      height: 100%;
+  }
+</style>
+{% endblock stylesheets %}
+
 {% block body %}
-<div class="container" data-bind="foreach: sightings">
-  <div class="row">
-    <div class="col-md-12">
-      <a style="display: block" data-bind="attr: {href: webUrl }">
-        <span data-bind="text: beer().name"></span><br>
-        <small><span data-bind="text: beer().brewery.name"></span></small>
-        Seen at at <span data-bind="text: venue().name"></span><br>
-        <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
-      </a>
+<div class="container full-height">
+  <div class="row full-height">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
+      <ul id="sighting_list" data-bind="foreach: sightings" class="markerless">
+        <li class="sighting_item">
+          <a style="display: block" data-bind="attr: {href: webUrl }">
+            <span data-bind="text: beer().name"></span><br>
+            <small><span data-bind="text: beer().brewery.name"></span></small>
+            Seen at at <span data-bind="text: venue().name"></span><br>
+            <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
+          </a>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
 {% endblock body %}
 {% block javascript %}
+<script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
 <script src="{% static 'js/beer/models.js' %}"></script>
 <script src="{% static 'js/venue/models.js' %}"></script>
 <script src="{% static 'js/sighting/models.js' %}"></script>
