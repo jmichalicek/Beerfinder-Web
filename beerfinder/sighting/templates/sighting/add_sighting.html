@@ -39,7 +39,7 @@
 <div id="venue_list_container" class="container full-height" data-bind="visible: venueListVisible">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
-      <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" style="padding-left: 0px">
+      <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="markerless">
         <li class="venue_item">
           {# magic to not draw the items which are not visible which makes this far more scalable #}
           <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
@@ -60,7 +60,7 @@
   <div class="row full-height">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
       <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
-      <ul id="search_list" data-bind="foreach: searchVenues" style="padding-left: 0px">
+      <ul id="search_list" data-bind="foreach: searchVenues" class="markerless">
         <li class="venue_item">
           <div style="border: 2px solid black; height: 125px;">
             <span data-bind="text: name"></span><br>

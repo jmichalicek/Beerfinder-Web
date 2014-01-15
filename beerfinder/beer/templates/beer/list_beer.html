@@ -40,7 +40,7 @@
 <div class="container full-height" id="beer_list_container">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
-      <ul id="beer_list" data-bind="foreach: beers.infinitescroll.displayItems" style="padding-left: 0px">
+      <ul id="beer_list" data-bind="foreach: beers.infinitescroll.displayItems" class="markerless">
         <li class="beer_item">
           <!-- ko if: $index() >= $root.beers.infinitescroll.firstHiddenIndex() -->
           <div>
