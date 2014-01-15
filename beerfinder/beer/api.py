@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import permissions
 
@@ -14,3 +15,14 @@ class BeerViewSet(viewsets.ModelViewSet):
 
     def pre_save(self, obj):
         obj.created_by = self.request.user
+
+    def get_queryset(self):
+        # implementing search here, but may move to its own endpoint
+        # with django haystack implementing proper full text search
+        queryset = self.queryset.select_related('brewery');
+        search_term = self.request.QUERY_PARAMS.get('search', None)
+        if search_term is not None and search_term.strip() != '':
+            queryset = queryset.filter(Q(name__icontains=search_term) | Q(brewery__name__icontains=search_term))
+
+        return queryset
+

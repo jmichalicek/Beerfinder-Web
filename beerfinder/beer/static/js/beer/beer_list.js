@@ -1,10 +1,13 @@
 var ViewModel = function () {
     var self = this;
 
+    var Modes = Object.freeze({LIST: 'list',
+                               SEARCH: 'search'});
+
+    this.mode = Modes.LIST;  // other option is search
     this.searchTerm = ko.observable();
     this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
     this.itemsPerRequest = 50;
-    this.maxResults = null;
 
     this.activeNavSection = ko.observable('beer_list');
     this.beers = ko.observableArray();
@@ -30,7 +33,10 @@ var ViewModel = function () {
 
         // add more items if scroll reaches the last 15 items
         if (self.beers.peek().length - self.beers.infinitescroll.lastVisibleIndex.peek() <= 50) {
-            self.getBeerList();
+            // only do it if there's not already a request in progress and we have a next page to get
+            if(!self.requestInProgress && self.nextPage) {
+                self.getBeerList();
+            }
         }
     });
 
@@ -54,11 +60,22 @@ var ViewModel = function () {
     // end infinite scroll stuff
 
 
-
-
     this.getBeerList = function() {
         // TODO: pagination
-        $.ajax({url: '/api/beer/' + self.nextPage,
+        self.requestInProgress = true;
+        var url = '/api/beer/';
+        if(self.nextPage) {
+            url += self.nextPage;
+        }
+
+        // this may end up being handled in a separate function, separate observableArray,
+        // and eventually even separate endpoint.
+        if(self.mode === Modes.SEARCH) {
+            url += self.nextPage ? '&' : '?';
+            url += 'search=' + self.searchTerm();
+        }
+
+        $.ajax({url: url,
                 method: 'GET',
                 data: {},
                }).done(function (data) {
@@ -67,18 +84,23 @@ var ViewModel = function () {
                        currentList.push(new BeerModel(item));
                    });
                    self.beers(currentList);
-               });
+                   self.nextPage = data.next_page;
+               }).complete(function () {
+                   self.requestInProgress = false;
+                   });
     };
 
     this.submitSearchHandler = function () {
-//        if(self.searchTerm().length < 1) {
-//            // just do regular explore if the search term was empty
-//            self.discoverView(true);
-//            self.getNearbyVenues();
-//        } else {
-//            self.discoverView(false);
-//            self.searchForVenue();
-//        }
+        self.beers([]);
+        self.nextPage = '';
+        var term = self.searchTerm().trim();
+        if(term.length < 1) {
+            self.mode = Modes.LIST;
+        } else {
+            self.mode = Modes.SEARCH;
+        }
+        self.searchTerm(term); // because of the trim
+        self.getBeerList();
     };
 
 
