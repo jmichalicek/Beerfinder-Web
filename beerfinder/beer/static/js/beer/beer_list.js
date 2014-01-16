@@ -61,19 +61,19 @@ var ViewModel = function () {
 
 
     this.getBeerList = function() {
-        // TODO: pagination
         self.requestInProgress = true;
         var url = '/api/beer/';
         if(self.nextPage) {
-            url += self.nextPage;
+            url = self.nextPage;
         }
 
         // this may end up being handled in a separate function, separate observableArray,
         // and eventually even separate endpoint.
-        if(self.mode === Modes.SEARCH) {
-            url += self.nextPage ? '&' : '?';
-            url += 'search=' + self.searchTerm();
-        }
+        // This was here based on misreading a response.  I think I won't need it.
+        //if(self.mode === Modes.SEARCH) {
+        //    url += self.nextPage ? '&' : '?';
+        //    url += 'search=' + self.searchTerm();
+        //}
 
         $.ajax({url: url,
                 method: 'GET',
