@@ -18,7 +18,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                     help_text=_('Designates whether this user should be treated as '
                                                 'active. Unselect this instead of deleting accounts.'))
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
-    username = models.CharField(max_length=50, blank=True, help_text=_('Username to alternately display instead of email address'), unique=True)
+    username = models.CharField(max_length=50, blank=True, help_text=_('Username to alternately display instead of email address'), unique=True, db_index=True)
     show_name_on_sightings = models.BooleanField(default=True, blank=True)
 
     objects = UserManager()
