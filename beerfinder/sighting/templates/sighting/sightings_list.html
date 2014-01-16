@@ -31,14 +31,16 @@
 <div class="container full-height">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 full-height" style="overflow: hidden">
-      <ul id="sighting_list" data-bind="foreach: sightings" class="markerless">
+      <ul id="sighting_list" data-bind="foreach: sightings.infinitescroll.displayItems" class="markerless">
         <li class="sighting_item">
+          <!-- ko if: $index() >= $root.sightings.infinitescroll.firstHiddenIndex() -->
           <a style="display: block" data-bind="attr: {href: webUrl }">
             <span data-bind="text: beer().name"></span><br>
             <small><span data-bind="text: beer().brewery.name"></span></small>
             Seen at at <span data-bind="text: venue().name"></span><br>
             <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
           </a>
+          <!-- /ko -->
         </li>
       </ul>
     </div>
