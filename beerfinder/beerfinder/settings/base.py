@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 import dj_database_url
 
+SITE_ID = 1;
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 AUTH_USER_MODEL = 'accounts.User'
@@ -38,7 +40,14 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
+    # 3rd party apps
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    # my apps
     'accounts',
     'beer',
     'sighting',
@@ -53,6 +62,18 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+                               "django.core.context_processors.debug",
+                               "django.core.context_processors.i18n",
+                               "django.core.context_processors.media",
+                               "django.core.context_processors.static",
+                               "django.core.context_processors.tz",
+                               "django.contrib.messages.context_processors.messages",
+                               "django.core.context_processors.request",
+                               # allauth specific context processors
+                               "allauth.account.context_processors.account",
+                               "allauth.socialaccount.context_processors.socialaccount",)
 
 ROOT_URLCONF = 'beerfinder.urls'
 
@@ -121,7 +142,18 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(os.path.dirname(__file__)), 'templates'),
 )
 
+AUTHENTICATION_BACKENDS = (
+     # Needed to login by username in Django admin, regardless of `allauth`
+    "django.contrib.auth.backends.ModelBackend",
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    "allauth.account.auth_backends.AuthenticationBackend",
+ )
+
 LOGIN_REDIRECT_URL = 'sightings_list'
 
 FOURSQUARE_CLIENT_ID = os.environ.get('FOURSQUARE_CLIENT_ID')
 FOURSQUARE_CLIENT_SECRET = os.environ.get('FOURSQUARE_CLIENT_SECRET')
+
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True

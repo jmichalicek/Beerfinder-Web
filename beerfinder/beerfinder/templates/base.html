@@ -27,8 +27,8 @@
             <li data-bind="css: {active: activeNavSection() == 'beer_list'}"><a href="{% url 'show_beer_list' %}">Beer List</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}<li><a href="{% url 'logout' %}">Log Out</a></li>{% else %}
-            <li><a href="{% url 'login' %}">Log In</a></li>{% endif %}
+            {% if user.is_authenticated %}<li><a href="{% url 'account_logout' %}">Log Out</a></li>{% else %}
+            <li><a href="{% url 'account_login' %}">Log In</a></li>{% endif %}
           </ul>
         </div><!--/.nav-collapse -->
       </div>
