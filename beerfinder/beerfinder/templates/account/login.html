@@ -13,7 +13,10 @@
           <label for="{{ form.password.auto_id }}">{{ form.password.label }}</label><br />
           {{ form.password }}
         </div>
-        <button type="submit" class="btn btn-default">Login</button>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">Login</button><br>
+          Don't have an account? <a href="{% url 'account_signup' %}">Create one!</a>
+        </div>
       </form>
     </div>
   </div>
