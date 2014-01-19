@@ -2,6 +2,7 @@ from django.conf import settings
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 import foursquare
 
@@ -9,8 +10,8 @@ from beer.models import Beer
 from venue.models import Venue
 
 from .forms import SightingModelForm
-from .models import Sighting
-from .serializers import SightingSerializer
+from .models import Sighting, SightingConfirmation
+from .serializers import SightingSerializer, SightingConfirmationSerializer
 
 class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
@@ -100,3 +101,20 @@ class SightingViewSet(viewsets.ModelViewSet):
         response_data = SightingSerializer(queryset)
         return Response(response_data.data)
         #print venues['groups'][0]['items'][3]['venue']['id']
+
+    @action(methods=['POST'])
+    def confirm_available(self, request, *args, **kwargs):
+        """
+        Mark a sighting as still available
+        """
+        sighting = self.get_object()
+        # create sighting confirmation object with user=request.user and is_available=True
+        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': True})
+        if confirmation_serializer.is_valid():
+            confirmation = confirmation_serializer.save()
+            return Response(SightingSerializer(sighting).data, status=201)
+        else:
+            print confirmation_serializer.errors
+            # should return a more generic error here
+            return Response(confirmation_serializer.errors, status=400)
+

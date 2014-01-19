@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Sighting
+from .models import Sighting, SightingConfirmation
 
 class SightingModelForm(forms.ModelForm):
 

@@ -23,3 +23,14 @@ class Sighting(models.Model):
             return self.user.username
 
         return u'Anonymous'
+
+
+class SightingConfirmation(models.Model):
+
+    sighting = models.ForeignKey(Sighting)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
+    is_available = models.BooleanField(blank=True, default=False, db_index=True)
+    date_created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ('-date_created', 'sighting')

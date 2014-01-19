@@ -6,7 +6,7 @@ import factory
 from datetime import timedelta
 import simplejson as json
 
-from .models import Sighting
+from .models import Sighting, SightingConfirmation
 
 from accounts.models import User
 from venue.models import Venue
@@ -72,9 +72,9 @@ class SightingViewSetTestCase(TestCase):
 
         self.venue = VenueFactory()
         self.beer1_sighting1 = SightingFactory(beer=self.beer1, venue=self.venue)
-        self.beer2_sighting1 = SightingFactory(beer=self.beer2, venue=self.venue)
-        self.beer1_sighting2 = SightingFactory(beer=self.beer1, venue=VenueFactory())
-        self.beer2_sighting2 = SightingFactory(beer=self.beer2, venue=VenueFactory(), user=UserFactory(show_name_on_sightings=False))
+        self.beer2_sighting1 = SightingFactory(beer=self.beer2, venue=self.venue, date_sighted=timezone.now() - timedelta(minutes=1))
+        self.beer1_sighting2 = SightingFactory(beer=self.beer1, venue=VenueFactory(), date_sighted=timezone.now() - timedelta(minutes=2))
+        self.beer2_sighting2 = SightingFactory(beer=self.beer2, venue=VenueFactory(), user=UserFactory(show_name_on_sightings=False), date_sighted=timezone.now() - timedelta(minutes=3))
 
     def test_get_list(self):
         """
@@ -83,10 +83,11 @@ class SightingViewSetTestCase(TestCase):
 
         self.client.login(username=self.user.email, password='password')
         response = self.client.get('/api/sightings/')
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-        response_objects = json.loads(response.content)
+        response_objects = json.loads(response.content)['results']
         self.assertEqual(len(response_objects), 4)
 
         self.assertEqual(response_objects[0]['id'], self.beer1_sighting1.id)
@@ -116,7 +117,7 @@ class SightingViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-        response_objects = json.loads(response.content)
+        response_objects = json.loads(response.content)['results']
         self.assertEqual(len(response_objects), 2)
 
         self.assertEqual(response_objects[0]['id'], self.beer1_sighting1.id)
@@ -128,3 +129,11 @@ class SightingViewSetTestCase(TestCase):
         self.assertEqual(response_objects[1]['sighted_by'], self.beer1_sighting2.user.email)
         self.assertEqual(response_objects[1]['beer']['slug'], self.beer1.slug)
 
+    def test_confirm_available(self):
+        self.client.login(username=self.user.email, password='password')
+        current_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.all().count()
+        response = self.client.post('/api/sightings/{0}/confirm_available/'.format( self.beer1_sighting1.id))
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        updated_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.all().count()
+        self.assertTrue(updated_confirmation_count == current_confirmation_count + 1)
