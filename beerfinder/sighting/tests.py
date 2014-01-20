@@ -131,9 +131,18 @@ class SightingViewSetTestCase(TestCase):
 
     def test_confirm_available(self):
         self.client.login(username=self.user.email, password='password')
-        current_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.all().count()
+        current_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=True).count()
         response = self.client.post('/api/sightings/{0}/confirm_available/'.format( self.beer1_sighting1.id))
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'], 'application/json')
-        updated_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.all().count()
+        updated_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=True).count()
         self.assertTrue(updated_confirmation_count == current_confirmation_count + 1)
+
+    def test_confirm_unavailable(self):
+        self.client.login(username=self.user.email, password='password')
+        unavailable_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=False).count()
+        response = self.client.post('/api/sightings/{0}/confirm_unavailable/'.format( self.beer1_sighting1.id))
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        updated_unavailable_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=False).count()
+        self.assertTrue(updated_unavailable_count == unavailable_confirmation_count + 1)

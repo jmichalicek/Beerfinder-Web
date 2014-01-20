@@ -108,7 +108,6 @@ class SightingViewSet(viewsets.ModelViewSet):
         Mark a sighting as still available
         """
         sighting = self.get_object()
-        # create sighting confirmation object with user=request.user and is_available=True
         confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': True})
         if confirmation_serializer.is_valid():
             confirmation = confirmation_serializer.save()
@@ -118,3 +117,17 @@ class SightingViewSet(viewsets.ModelViewSet):
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
+    @action(methods=['POST'])
+    def confirm_unavailable(self, request, *args, **kwargs):
+        """
+        Mark a sighting as no longer available
+        """
+        sighting = self.get_object()
+        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': False})
+        if confirmation_serializer.is_valid():
+            confirmation = confirmation_serializer.save()
+            return Response(SightingSerializer(sighting).data, status=201)
+        else:
+            print confirmation_serializer.errors
+            # should return a more generic error here
+            return Response(confirmation_serializer.errors, status=400)
