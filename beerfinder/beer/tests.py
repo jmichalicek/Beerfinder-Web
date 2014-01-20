@@ -73,7 +73,7 @@ class BeerViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-        response_objects = json.loads(response.content)
+        response_objects = json.loads(response.content)['results']
         self.assertEqual(len(response_objects), 2)
         self.assertEqual(response_objects[0]['id'], self.beer1.id)
         self.assertEqual(response_objects[0]['name'], self.beer1.name)
