@@ -23,6 +23,29 @@
     </div>
   </div>
 </div>
+<div class="container" id="comments_container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+      <form data-bind="submit: addComment">
+        <div class="form-group">
+          <label for="comment_text" class="sr-only">Comment:</label>
+          <textarea id="comment_text" name="text"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Comment</button>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+      <ul class="markerless" data-bind="foreach: comments">
+        <li>
+          <p data-bind="text: text"></p>
+          <small>From <span data-bind="text: comment_by"></span> on <span data-bind="text: date_created"></span></small>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
 {% endblock body %}
 
 {% block javascript %}

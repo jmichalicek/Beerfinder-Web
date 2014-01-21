@@ -34,3 +34,22 @@ class SightingConfirmation(models.Model):
 
     class Meta:
         ordering = ('-date_created', 'sighting')
+
+class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    sighting = models.ForeignKey(Sighting, related_name='comments')
+    date_created = models.DateTimeField(auto_now_add=True, db_index=True)
+    text = models.TextField()
+
+    class Meta:
+        ordering = ('-date_created', 'sighting')
+
+    def __unicode__(self):
+        return u'User id {0} comment on sighting id {1}'.format(self.user_id, self.id)
+
+    @property
+    def comment_by(self):
+        if self.user.show_name_on_sightings:
+            return self.user.username
+
+        return u'Anonymous'

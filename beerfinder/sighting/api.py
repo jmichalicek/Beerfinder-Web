@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.core.paginator import Paginator
+
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, link
 
 import foursquare
 
@@ -11,7 +13,8 @@ from venue.models import Venue
 
 from .forms import SightingModelForm
 from .models import Sighting, SightingConfirmation
-from .serializers import SightingSerializer, SightingConfirmationSerializer
+from .serializers import (SightingSerializer, SightingConfirmationSerializer,
+                          PaginatedSightingCommentSerializer, SightingCommentSerializer)
 
 class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
@@ -117,7 +120,7 @@ class SightingViewSet(viewsets.ModelViewSet):
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
-    @action(methods=['POST'])
+    @action(methods=['post'])
     def confirm_unavailable(self, request, *args, **kwargs):
         """
         Mark a sighting as no longer available
@@ -128,6 +131,41 @@ class SightingViewSet(viewsets.ModelViewSet):
             confirmation = confirmation_serializer.save()
             return Response(SightingSerializer(sighting).data, status=201)
         else:
-            print confirmation_serializer.errors
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
+
+    @action(methods=['post'])
+    def add_comment(self, request, *args, **kwargs):
+        sighting = self.get_object()
+        serializer = SightingCommentSerializer(data=request.POST)
+        if serializer.is_valid():
+            serializer.object.user = request.user
+            serializer.object.sighting = sighting
+            comment = serializer.save()
+            return Response(serializer.data, status=201)
+
+        else:
+            return Response(serializer.errors, status=400)
+
+    @link()
+    def comments(self, request, *args, **kwargs):
+        """
+        Get the comments for a sighting
+        """
+        sighting = self.get_object()
+        queryset = sighting.comments.all()
+        paginator = Paginator(queryset, 10)
+
+        page = request.QUERY_PARAMS.get('page')
+        try:
+            comments = paginator.page(page)
+        except PageNotAnInteger:
+            comments = paginator.page(1)
+        except EmptyPage:
+            comments = paginator.page(paginator.num_pages)
+
+        serializer_context = {'request': request}
+        serializer = PaginatedSightingCommentSerializer(comments,
+                                                        context=serializer_context)
+
+        return Response(serializer.data)
