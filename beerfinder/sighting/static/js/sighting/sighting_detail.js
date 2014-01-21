@@ -2,8 +2,15 @@ var ViewModel = function (data) {
     var self = this;
     this.sighting = ko.observable(new SightingModel(data.sighting));
     this.activeNavSection = ko.observable('');
-    this.comments = ko.observable([]);
+    this.comments = ko.observableArray([]);
+    this.showComment = ko.observable(false);
+    this.commentToggleText = ko.computed(function () {
+        return self.showComment() ? "Cancel" : "Add Comment";
+    });
 
+    this.toggleShowComment = function () {
+        self.showComment(!self.showComment());
+    }
     this.getComments = function () {
         $.ajax({
             url: '/api/sightings/' + self.sighting().id() + '/comments/'

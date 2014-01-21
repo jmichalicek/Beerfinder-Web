@@ -45,7 +45,7 @@ class Comment(models.Model):
         ordering = ('-date_created', 'sighting')
 
     def __unicode__(self):
-        return u'User id {0} comment on sighting id {1}'.format(self.user_id, self.id)
+        return u'User id {0} comment on sighting id {1}'.format(self.user_id, self.sighting_id)
 
     @property
     def comment_by(self):
