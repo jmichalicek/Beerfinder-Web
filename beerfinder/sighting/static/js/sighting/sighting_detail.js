@@ -1,5 +1,6 @@
 var ViewModel = function (data) {
     var self = this;
+    this.nextCommentPage = ko.observable(null);
     this.sighting = ko.observable(new SightingModel(data.sighting));
     this.activeNavSection = ko.observable('');
     this.comments = ko.observableArray([]);
@@ -12,14 +13,17 @@ var ViewModel = function (data) {
         self.showComment(!self.showComment());
     }
     this.getComments = function () {
+        var url = self.nextCommentPage() ||  '/api/sightings/' + self.sighting().id() + '/comments/';
         $.ajax({
-            url: '/api/sightings/' + self.sighting().id() + '/comments/'
+            url: url,
+            data: {page: self.commentPage}
         }).done(function (data) {
             var currentComments = self.comments()
             ko.utils.arrayForEach(data.results, function(comment) {
                 currentComments.push(new SightingCommentModel(comment));
             });
             self.comments(currentComments);
+            self.nextCommentPage(data.next);
         });
     };
 
