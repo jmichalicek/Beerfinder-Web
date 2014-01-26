@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+{% endblock body %}
+
+{% block javascript %}
+<script src="{% static 'js/venue/models.js' %}"></script>
+<script src="{% static 'js/beer/models.js' %}"></script>
+<script src="{% static 'js/sighting/models.js' %}"></script>
+<script src="{% static 'js/accounts/models.js' %}"></script>
+<script src="{% static 'js/accounts/edit_profile.js' %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+    vm = new EditProfileViewModel();
+    ko.applyBindings(vm);
+});
+</script>
+
+{% endblock javascript %}
