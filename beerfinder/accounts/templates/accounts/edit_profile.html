@@ -4,29 +4,72 @@
 <div class="container" id="sighting_container">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
-      <form data-bind="submit: updateProfile">
-        <div class="form-group">
-          <label for="id_first_name">First name:</label>
-          <input type="text" id="id_first_name" name="first_name" autocomplete="off" data-bind="value: profile().firstName"></input>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Profile</h3>
         </div>
-        <div class="form-group">
-          <label for="id_last_name">Last name:</label>
-          <input type="text" id="id_last_name" name="last_name" autocomplete="off" data-bind="value: profile().lastName"></input>
+        <div class="panel-body">
+          <div class="alert alert-success" data-bind="visible: showSaveProfileSuccess">
+            <button aria-hidden="true" data-bind="click: function() {showSaveProfileSuccess(false);}" class="close" type="button">&times;</button>
+            Profile successfully saved!
+          </div>
+          <div class="alert alert-danger" data-bind="visible: showSaveProfileError">
+            <button aria-hidden="true" data-bind="click: function() {showSaveProfileError(false);}" class="close" type="button">&times;</button>
+            <span data-bind="text: saveProfileErrorText"></span>
+          </div>
+          <form data-bind="submit: saveProfile">
+            <div class="form-group">
+              <label for="id_first_name">First name:</label>
+              <input type="text" id="id_first_name" name="first_name" autocomplete="off" data-bind="value: profile().firstName"></input>
+            </div>
+            <div class="form-group">
+              <label for="id_last_name">Last name:</label>
+              <input type="text" id="id_last_name" name="last_name" autocomplete="off" data-bind="value: profile().lastName"></input>
+            </div>
+            <div class="form-group">
+              <label for="id_email">Email:</label>
+              <input type="text" id="id_email" name="email" autocomplete="off" data-bind="value: profile().email"></input>
+            </div>
+            <div class="form-group">
+              <label for="id_username">Username:</label>
+              <input type="text" id="id_username" name="username" autocomplete="off" data-bind="value: profile().username"></input>
+            </div>
+            <div class="form-group">
+              <label for="id_show_name_on_sightings">Show name on sightings:</label>
+              <input type="checkbox" id="id_show_name_on_sightings" name="show_name_on_sightings" autocomplete="off" data-bind="checked: profile().showNameOnSightings"></input>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </form>
         </div>
-        <div class="form-group">
-          <label for="id_email">Email:</label>
-          <input type="text" id="id_email" name="email" autocomplete="off" data-bind="value: profile().email"></input>
+      </div> <!-- end profile panel -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Change Password</h3>
         </div>
-        <div class="form-group">
-          <label for="id_username">Username:</label>
-          <input type="text" id="id_username" name="username" autocomplete="off" data-bind="value: profile().username"></input>
+        <div class="panel-body">
+          <div class="alert alert-success" data-bind="visible: showChangePasswordSuccess">
+            <button aria-hidden="true" data-bind="click: function() {showChangePasswordSuccess(false);}" class="close" type="button">&times;</button>
+            Password successfully changed!
+          </div>
+          <div class="alert alert-danger" data-bind="visible: showChangePasswordError">
+            <button aria-hidden="true" data-bind="click: function() {showChangePasswordError(false);}" class="close" type="button">&times;</button>
+            <span data-bind="text: changePasswordErrorText"></span>
+          </div>
+          <form data-bind="submit: changePassword">
+            <div class="form-group">
+              <label for="id_password">Current Password:</label>
+              <input type="password" id="id_oldpassword" name="oldpassword" autocomplete="off"></input>
+            </div>
+            <div class="form-group">
+              <label for="id_password1">New Password:</label>
+              <input type="password" id="id_password1" name="password1" autocomplete="off"></input><br>
+              <label for="id_password2">Confirm Password:</label>
+              <input type="password" id="id_password2" name="password2" autocomplete="off"></input>
+            </div>
+            <button type="submit" class="btn btn-primary">Change Password</button>
+          </form>
         </div>
-        <div class="form-group">
-          <label for="id_show_name_on_sightings">Show name on sightings:</label>
-          <input type="checkbox" id="id_show_name_on_sightings" name="show_name_on_sightings" autocomplete="off" data-bind="checked: profile().showNameOnSightings"></input>
-        </div>
-      </form>
-      <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div><!-- end change password panel -->
     </div>
   </div>
 </div>
