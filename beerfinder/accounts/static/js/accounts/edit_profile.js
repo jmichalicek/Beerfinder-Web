@@ -1,5 +1,27 @@
+var ProfileSections = {
+    PROFILE: 'profile',
+    WATCHLIST: 'watchlist'
+};
+
+var activeView = ko.observable(ProfileSections.PROFILE);
+
+var NavViewModel = function () {
+    this.showProfile = function () {
+        activeView(ProfileSections.PROFILE);
+    };
+
+    this.showWatchList = function () {
+        activeView(ProfileSections.WATCHLIST);
+    };
+}
+
+
 var EditProfileViewModel = function (data) {
     var self = this;
+
+    this.isActive = ko.computed(function () {
+        return activeView() == ProfileSections.PROFILE;
+    });
 
     this.profile = ko.observable(new MyAccountModel({}));
 
@@ -54,4 +76,10 @@ var EditProfileViewModel = function (data) {
     };
 
     self.getProfile();
+};
+
+var WatchlistViewModel = function (data) {
+    this.isActive = ko.computed(function () {
+        return activeView() == ProfileSections.WATCHLIST;
+    });
 };
