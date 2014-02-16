@@ -3,7 +3,12 @@ body {
       position: relative;
       }
 
+// bootstrap 3 actually has a class to do this already.
 ul.markerless {
     padding-left: 0px;
     list-style: none inside none;
+}
+
+a.icon {
+   color: inherit;
 }
