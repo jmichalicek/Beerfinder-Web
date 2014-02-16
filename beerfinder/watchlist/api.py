@@ -6,11 +6,8 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action, link
 
-from beer.models import Beer
-#from venue.models import Venue
-
 from .models import WatchedBeer
-from .serializers import WatchedBeerSerializer, PaginatedWatchedBeerSerializer
+from .serializers import WatchedBeerSerializer, PaginatedWatchedBeerSerializer, WatchedBeerWriteableSerializer
 
 class WatchListViewSet(viewsets.ModelViewSet):
     queryset = WatchedBeer.objects.select_related('user', 'beer', 'beer__brewery').all()
@@ -19,20 +16,6 @@ class WatchListViewSet(viewsets.ModelViewSet):
     paginate_by = 25
     paginate_by_param = 'page_size'
 
-    def create(self, request, *args, **kwargs):
-        """
-        Does a whole bunch of extra special stuff
-        """
-
-        try:
-            beer = Beer.objects.get(slug=request.DATA.get('beer'))
-        except Beer.DoesNotExist:
-            return Response({'error': 'Beer does not exist'}, status=400)
-
-        form_data = {'beer': beer.id, 'user': request.user.id}
-
-        return Response()
-
     def pre_save(self, obj):
         obj.user = self.request.user
 
@@ -40,3 +23,13 @@ class WatchListViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
         queryset = queryset.filter(user_id=self.request.user.id)
         return queryset
+
+    def get_serializer_class(self):
+        """
+        Returns the normal serializer for read type requests.
+        Return the serializer which takes beer slug for write requests.
+        """
+        if self.request.method not in ['POST', 'PUT']:
+            return super(WatchListViewSet, self).get_serializer_class()
+        else:
+            return WatchedBeerWriteableSerializer
