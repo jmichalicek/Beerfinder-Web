@@ -51,7 +51,8 @@ INSTALLED_APPS = (
     'accounts',
     'beer',
     'sighting',
-    'venue'
+    'venue',
+    'watchlist'
 )
 
 MIDDLEWARE_CLASSES = (
