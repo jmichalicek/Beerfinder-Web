@@ -105,4 +105,17 @@ var WatchlistViewModel = function (data) {
             console.log("Ooops" + data);
         });
     };
+
+    this.removeFromWatchlist = function (watchedBeer) {
+        $.ajax({
+            url: watchedBeer.url(),
+            type: 'DELETE',
+            dataType: 'text',
+            cache: false,
+        }).done(function (data) {
+            self.watchlist.remove(watchedBeer);
+        }).fail(function (data) {
+            console.log(data);
+        });
+    }
 };

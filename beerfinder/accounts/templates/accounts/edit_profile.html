@@ -89,7 +89,7 @@
           </div>
           <div class="panel-body">
             <ul class="list-unstyled list-group"  data-bind="foreach: watchlist">
-              <li class="list-group-item" style="margin-top: 0px;"><span data-bind="text: beer().name"></span><a href="#" class="pull-right icon" style="margin-top: 0px; margin-bottom:10px"  title="Unwatch"><i class="fa fa-eye-slash"></i></a>
+              <li class="list-group-item" style="margin-top: 0px;"><span data-bind="text: beer().name"></span><a href="#" class="pull-right icon" title="Unwatch" data-bind="click: $parent.removeFromWatchlist"><i class="fa fa-eye-slash"></i></a>
               </li>
             </ul>
           </div><!-- end watchlist panel -->
