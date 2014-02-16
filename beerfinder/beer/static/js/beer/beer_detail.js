@@ -14,4 +14,16 @@ var ViewModel = function (data) {
                    });
                });
     };
+
+    this.addToWatchlist = function (data) {
+        $.ajax({
+            url: '/api/watchlist/',
+            type: 'POST',
+            data: {'beer': self.beer().slug()}
+        }).done(function (data) {
+            alert("Added to watchlist " + data);
+        }).fail(function (data) {
+            console.log("error adding beer to watchlist: " + data);
+        });
+    };
 };
