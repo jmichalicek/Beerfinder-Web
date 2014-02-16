@@ -54,6 +54,8 @@ var EditProfileViewModel = function (data) {
             type: 'GET'
         }).done(function (data) {
             self.profile(new MyAccountModel(data));
+        }).fail(function (data) {
+            console.log("Error getting profile: " + data);
         });
     };
     
@@ -79,7 +81,28 @@ var EditProfileViewModel = function (data) {
 };
 
 var WatchlistViewModel = function (data) {
+    var self = this;
+
     this.isActive = ko.computed(function () {
         return activeView() == ProfileSections.WATCHLIST;
     });
+
+    // TODO: infinite scroll for watchlist
+    this.watchlist = ko.observableArray([]);
+
+    this.getWatchlist = function () {
+        $.ajax({
+            url: '/api/watchlist/',
+            type: 'GET'
+        }).done(function (data) {
+            var currentList = self.watchlist();
+            ko.utils.arrayForEach(data.results, function(item) {
+                currentList.push(new WatchedBeerModel(item));
+            });
+            self.watchlist(currentList);
+            // self.nextPage = data.next_page;
+        }).fail(function (data) {
+            console.log("Ooops" + data);
+        });
+    };
 };
