@@ -12,3 +12,8 @@ class UserFactory(factory.django.DjangoModelFactory):
     is_staff = False
     is_superuser = False
     show_name_on_sightings = True
+
+    @factory.post_generation
+    def set_password(obj, create, extracted, **kwargs):
+        obj.set_password('password')
+        obj.save()
