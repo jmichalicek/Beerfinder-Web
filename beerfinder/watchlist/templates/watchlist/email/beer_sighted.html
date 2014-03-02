@@ -13,5 +13,8 @@
       {% if location.postal_code %}<li>{{ location.postal_code }}</li>{% endif %}
       {% endwith %}
     </ul>
+    <a href="{% url 'sighting_detail' sighting.id %}">View sighting</a><br>
+    {# todo: make the view use url hash fragments to show correct section #}
+    <a href="{% url 'accounts_edit_profile' %}">View your watchlist</a><br>
   </body>
 </html>
