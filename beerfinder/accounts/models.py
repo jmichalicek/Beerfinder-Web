@@ -21,6 +21,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50, blank=True, help_text=_('Username to alternately display instead of email address'), unique=True, db_index=True)
     show_name_on_sightings = models.BooleanField(default=True, blank=True)
 
+    send_watchlist_email = models.BooleanField(default=True, blank=True)
+
     objects = UserManager()
 
     def __unicode__(self):
