@@ -13,7 +13,7 @@ from venue.models import Venue
 
 from beer.tests import BeerFactory
 from accounts.tests import UserFactory
-
+from venue.tests import VenueFactory
 
 class AnonymousUserFactory(UserFactory):
     show_name_on_sightings = False
@@ -28,10 +28,6 @@ class AnonymousSightingFactory(factory.django.DjangoModelFactory):
 
     user = factory.SubFactory(AnonymousUserFactory)
 
-class VenueFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = Venue
-
-    foursquare_id = factory.Sequence(lambda n: "Venue %03d" % n)
 
 class SightingTestCase(TestCase):
 

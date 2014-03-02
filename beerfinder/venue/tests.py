@@ -1,3 +1,11 @@
 from django.test import TestCase
 
-# Create your tests here.
+import factory
+
+from .models import Venue
+
+
+class VenueFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = Venue
+
+    foursquare_id = factory.Sequence(lambda n: "Venue %03d" % n)
