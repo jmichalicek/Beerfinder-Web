@@ -1,0 +1,17 @@
+<html>
+  <body>
+    <p>
+      {{ sighting.beer }} from your watchlist has been seen on {{ sighting.date_sighted }} at the following location.
+    </p>
+    <ul>
+      {% with location=sighting.venue %}
+      {% if location.name %}<li>{{ location.name }}</li>{% endif %}
+      {% if location.street_address %}<li>{{ location.street_address }}</li>{% endif %}
+      {% if location.city or location.state %}
+      <li>{% if location.city %}{{ location.city }}{% endif %}{% if location.city and location.state%}, {% endif %}{{ location.state }}</li>
+      {% endif %} 
+      {% if location.postal_code %}<li>{{ location.postal_code }}</li>{% endif %}
+      {% endwith %}
+    </ul>
+  </body>
+</html>

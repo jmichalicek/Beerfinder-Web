@@ -1,4 +1,6 @@
 from django.test import TestCase
+from django.test.utils import override_settings
+from django.core import mail
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -6,8 +8,12 @@ import factory
 
 from accounts.tests import UserFactory
 from beer.tests import BeerFactory
+from sighting.tests import SightingFactory
+from venue.tests import VenueFactory
 
 from .models import WatchedBeer
+from .tasks import send_watchlist_email
+
 
 class WatchedBeerFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = WatchedBeer
@@ -15,6 +21,8 @@ class WatchedBeerFactory(factory.django.DjangoModelFactory):
     beer = factory.SubFactory(BeerFactory)
     user = factory.SubFactory(UserFactory)
 
+
+@override_settings(CELERY_ALWAYS_EAGER=True)
 class APIWatchListTest(APITestCase):
 
     def setUp(self):
@@ -61,3 +69,50 @@ class APIWatchListTest(APITestCase):
         # now try to delete someone else's
         response = self.client.delete('/api/watchlist/{0}/'.format(user2_watched.id))
         self.assertEqual(response.status_code, 404)
+
+
+@override_settings(CELERY_ALWAYS_EAGER=True)
+class SendWatchlistEmailTest(TestCase):
+
+    def setUp(self):
+        self.venue = VenueFactory()
+
+    def test_send_emails(self):
+        """
+        Tests the celery task specifically.
+        Testing that emails are sent when a sighting is created with no regard
+        to the method will be done separately.
+        """
+        user_1 = UserFactory.create()
+        user_2 = UserFactory.create()
+        user_3 = UserFactory.create()
+
+        beer_1 = BeerFactory.create()
+        beer_2 = BeerFactory.create()
+
+        user_1_watched_1 = WatchedBeerFactory.create(user=user_1, beer=beer_1)
+        user_2_watched_1 = WatchedBeerFactory.create(user=user_2, beer=beer_1)
+        user_2_watched_1 = WatchedBeerFactory.create(user=user_2, beer=beer_2)
+
+        beer_1_sighting = SightingFactory.create(user=user_3, beer=beer_1, venue=self.venue)
+        beer_2_sighting = SightingFactory.create(user=user_3, beer=beer_2, venue=self.venue)
+
+        mail.outbox = []
+        send_watchlist_email.delay(beer_1_sighting.id)
+        self.assertEqual(len(mail.outbox), 2)
+        recipients = [m.to for m in mail.outbox]
+        self.assertItemsEqual(recipients, [[user_1.email], [user_2.email]])
+
+        mail.outbox = []
+        send_watchlist_email.delay(beer_2_sighting.id)
+        self.assertEqual(len(mail.outbox), 1)
+        for m in mail.outbox:
+            self.assertEqual(m.to, [user_2.email])
+
+        user_1.send_watchlist_email = False
+        user_1.save()
+        mail.outbox = []
+        send_watchlist_email.delay(beer_1_sighting.id)
+        self.assertEqual(len(mail.outbox), 1)
+        for m in mail.outbox:
+            self.assertEqual(m.to, [user_2.email])
