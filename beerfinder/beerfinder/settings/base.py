@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'djcelery',
 
     # my apps
     'accounts',
@@ -163,3 +164,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ACCOUNT_ADAPTER = 'accounts.adapters.RegistrationTogglableAdapter'
 REGISTRATION_OPEN = False
+
+# celery stuff
+#BROKER_URL = 'redis://localhost:6379/0'
+BROKER_URL = 'redis://'
+CELERY_RESULT_BACKEND = 'redis://'
+BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True}
+
+TWITTER_API_KEY = os.environ.get('TWITTER_API_KEY')
+TWITTER_API_SECRET = os.environ.get('TWITTER_API_SECRET')
+
+DEFAULT_FROM_EMAIL = 'jmichalicek@gmail.com'
