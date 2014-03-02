@@ -116,3 +116,23 @@ class SendWatchlistEmailTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         for m in mail.outbox:
             self.assertEqual(m.to, [user_2.email])
+
+
+@override_settings(CELERY_ALWAYS_EAGER=True)
+class WatchlistTest(TestCase):
+    def setUp(self):
+        self.venue = VenueFactory()
+        self.user = UserFactory()
+        self.user_2 = UserFactory.create()
+        self.beer = BeerFactory()
+        self.watched_beer = WatchedBeerFactory(user=self.user, beer=self.beer)
+
+    def test_email_sent_on_sighting(self):
+        """
+        Test that emails are sent to user's watching a beer when a sighting is created
+        """
+        mail.outbox = []
+        SightingFactory.create(user=self.user_2, beer=self.beer, venue=self.venue)
+        self.assertEqual(len(mail.outbox), 1)
+        for m in mail.outbox:
+            self.assertEqual(m.to, [self.user.email])
