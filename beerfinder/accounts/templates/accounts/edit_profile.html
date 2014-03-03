@@ -44,7 +44,11 @@
                 <input type="text" id="id_username" name="username" autocomplete="off" data-bind="value: profile().username"></input>
               </div>
               <div class="form-group">
-                <label for="id_show_name_on_sightings">Show name on sightings:</label>
+                <label for="id_send_watchlist_email">Receive email notification about watched beer sightings?</label>
+                <input type="checkbox" id="id_send_watchlist_email" name="send_watchlist_email" autocomplete="off" data-bind="checked: profile().sendWatchlistEmail"></input>
+              </div>
+              <div class="form-group">
+                <label for="id_show_name_on_sightings">Show name on sightings?</label>
                 <input type="checkbox" id="id_show_name_on_sightings" name="show_name_on_sightings" autocomplete="off" data-bind="checked: profile().showNameOnSightings"></input>
               </div>
               <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -80,7 +84,7 @@
           </div>
         </div><!-- end change password panel -->
       </div>
-    </div><!-- end user_info_conainer -->
+    </div><!-- end user_info_container -->
     <div class="container" id="watchlist_container" data-bind="visible: isActive">
       <div class="col-xs-12 col-sm-6">
         <div class="panel panel-default">

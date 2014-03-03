@@ -34,12 +34,10 @@ var EditProfileViewModel = function (data) {
     this.changePasswordErrorText = ko.observable("");
 
     this.saveProfile = function (formElement) {
-        //var formData = new FormData(formElement);
-
         $.ajax({
             url: '/api/profile/me/',
             type: 'POST',
-            data: $(formElement).serialize(),
+            data: self.profile().toApiFormData(),
         }).done(function (){
             self.showSaveProfileSuccess(true);
         }).fail(function () {

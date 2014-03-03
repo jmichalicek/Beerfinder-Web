@@ -10,4 +10,4 @@ class AllDataUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'date_joined', 'first_name', 'last_name', 'show_name_on_sightings')
+        fields = ('id', 'email', 'username', 'date_joined', 'first_name', 'last_name', 'show_name_on_sightings', 'send_watchlist_email')
