@@ -41,7 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-
+    'django.contrib.gis',
     # 3rd party apps
     'allauth',
     'allauth.account',
@@ -91,8 +91,10 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASES = {'default': dj_database_url.config(
+        #engine='django.contrib.gis.db.backend.spatialite',
         default='sqlite:////{0}'.format(os.path.join(BASE_DIR, 'beerfinder.sqlite'))),
 }
+#DATABASES = {'default': dj_database_url.config()}
 
 #DATABASES = {
 #    'default': {

@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.gis.geos import Point, fromstr, GEOSGeometry
 
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -14,7 +15,8 @@ from venue.models import Venue
 from .forms import SightingModelForm
 from .models import Sighting, SightingConfirmation
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
-                          PaginatedSightingCommentSerializer, SightingCommentSerializer)
+                          PaginatedSightingCommentSerializer, SightingCommentSerializer,
+                          PaginatedSightingSerializer)
 
 class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
@@ -47,7 +49,7 @@ class SightingViewSet(viewsets.ModelViewSet):
         # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
         if sighting_form.is_valid():
             sighting = sighting_form.save()
-            serialized = SightingSerializer(sighting)
+            serialized = PaginatedSightingSerializer(sighting)
             return Response(serialized.data, status=201) #201, created
         else:
             return Response({'form_errors': sighting_form.errors}, status=400)
@@ -73,37 +75,23 @@ class SightingViewSet(viewsets.ModelViewSet):
         latitude = request.QUERY_PARAMS.get('latitude', None)
         longitude = request.QUERY_PARAMS.get('longitude', None)
 
-        queryset = self.queryset
+        # Spot.objects.filter(point__distance_lte=(origin, D(m=distance_m))).distance(origin).order_by('distance')[:1][0]
+        origin = fromstr("Point({0} {1})".format(longitude, latitude))
+        queryset = self.queryset.distance(origin, field_name='venue__point').order_by('distance')
 
-        client_id = settings.FOURSQUARE_CLIENT_ID
-        client_secret = settings.FOURSQUARE_CLIENT_SECRET
-        client = foursquare.Foursquare(client_id=client_id, client_secret=client_secret)
+        paginator = Paginator(queryset, 2)
+        page_number = request.QUERY_PARAMS.get('page')
+        try:
+            page = paginator.page(page_number)
+        except PageNotAnInteger:
+            page = paginator.page(1)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
 
-        # search category ids
-        # 4bf58dd8d48988d17f941735 theaters
-        # 4bf58dd8d48988d1e5931735 music venue
-        # 4d4b7105d754a06374d81259 food
-        # 4d4b7105d754a06376d81259 nightlife spots (bars, breweries included)
-        #4bf58dd8d48988d1f9941735 grocery
-        # 4d954b0ea243a5684a65b473 convenience stores
-
-        venues = client.venues.explore({'ll': '{0},{1}'.format(latitude, longitude),
-                                        'sortByDistance': 1,
-                                        'limit': 50,
-                                        })
-
-
-        venue_ids = []
-        import itertools
-        for group in venues['groups']:
-            venue_ids = itertools.chain(venue_ids, (item['venue']['id'] for item in group['items']))
-
-        venue_ids = list(venue_ids)
-
-        #queryset = queryset.filter(venue__foursquare_id__in=venue_ids)
-        response_data = SightingSerializer(queryset)
-        return Response(response_data.data)
-        #print venues['groups'][0]['items'][3]['venue']['id']
+        serializer_context = {'request': request}
+        serialized = PaginatedSightingSerializer(page,
+                                                 context=serializer_context)
+        return Response(serialized.data)
 
     @action(methods=['POST'])
     def confirm_available(self, request, *args, **kwargs):

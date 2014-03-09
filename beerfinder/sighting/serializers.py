@@ -36,3 +36,7 @@ class PaginatedSightingCommentSerializer(pagination.PaginationSerializer):
     """
     class Meta:
         object_serializer_class = SightingCommentSerializer
+
+class PaginatedSightingSerializer(pagination.PaginationSerializer):
+    class Meta:
+        object_serializer_class = SightingSerializer

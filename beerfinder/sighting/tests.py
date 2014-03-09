@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
+from django.contrib.gis.geos import Point, fromstr, GEOSGeometry
+
 import factory
 from datetime import timedelta
 import simplejson as json
@@ -61,16 +63,21 @@ class SightingTestCase(TestCase):
 
 
 class SightingViewSetTestCase(TestCase):
+    # legend Point("-77.4429997801781 37.5268217786912")
+    # hardywood Point("-77.4419362313172 37.5254898040785")
+    # the national Point("-77.4352025985718 37.5418168540823")
+
     def setUp(self):
         self.beer1 = BeerFactory()
-        self.beer2 = BeerFactory()
+        self.beer2 = BeerFactory.create()
         self.user = get_user_model().objects.create_user('user@example.com', 'password')
 
         self.venue = VenueFactory()
         self.beer1_sighting1 = SightingFactory(beer=self.beer1, venue=self.venue)
         self.beer2_sighting1 = SightingFactory(beer=self.beer2, venue=self.venue, date_sighted=timezone.now() - timedelta(minutes=1))
-        self.beer1_sighting2 = SightingFactory(beer=self.beer1, venue=VenueFactory(), date_sighted=timezone.now() - timedelta(minutes=2))
-        self.beer2_sighting2 = SightingFactory(beer=self.beer2, venue=VenueFactory(), user=UserFactory(show_name_on_sightings=False), date_sighted=timezone.now() - timedelta(minutes=3))
+        self.beer1_sighting2 = SightingFactory(beer=self.beer1, venue=VenueFactory.create(point = fromstr("POINT(77.29 37.33)")
+), date_sighted=timezone.now() - timedelta(minutes=2))
+        self.beer2_sighting2 = SightingFactory(beer=self.beer2, venue=VenueFactory.create(point=fromstr("Point(-77.4419362313172 37.5254898040785)")), user=UserFactory(show_name_on_sightings=False), date_sighted=timezone.now() - timedelta(minutes=3))
 
     def test_get_list(self):
         """

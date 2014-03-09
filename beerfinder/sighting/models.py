@@ -2,7 +2,9 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 
-class Sighting(models.Model):
+from django.contrib.gis.db import models as gis_models
+
+class Sighting(gis_models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_sighted = models.DateTimeField(blank=True, default=timezone.now)
     venue = models.ForeignKey('venue.Venue')
@@ -10,6 +12,8 @@ class Sighting(models.Model):
     image = models.ImageField(upload_to='sighting_images/%Y/%m/%d', blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
     comment = models.TextField(blank=True)
+
+    objects = gis_models.GeoManager()
 
     class Meta:
         ordering = ('-date_sighted', 'beer', 'venue__name',)
