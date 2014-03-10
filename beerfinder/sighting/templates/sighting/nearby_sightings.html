@@ -39,6 +39,7 @@
             <span data-bind="text: beer().name"></span><br>
             <small><span data-bind="text: beer().brewery.name"></span></small>
             Seen at at <span data-bind="text: venue().name"></span><br>
+            <span data-bind="text: distance().toFixed(2)"></span> miles away.<br>
             <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
           </a>
           <!-- /ko -->

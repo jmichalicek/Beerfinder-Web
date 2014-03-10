@@ -17,6 +17,23 @@ class SightingSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment',)
 
 
+class DistanceSightingSerializer(SightingSerializer):
+    """
+    Sighting with distance from user
+
+    Possibly this should just always be used and Sighting should always return distance.
+    """
+
+    distance = serializers.Field()
+
+    class Meta:
+        model = Sighting
+        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment', 'distance')
+
+    def transform_distance(self, obj, value):
+        return obj.distance.mi
+
+
 class SightingConfirmationSerializer(serializers.ModelSerializer):
     class Meta:
         model = SightingConfirmation
@@ -37,6 +54,7 @@ class PaginatedSightingCommentSerializer(pagination.PaginationSerializer):
     class Meta:
         object_serializer_class = SightingCommentSerializer
 
-class PaginatedSightingSerializer(pagination.PaginationSerializer):
+
+class PaginatedDistanceSightingSerializer(pagination.PaginationSerializer):
     class Meta:
-        object_serializer_class = SightingSerializer
+        object_serializer_class = DistanceSightingSerializer

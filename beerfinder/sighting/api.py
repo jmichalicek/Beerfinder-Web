@@ -16,7 +16,7 @@ from .forms import SightingModelForm
 from .models import Sighting, SightingConfirmation
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
-                          PaginatedSightingSerializer)
+                          PaginatedDistanceSightingSerializer, DistanceSightingSerializer)
 
 class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
@@ -49,7 +49,7 @@ class SightingViewSet(viewsets.ModelViewSet):
         # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
         if sighting_form.is_valid():
             sighting = sighting_form.save()
-            serialized = PaginatedSightingSerializer(sighting)
+            serialized = SightingSerializer(sighting)
             return Response(serialized.data, status=201) #201, created
         else:
             return Response({'form_errors': sighting_form.errors}, status=400)
@@ -89,8 +89,8 @@ class SightingViewSet(viewsets.ModelViewSet):
             page = paginator.page(paginator.num_pages)
 
         serializer_context = {'request': request}
-        serialized = PaginatedSightingSerializer(page,
-                                                 context=serializer_context)
+        serialized = PaginatedDistanceSightingSerializer(page,
+                                                         context=serializer_context)
         return Response(serialized.data)
 
     @action(methods=['POST'])

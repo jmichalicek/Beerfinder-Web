@@ -11,6 +11,8 @@ var SightingModel = function (data) {
     this.webUrl = ko.computed(function () {
         return '/sightings/' + self.id();
     });
+
+    this.distance = ko.observable(data.distance || 0)
 };
 
 var SightingCommentModel = function (data) {

@@ -60,11 +60,12 @@ var ViewModel = function () {
     this.getSightings = function() {
         // TODO: pagination
         var url = '/api/sightings/nearby/';
+        var requestParams = {};
         if(self.nextPage) {
             url = self.nextPage;
+        } else {
+            requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
         }
-
-        requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
         self.requestInProgress = true;
         $.ajax({url: url,
                 type: 'GET',
