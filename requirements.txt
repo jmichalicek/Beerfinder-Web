@@ -5,7 +5,7 @@ anyjson==0.3.3
 billiard==3.3.0.16
 celery==3.1.9
 distribute==0.6.24
-dj-database-url==0.2.2
+-e git+git@github.com:kennethreitz/dj-database-url.git@ebb012f3afbeb72b884c67b59c9b820694b18a38#egg=dj_database_url-dev
 django-allauth==0.15.0
 django-celery==3.1.9
 djangorestframework==2.3.12
@@ -15,6 +15,7 @@ httplib2==0.8
 kombu==3.0.12
 oauthlib==0.6.1
 poster==0.8.1
+psycopg2==2.5.2
 python-openid==2.2.5
 pytz==2013.9
 redis==2.9.1
