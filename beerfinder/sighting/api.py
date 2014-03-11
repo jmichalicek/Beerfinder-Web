@@ -76,10 +76,11 @@ class SightingViewSet(viewsets.ModelViewSet):
         longitude = request.QUERY_PARAMS.get('longitude', None)
 
         # Spot.objects.filter(point__distance_lte=(origin, D(m=distance_m))).distance(origin).order_by('distance')[:1][0]
-        origin = fromstr("Point({0} {1})".format(longitude, latitude))
+        #origin = fromstr("Point({0} {1})".format(longitude, latitude))
+        origin = Point(float(longitude), float(latitude))
         queryset = self.queryset.distance(origin, field_name='venue__point').order_by('distance')
 
-        paginator = Paginator(queryset, 2)
+        paginator = Paginator(queryset, 25)
         page_number = request.QUERY_PARAMS.get('page')
         try:
             page = paginator.page(page_number)
