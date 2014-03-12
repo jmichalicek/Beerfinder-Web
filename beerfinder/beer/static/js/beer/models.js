@@ -17,4 +17,19 @@ var BeerModel = function (data) {
     this.addSightingUrl = ko.computed(function () {
         return '/sightings/add_sighting/?beer=' + self.slug();
     });
+
+    this.getRecentSightings = function () {
+        return $.ajax({url: '/api/sightings/',
+                       method: 'GET',
+                       data: {beer: self.slug()}
+                      });
+    };
+
+    this.getNearbySightings = function (latitude, longitude) {
+        var requestParams = {latitude:latitude, longitude: longitude, beer: self.slug()};
+        return $.ajax({url: '/api/sightings/nearby/',
+                       method: 'GET',
+                       data: requestParams,
+                      });
+    };
 };

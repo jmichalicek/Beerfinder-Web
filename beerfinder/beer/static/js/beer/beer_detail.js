@@ -56,15 +56,18 @@ var RecentSightingListViewModel = function (data) {
     this.tabManager = data.tabManager;
     this.parentViewModel = data.parentView;
     this.sightings = ko.observableArray();
+
     this.getSightings = function () {
-        $.ajax({url: '/api/sightings/',
+        /*$.ajax({url: '/api/sightings/',
                 method: 'GET',
                 data: {beer_slug: self.parentViewModel.beer().slug()}
-               }).done(function (data) {
-                   ko.utils.arrayForEach(data.results, function(item) {
-                       self.sightings.push(new SightingModel(item));
-                   });
-               });
+               })*/
+        self.parentViewModel.beer().getRecentSightings().done(function (data) {
+            ko.utils.arrayForEach(data.results, function(item) {
+                self.sightings.push(new SightingModel(item));
+            });
+        });
+
     };
 };
 
@@ -77,30 +80,33 @@ var NearbySightingListViewModel = function (data) {
     this.tabManager = data.tabManager;
     this.parentViewModel = data.parentView;
     this.sightings = ko.observableArray();
-
+    
     this.initialize = function () {
         navigator.geolocation.getCurrentPosition(self.getNearbySightings);
     };
-
+    
     this.getNearbySightings = function (position) {
         // to be used as a callback for html5 geolocation
         self.location = position;
         self.getSightings();
-    }
-
+    };
+    
     this.getSightings = function () {
         if(!self.location.coords) {
             self.initialize();
             return false;
         }
-        var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude, beer_slug: self.parentViewModel.beer().slug()};
-        $.ajax({url: '/api/sightings/nearby/',
-                method: 'GET',
-                data: requestParams,
-               }).done(function (data) {
-                   ko.utils.arrayForEach(data.results, function(item) {
-                       self.sightings.push(new SightingModel(item));
-                   });
-               });
+        /*#var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude, beer_slug: self.parentViewModel.beer().slug()};
+        #$.ajax({url: '/api/sightings/nearby/',
+        #        method: 'GET',
+        #        data: requestParams,
+        #       }) */
+        self.parentViewModel.beer().getNearbySightings(self.location.coords.latitude,
+                                                       self.location.coords.longitude
+                                                      ).done(function (data) {
+                                                          ko.utils.arrayForEach(data.results, function(item) {
+                                                              self.sightings.push(new SightingModel(item));
+                                                          });
+                                                      });
     };
 };
