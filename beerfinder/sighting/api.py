@@ -63,6 +63,7 @@ class SightingViewSet(viewsets.ModelViewSet):
         # I am not settled on this and may switch to url path params for by beer sightings
         # but then need to mess with more advanced routing
         beer_slug = self.request.QUERY_PARAMS.get('beer', None)
+
         if beer_slug:
             queryset = queryset.filter(beer__slug=beer_slug)
 
@@ -75,10 +76,9 @@ class SightingViewSet(viewsets.ModelViewSet):
         latitude = request.QUERY_PARAMS.get('latitude', None)
         longitude = request.QUERY_PARAMS.get('longitude', None)
 
-        # Spot.objects.filter(point__distance_lte=(origin, D(m=distance_m))).distance(origin).order_by('distance')[:1][0]
         #origin = fromstr("Point({0} {1})".format(longitude, latitude))
         origin = Point(float(longitude), float(latitude))
-        queryset = self.queryset.distance(origin, field_name='venue__point').order_by('distance')
+        queryset = self.get_queryset().distance(origin, field_name='venue__point').order_by('distance')
 
         paginator = Paginator(queryset, 25)
         page_number = request.QUERY_PARAMS.get('page')
