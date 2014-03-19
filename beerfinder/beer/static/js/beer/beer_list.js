@@ -11,6 +11,7 @@ var ViewModel = function () {
     this.searchTerm = ko.observable();
     this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
     this.itemsPerRequest = 50;
+    this.morePages = ko.observable(true);
 
     this.activeNavSection = ko.observable('beer_list');
     this.beers = ko.observableArray();
@@ -89,10 +90,15 @@ var ViewModel = function () {
                        currentList.push(new BeerModel(item));
                    });
                    self.beers(currentList);
-                   self.nextPage = data.next_page;
+                   self.nextPage = data.next;
                }).complete(function () {
                    self.requestInProgress = false;
-                   });
+                   if(self.nextPage) {
+                       self.morePages(true);
+                   } else {
+                       self.morePages(false);
+                   }
+               });
     };
 
     this.submitSearchHandler = function () {
