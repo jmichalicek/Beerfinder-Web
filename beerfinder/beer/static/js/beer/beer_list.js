@@ -1,10 +1,13 @@
+var Modes = Object.freeze({LIST: 'list',
+                           SEARCH: 'search'});
+
 var ViewModel = function () {
     var self = this;
 
-    var Modes = Object.freeze({LIST: 'list',
-                               SEARCH: 'search'});
+   // var Modes = Object.freeze({LIST: 'list',
+   //                            SEARCH: 'search'});
 
-    this.mode = Modes.LIST;  // other option is search
+    this.mode = ko.observable(Modes.LIST);  // other option is search
     this.searchTerm = ko.observable();
     this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
     this.itemsPerRequest = 50;
@@ -67,17 +70,19 @@ var ViewModel = function () {
             url = self.nextPage;
         }
 
+        var requestParams = {};
         // this may end up being handled in a separate function, separate observableArray,
         // and eventually even separate endpoint.
         // This was here based on misreading a response.  I think I won't need it.
-        //if(self.mode === Modes.SEARCH) {
+        if(self.mode() === Modes.SEARCH) {
         //    url += self.nextPage ? '&' : '?';
         //    url += 'search=' + self.searchTerm();
-        //}
+            requestParams = {search: self.searchTerm()};
+        }
 
         $.ajax({url: url,
                 method: 'GET',
-                data: {},
+                data: requestParams,
                }).done(function (data) {
                    var currentList = self.beers();
                    ko.utils.arrayForEach(data.results, function(item) {
@@ -95,9 +100,9 @@ var ViewModel = function () {
         self.nextPage = '';
         var term = self.searchTerm().trim();
         if(term.length < 1) {
-            self.mode = Modes.LIST;
+            self.mode(Modes.LIST);
         } else {
-            self.mode = Modes.SEARCH;
+            self.mode(Modes.SEARCH);
         }
         self.searchTerm(term); // because of the trim
         self.getBeerList();
