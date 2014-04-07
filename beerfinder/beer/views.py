@@ -22,3 +22,9 @@ def beer_detail(request, beer_slug):
     return render_to_response('beer/detail.html',
                               {'beer': JSONRenderer().render(serialized.data)},
                               context_instance=RequestContext(request))
+
+@login_required
+def add_beer(request):
+    return render_to_response('beer/add_beer.html',
+                              {},
+                              context_instance=RequestContext(request))
