@@ -41,14 +41,46 @@
     {% block body %}{% endblock body %}
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/knockout/knockout-3.0.0.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
-    <script src="{% static 'js/vendor/bootstrap.js' %}"></script>
+{#     <script src="//ajax.aspnetcdn.com/ajax/knockout/knockout-3.0.0.js"></script> #}
+{#     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script> #}
+{#    <script src="{% static 'js/vendor/bootstrap.js' %}"></script> #}
     <script src="{% static 'js/csrf.js' %}"></script>
+    {# <script src="{% static 'js/vendor/infinitescroll.js' %}"></script>  <!-- get ths working with rquirejs --> #}
+
+    {% comment %}
     <script type="text/javascript">
       jQuery.ajaxSettings.traditional = true;
     </script>
-<!--    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script> -->
+    {% endcomment %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
+    <script type="text/javascript">
+      require.config({
+        baseUrl: "/static/js/",
+        paths: {
+          beer: 'beer',
+          accounts: 'accounts',
+          sighting: 'sighting',
+          watchlist: 'watchlist',
+          venue: 'venue',
+          vendor: 'vendor',
+          knockout: '//ajax.aspnetcdn.com/ajax/knockout/knockout-3.0.0',
+          jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min',
+          bootstrap: 'vendor/bootstrap',
+          underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
+          csrf: 'csrf'
+        },
+
+        shim: {
+          infinitescroll: ['knockout'],
+          bootstrap: ['jquery'],
+          csrf: ['jquery']
+        },
+
+        deps: ['jquery', 'bootstrap', 'knockout'],
+        callback: function () { jQuery.ajaxSettings.traditional = true;},
+      });
+
+      </script>
 
     {% block javascript %}{% endblock javascript %}
   </body>

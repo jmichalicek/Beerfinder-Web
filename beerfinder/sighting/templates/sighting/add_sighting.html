@@ -105,13 +105,10 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
-<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
-<script src="{% static 'js/venue/models/FoursquareVenueModel.js' %}"></script>
-<script src="{% static 'js/sighting/viewmodels/AddSightingViewModel.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function () {
-    vm = new AddSightingViewModel({beer: {{ beer|safe }}});
+require(['knockout', 'sighting/viewmodels/AddSightingViewModel'], function (ko, AddSightingViewModel) {
+    "use strict";
+    var vm = new AddSightingViewModel({beer: {{ beer|safe }}});
     ko.applyBindings(vm);
     vm.getLocation();
 });

@@ -37,7 +37,7 @@
           <!-- ko if: $index() >= $root.sightings.infinitescroll.firstHiddenIndex() -->
           <a style="display: block" data-bind="attr: {href: webUrl }">
             <span data-bind="text: beer().name"></span><br>
-            <small><span data-bind="text: beer().brewery.name"></span></small>
+            <small><span data-bind="text: beer().brewery().name"></span></small>
             Seen at at <span data-bind="text: venue().name"></span><br>
             <span data-bind="text: distance().toFixed(2)"></span> miles away.<br>
             <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
@@ -51,14 +51,9 @@
 {% endblock body %}
 
 {% block javascript %}
-<script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
-<script src="{% static 'js/beer/models.js' %}"></script>
-<script src="{% static 'js/venue/models.js' %}"></script>
-<script src="{% static 'js/sighting/models.js' %}"></script>
-<script src="{% static 'js/sighting/nearby_sightings.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function () {
-    vm = new ViewModel();
+require(['knockout', 'sighting/viewmodels/NearbySightingsViewModel'], function (ko, NearbySightingsViewModel) {
+    var vm = new NearbySightingsViewModel();
     ko.applyBindings(vm);
     vm.initialize();
 });

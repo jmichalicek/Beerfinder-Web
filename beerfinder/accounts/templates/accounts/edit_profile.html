@@ -103,25 +103,18 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
-<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
-<script src="{% static 'js/sighting/models/SightingModel.js' %}"></script>
-<script src="{% static 'js/accounts/models/MyAccountModel.js' %}"></script>
-<script src="{% static 'js/watchlist/models/WatchedBeerModel.js' %}"></script>
-<script src="{% static 'js/accounts/viewmodels/AccountProfileNavViewModel.js' %}"></script>
-<script src="{% static 'js/accounts/viewmodels/EditProfileViewModel.js' %}"></script>
-<script src="{% static 'js/accounts/viewmodels/AccountProfileWatchlistViewModel.js' %}"></script>
-
 <script type="text/javascript">
-$(document).ready(function () {
-    vm = new EditProfileViewModel();
+require(['knockout', 'accounts/viewmodels/EditProfileViewModel', 'accounts/viewmodels/AccountProfileWatchlistViewModel', 'accounts/viewmodels/AccountProfileNavViewModel', 'accounts/models/ProfileNavController'], function (ko, EditProfileViewModel, AccountProfileWatchlistViewModel, AccountProfileNavViewModel, ProfileNavController ) {
+    "use strict";
+    var profileNavController = new ProfileNavController();
+    var vm = new EditProfileViewModel({profileNavController: profileNavController});
     ko.applyBindings(vm, document.getElementById('user_info_container'));
 
-    var watchListVM = new AccountProfileWatchlistViewModel();
+    var watchListVM = new AccountProfileWatchlistViewModel({profileNavController: profileNavController});
     ko.applyBindings(watchListVM, document.getElementById('watchlist_container'));
     watchListVM.getWatchlist();
 
-    var navVm = new AccountProfileNavViewModel();
+    var navVm = new AccountProfileNavViewModel({profileNavController: profileNavController});
     ko.applyBindings(navVm, document.getElementById('nav_container'));
 
 });

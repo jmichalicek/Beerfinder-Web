@@ -52,28 +52,24 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
-<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
-<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
-<script src="{% static 'js/sighting/models/SightingModel.js' %}"></script>
-<script src="{% static 'js/beer/viewmodels/BeerDetailViewModel.js' %}"></script>
-<script src="{% static 'js/beer/viewmodels/BeerDetailTabContainerViewModel.js' %}"></script>
-<script src="{% static 'js/beer/viewmodels/RecentSightingListViewModel.js' %}"></script>
-<script src="{% static 'js/beer/viewmodels/NearbySightingListViewModel.js' %}"></script>
 
 <script type="text/javascript">
-$(document).ready(function () {
-    vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
+require(['knockout', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/BeerDetailTabContainerViewModel',
+         'beer/viewmodels/RecentSightingListViewModel', 'beer/viewmodels/NearbySightingListViewModel'],
+        function(ko, BeerDetailViewModel, BeerDetailTabContainerViewModel, RecentSightingListViewModel, NearbySightingListViewModel) {
+    "use strict";
+
+    var vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
     ko.applyBindings(vm, document.getElementById('main_content'));
 
     var tabManager = new BeerDetailTabContainerViewModel();
     ko.applyBindings(tabManager, document.getElementById('tab_container'));
 
-    recentVm = new RecentSightingListViewModel({parentView: vm, tabManager: tabManager});
+    var recentVm = new RecentSightingListViewModel({parentView: vm, tabManager: tabManager});
     ko.applyBindings(recentVm, document.getElementById('recent_sighting_list'));
     recentVm.getSightings();
 
-    nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager});
+    var nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager});
     ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
     nearbyVm.getSightings();
 });

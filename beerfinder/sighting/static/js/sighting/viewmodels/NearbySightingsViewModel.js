@@ -1,16 +1,15 @@
-// Be sure to load js/sightings/models.js first
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function($, ko, infinitescroll, SightingModel) {
-    return function (data) {
+define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function ($, ko, infinitescroll, SightingModel) {
+    return function () {
         "use strict";
         var self = this;
-        data = typeof data !== 'undefined' ? data : {};
-
+        
         this.location = {}; // TODO: populate this.
-
+        this.activeNavSection = ko.observable('nearby_sightings');
         this.sightings = ko.observableArray();
-        this.activeNavSection = ko.observable('sightings_list');
+    
+        //new
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
-
+        
         this.sightings = ko.observableArray();
         this.sighting_list = ko.observableArray();
     
@@ -26,7 +25,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
             self.sightings.infinitescroll.scrollY($(sighting_list).scrollTop());
-
+        
             var l1 = self.sightings.peek().length;
             var l2 = self.sightings.infinitescroll.lastVisibleIndex.peek();
             if (self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25) {
@@ -35,7 +34,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
                 }
             }
         });
-
+    
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
             var itemsRef = $('#sighting_list'),
@@ -44,26 +43,33 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
             itemsHeight = itemsRef.height(),
             itemWidth = itemRef.outerWidth(),
             itemHeight = itemRef.outerHeight();
-            
+
             self.sightings.infinitescroll.viewportWidth(itemsWidth);
             self.sightings.infinitescroll.viewportHeight(itemsHeight);
             self.sightings.infinitescroll.itemWidth(itemWidth);
             self.sightings.infinitescroll.itemHeight(itemHeight);
+            
         }
         updateViewportDimensions();
-    
+
         // end infinite scroll stuff
 
-        this.getSightings = function() {
-            self.requestInProgress = true;
-            var url = '/api/sightings/';
 
+        //end new
+
+        this.getSightings = function() {
+            // TODO: pagination
+            var url = '/api/sightings/nearby/';
+            var requestParams = {};
             if(self.nextPage) {
                 url = self.nextPage;
+            } else {
+                requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
             }
-
+            self.requestInProgress = true;
             $.ajax({url: url,
                     type: 'GET',
+                    data: requestParams,
                    }).done(function (data) {
                        var currentList = self.sightings();
                        ko.utils.arrayForEach(data.results, function(item) {
@@ -73,7 +79,17 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
                        self.nextPage = data.next;
                    }).complete(function () {
                        self.requestInProgress = false;
-                   });
+                   });  
+        };
+
+        this.initialize = function () {
+            navigator.geolocation.getCurrentPosition(self.getNearbySightings);
+        };
+
+        this.getNearbySightings = function (position) {
+            // to be used as a callback for html5 geolocation
+            self.location = position;
+            self.getSightings();
         };
     };
 });

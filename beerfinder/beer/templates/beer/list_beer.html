@@ -67,12 +67,8 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
-<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
-<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
-<script src="{% static 'js/beer/viewmodels/BeerListViewModel.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function () {
+require(['knockout', 'beer/viewmodels/BeerListViewModel'], function(ko, BeerListViewModel) {
     vm = new BeerListViewModel();
     ko.applyBindings(vm);
     vm.initialize();

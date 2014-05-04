@@ -18,12 +18,10 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
-<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
-<script src="{% static 'js/beer/viewmodels/AddBeerViewModel.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function () {
-    vm = new AddBeerViewModel();
+requirejs(['knockout', 'beer/viewmodels/AddBeerViewModel'], function (ko, AddBeerViewModel) {
+    "use strict";
+    var vm = new AddBeerViewModel();
     ko.applyBindings(vm);
 });
 </script>

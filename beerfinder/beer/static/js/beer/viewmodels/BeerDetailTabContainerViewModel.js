@@ -1,8 +1,14 @@
-var BeerDetailTabContainerViewModel = function() {
-    var self = this;
-    this.activeSightingTab = ko.observable(SightingTabs.RECENT);
+var SightingTabs = {RECENT: 'recent', NEARBY: 'nearby'};
 
-    this.changeTab = function (section) {
-        self.activeSightingTab(section);
+define(['knockout'], function(ko) {
+    return function() {
+        "use strict";
+        var self = this;
+
+        this.activeSightingTab = ko.observable(SightingTabs.RECENT);
+
+        this.changeTab = function (section) {
+            self.activeSightingTab(section);
+        };
     };
-};
+});

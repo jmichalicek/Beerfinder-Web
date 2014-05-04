@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
       <span data-bind="text: sighting().beer().name"></span><br>
-      <small><span data-bind="text: sighting().beer().brewery.name"></span></small><br>
+      <small><span data-bind="text: sighting().beer().brewery().name"></span></small><br>
       <small><span data-bind="text: sighting().date_sighted()"></small></span><br>
       <small>Sighted by <span data-bind="text: sighting().sighted_by()"></small></span><br>
       <div data-bind="if: sighting().image()"> 
@@ -51,15 +51,8 @@
 {% endblock body %}
 
 {% block javascript %}
-<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
-<script src="{% static 'js/venue/models/FoursquareVenueModel.js' %}"></script>
-<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
-<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
-<script src="{% static 'js/sighting/models/SightingModel.js' %}"></script>
-<script src="{% static 'js/sighting/models/SightingCommentModel.js' %}"></script>
-<script src="{% static 'js/sighting/viewmodels/SightingDetailViewModel.js' %}"></script>
 <script type="text/javascript">
-$(document).ready(function () {
+require(['knockout', 'sighting/viewmodels/SightingDetailViewModel'], function (ko, SightingDetailViewModel) {
     vm = new SightingDetailViewModel({sighting: {{ sighting|safe }}});
     ko.applyBindings(vm);
     vm.getComments();
