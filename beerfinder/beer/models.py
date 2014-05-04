@@ -22,7 +22,6 @@ class Beer(models.Model):
     slug = models.SlugField(max_length=150)
     normalized_name = models.CharField(max_length=75, blank=True, db_index=True, help_text='normalized, simplified name for easy searching')
 
-
     class Meta:
         unique_together = (('name', 'brewery'),)
         ordering = ('name', )
@@ -45,6 +44,9 @@ class Beer(models.Model):
         normalized = name.strip()
         normalized = re.sub(r'\s+', ' ', normalized)
         normalized = unidecode(u'{0}'.format(normalized))
+        # the below re takes anything that is not a capital ascii letter, lowercase ascii letter
+        # or ascii digit and removes it.  \w is not used because underscore should be removed
+        normalized = re.sub(r'[^A-Za-z0-9\s]+', '', normalized)
         return u'{0}'.format(normalized)
 
     def generate_slug(self):
@@ -116,6 +118,9 @@ class Brewery(models.Model):
         normalized = name.strip()
         normalized = re.sub(r'\s+', ' ', normalized)
         normalized = unidecode(u'{0}'.format(normalized))
+        # the below re takes anything that is not a capital ascii letter, lowercase ascii letter
+        # or ascii digit and removes it.  \w is not used because underscore should be removed
+        normalized = re.sub(r'[^A-Za-z0-9\s]+', '', normalized)
         return u'{0}'.format(normalized)
 
     def generate_slug(self):

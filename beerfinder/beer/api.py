@@ -26,7 +26,11 @@ class BeerViewSet(viewsets.ModelViewSet):
         queryset = self.queryset.select_related('brewery');
         search_term = self.request.QUERY_PARAMS.get('search', None)
         if search_term is not None and search_term.strip() != '':
-            queryset = queryset.filter(Q(name__icontains=search_term) | Q(brewery__name__icontains=search_term))
+            queryset = queryset.filter(Q(name__icontains=search_term)
+                                       | Q(normalized_name__icontains=Beer.normalize_for_name(search_term))
+                                       | Q(brewery__name__icontains=search_term)
+                                       | Q(brewery__normalized_name__icontains=Brewery.normalize_for_name(search_term))
+                                       )
 
         return queryset
 
