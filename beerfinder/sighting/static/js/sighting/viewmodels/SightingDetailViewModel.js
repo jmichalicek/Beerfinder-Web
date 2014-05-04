@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'sighting/models/SightingModel'], function ($, ko, SightingModel) {
+define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/SightingCommentModel'], function ($, ko, SightingModel, SightingCommentModel) {
     return function (data) {
         "use strict";
         var self = this;
