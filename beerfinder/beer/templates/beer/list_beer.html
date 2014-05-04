@@ -41,7 +41,7 @@
   <div class="row full-height">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden;">
       <!-- ko if: mode() == Modes.SEARCH && beers.infinitescroll.displayItems().length == 0 -->
-      No matching beer found.  <a href="#">Add it?</a>
+      No matching beer found.  <a href="{% url 'add_beer' %}">Add it?</a>
       <!-- /ko -->
       <ul id="beer_list" data-bind="foreach: beers.infinitescroll.displayItems" class="list-unstyled">
         <li class="beer_item">
@@ -61,7 +61,7 @@
     </div>
     {# find way to make this only show if last item in li is showing #}
     <div class="col-xs-12 col-sm-6 col-sm-offset-3" style="margin-top: -1px">
-      <span data-bind="visible: !morePages()">Didn't see the beer you're looking for?  <a href="#">Add it!</a></span>
+      <span data-bind="visible: !morePages()">Didn't see the beer you're looking for?  <a href="{% url 'add_beer' %}">Add it!</a></span>
     </div>
   </div>
 </div>

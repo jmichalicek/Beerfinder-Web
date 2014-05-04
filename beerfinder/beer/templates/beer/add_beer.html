@@ -4,8 +4,15 @@
 <div class="container">
   <div class="row" id="main_content">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <span data-bind="text: beer().name()"></span><br>
-      <span data-bind="text: beer().brewery().name"></span>
+      <!-- ko foreach: formErrors -->
+      <div class="alert alert-danger"><span data-bind="text: $data"></span></div>
+      <!-- /ko -->
+      <form data-bind="submit: addBeer">
+        <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" data-bind="value: beerName"></input><br>
+        <!-- make this an auto-fill thingy of breweries -->
+        <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" data-bind="value: breweryName"></input><br>
+        <button type="submit" class="button btn-primary">Save</button>
+      </form>
     </div>
   </div>
 </div>
@@ -13,10 +20,10 @@
 {% block javascript %}
 <script src="{% static 'js/beer/models.js' %}"></script>
 <script src="{% static 'js/venue/models.js' %}"></script>
-<script src="{% static 'js/beer/add_beer.js' %}"></script>
+<script src="{% static 'js/beer/viewmodels/AddBeerViewModel.js' %}"></script>
 <script type="text/javascript">
 $(document).ready(function () {
-    vm = new ViewModel();
+    vm = new AddBeerViewModel();
     ko.applyBindings(vm);
 });
 </script>
