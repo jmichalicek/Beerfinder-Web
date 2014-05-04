@@ -1,5 +1,7 @@
 var SightingModel = function (data) {
+    "use strict";
     var self = this;
+    data = typeof data !== 'undefined' ? data : {};
 
     this.id = ko.observable(data.id);
     this.beer = ko.observable(data.beer);
@@ -9,17 +11,8 @@ var SightingModel = function (data) {
     this.image = ko.observable(data.image);
     this.url = ko.observable(data.url);
     this.webUrl = ko.computed(function () {
-        return '/sightings/' + self.id();
+        return '/sightings/' + self.id() + '/';
     });
 
     this.distance = ko.observable(data.distance || 0)
-};
-
-var SightingCommentModel = function (data) {
-    var self = this;
-
-    this.id = ko.observable(data.id);
-    this.date_created = ko.observable(data.date_created);
-    this.comment_by = ko.observable(data.comment_by);
-    this.text = ko.observable(data.text);
 };

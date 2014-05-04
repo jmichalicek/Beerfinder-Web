@@ -103,22 +103,25 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/venue/models.js' %}"></script>
-<script src="{% static 'js/beer/models.js' %}"></script>
-<script src="{% static 'js/sighting/models.js' %}"></script>
-<script src="{% static 'js/accounts/models.js' %}"></script>
-<script src="{% static 'js/watchlist/models.js' %}"></script>
-<script src="{% static 'js/accounts/edit_profile.js' %}"></script>
+<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
+<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
+<script src="{% static 'js/sighting/models/SightingModel.js' %}"></script>
+<script src="{% static 'js/accounts/models/MyAccountModel.js' %}"></script>
+<script src="{% static 'js/watchlist/models/WatchedBeerModel.js' %}"></script>
+<script src="{% static 'js/accounts/viewmodels/AccountProfileNavViewModel.js' %}"></script>
+<script src="{% static 'js/accounts/viewmodels/EditProfileViewModel.js' %}"></script>
+<script src="{% static 'js/accounts/viewmodels/AccountProfileWatchlistViewModel.js' %}"></script>
+
 <script type="text/javascript">
 $(document).ready(function () {
     vm = new EditProfileViewModel();
     ko.applyBindings(vm, document.getElementById('user_info_container'));
 
-    var watchListVM = new WatchlistViewModel();
+    var watchListVM = new AccountProfileWatchlistViewModel();
     ko.applyBindings(watchListVM, document.getElementById('watchlist_container'));
     watchListVM.getWatchlist();
 
-    var navVm = new NavViewModel();
+    var navVm = new AccountProfileNavViewModel();
     ko.applyBindings(navVm, document.getElementById('nav_container'));
 
 });

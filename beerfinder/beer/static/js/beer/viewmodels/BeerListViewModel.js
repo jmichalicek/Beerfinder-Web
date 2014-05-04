@@ -1,7 +1,7 @@
 var Modes = Object.freeze({LIST: 'list',
                            SEARCH: 'search'});
 
-var ViewModel = function () {
+var BeerListViewModel = function () {
     var self = this;
 
    // var Modes = Object.freeze({LIST: 'list',

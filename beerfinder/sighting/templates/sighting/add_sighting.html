@@ -106,12 +106,12 @@
 {% endblock body %}
 {% block javascript %}
 <script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
-{# <script src="http://rawgithub.com/thinkloop/knockout-js-infinite-scroll/master/infinitescroll.js"></script> #}
-<script src="{% static 'js/venue/models.js' %}"></script>
-<script src="{% static 'js/sighting/add_sighting.js' %}"></script>
+<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
+<script src="{% static 'js/venue/models/FoursquareVenueModel.js' %}"></script>
+<script src="{% static 'js/sighting/viewmodels/AddSightingViewModel.js' %}"></script>
 <script type="text/javascript">
 $(document).ready(function () {
-    vm = new ViewModel({beer: {{ beer|safe }}});
+    vm = new AddSightingViewModel({beer: {{ beer|safe }}});
     ko.applyBindings(vm);
     vm.getLocation();
 });

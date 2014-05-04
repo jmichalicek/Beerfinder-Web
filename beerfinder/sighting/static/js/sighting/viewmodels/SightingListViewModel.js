@@ -1,7 +1,9 @@
 // Be sure to load js/sightings/models.js first
 
-var ViewModel = function () {
+var SightingListViewModel = function (data) {
+    "use strict";
     var self = this;
+    data = typeof data !== 'undefined' ? data : {};
 
     this.location = {}; // TODO: populate this.
 

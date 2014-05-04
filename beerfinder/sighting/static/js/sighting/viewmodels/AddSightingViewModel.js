@@ -2,8 +2,10 @@
 // look at https://github.com/thinkloop/knockout-js-infinite-scroll/blob/master/infinitescroll.js
 // for infinite scrolling the locations
 
-var ViewModel = function (data) {
+var AddSightingViewModel = function (data) {
+    "use strict";
     var self = this;
+    data = typeof data !== 'undefined' ? data : {};
 
     this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
     this.venuesPerRequest = 50;
@@ -123,8 +125,8 @@ var ViewModel = function (data) {
             self.requestInProgress = true;
 
            
-            requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
-                             offset: offset};
+            var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
+                                 offset: offset};
             
             $.ajax({url: '/api/foursquare_venues/',
                     type: 'GET',

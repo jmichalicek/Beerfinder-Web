@@ -49,13 +49,14 @@
 {% endblock body %}
 {% block javascript %}
 <script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
-<script src="{% static 'js/beer/models.js' %}"></script>
-<script src="{% static 'js/venue/models.js' %}"></script>
-<script src="{% static 'js/sighting/models.js' %}"></script>
-<script src="{% static 'js/sighting/sightings_list.js' %}"></script>
+<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
+<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
+<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
+<script src="{% static 'js/sighting/models/SightingModel.js' %}"></script>
+<script src="{% static 'js/sighting/viewmodels/SightingListViewModel.js' %}"></script>
 <script type="text/javascript">
 $(document).ready(function () {
-    vm = new ViewModel();
+    vm = new SightingListViewModel();
     ko.applyBindings(vm);
     vm.getSightings();
 });

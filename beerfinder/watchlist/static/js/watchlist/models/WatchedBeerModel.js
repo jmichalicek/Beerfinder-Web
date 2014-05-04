@@ -1,6 +1,7 @@
 var WatchedBeerModel = function (data) {
     "use strict";
     var self = this;
+    data = typeof data !== 'undefined' ? data : {};
     
     this.beer = ko.observable(data.beer || new BeerModel({}));
     this.url = ko.observable(data.url || '');

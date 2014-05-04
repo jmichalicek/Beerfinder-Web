@@ -52,16 +52,21 @@
 </div>
 {% endblock body %}
 {% block javascript %}
-<script src="{% static 'js/beer/models.js' %}"></script>
-<script src="{% static 'js/venue/models.js' %}"></script>
-<script src="{% static 'js/sighting/models.js' %}"></script>
-<script src="{% static 'js/beer/beer_detail.js' %}"></script>
+<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
+<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
+<script src="{% static 'js/venue/models/VenueModel.js' %}"></script>
+<script src="{% static 'js/sighting/models/SightingModel.js' %}"></script>
+<script src="{% static 'js/beer/viewmodels/BeerDetailViewModel.js' %}"></script>
+<script src="{% static 'js/beer/viewmodels/BeerDetailTabContainerViewModel.js' %}"></script>
+<script src="{% static 'js/beer/viewmodels/RecentSightingListViewModel.js' %}"></script>
+<script src="{% static 'js/beer/viewmodels/NearbySightingListViewModel.js' %}"></script>
+
 <script type="text/javascript">
 $(document).ready(function () {
-    vm = new ViewModel({beer: {{ beer|safe }}});
+    vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
     ko.applyBindings(vm, document.getElementById('main_content'));
 
-    var tabManager = new TabContainerViewModel();
+    var tabManager = new BeerDetailTabContainerViewModel();
     ko.applyBindings(tabManager, document.getElementById('tab_container'));
 
     recentVm = new RecentSightingListViewModel({parentView: vm, tabManager: tabManager});

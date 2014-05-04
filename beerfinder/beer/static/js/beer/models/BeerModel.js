@@ -1,11 +1,3 @@
-var BreweryModel = function (data) {
-    var self = this;
-    data = typeof data !== 'undefined' ? data : {};
-
-    this.id = ko.observable(data.id);
-    this.name = ko.observable(data.name);
-}
-
 var BeerModel = function (data) {
     var self = this;
     data = typeof data !== 'undefined' ? data : {};
@@ -16,6 +8,10 @@ var BeerModel = function (data) {
     this.name = ko.observable(data.name);
     this.brewery = ko.observable(new BreweryModel(data.brewery));
     this.slug = ko.observable(data.slug);
+
+    this.viewUrl = ko.computed(function () {
+        return '/beer/'.concat(self.slug(), '/');
+    });
 
     this.detailUrl = ko.computed(function () {
         return self.BASE_URL.concat(self.slug(), '/');

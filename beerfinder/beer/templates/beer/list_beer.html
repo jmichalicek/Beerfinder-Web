@@ -52,7 +52,7 @@
               <span data-bind="text: brewery().name"></span>
             </div>
             <div>
-              <a data-bind="attr: { href: detailUrl }" class="btn btn-primary">View</a> <a data-bind="attr: {href: addSightingUrl }" class="btn btn-primary">Add Sighting</a>
+              <a data-bind="attr: { href: viewUrl }" class="btn btn-primary">View</a> <a data-bind="attr: {href: addSightingUrl }" class="btn btn-primary">Add Sighting</a>
             </div>
           </div>
           <!-- /ko -->
@@ -68,11 +68,12 @@
 {% endblock body %}
 {% block javascript %}
 <script src="{% static 'js/vendor/infinitescroll.js' %}"></script>
-<script src="{% static 'js/beer/models.js' %}"></script>
-<script src="{% static 'js/beer/beer_list.js' %}"></script>
+<script src="{% static 'js/beer/models/BreweryModel.js' %}"></script>
+<script src="{% static 'js/beer/models/BeerModel.js' %}"></script>
+<script src="{% static 'js/beer/viewmodels/BeerListViewModel.js' %}"></script>
 <script type="text/javascript">
 $(document).ready(function () {
-    vm = new ViewModel();
+    vm = new BeerListViewModel();
     ko.applyBindings(vm);
     vm.initialize();
 });
