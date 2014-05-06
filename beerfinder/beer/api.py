@@ -14,7 +14,7 @@ class BeerViewSet(viewsets.ModelViewSet):
     serializer_class = BeerSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'slug'
-    paginate_by = 20
+    paginate_by = 25
     paginate_by_param = 'page_size'
 
     def pre_save(self, obj):

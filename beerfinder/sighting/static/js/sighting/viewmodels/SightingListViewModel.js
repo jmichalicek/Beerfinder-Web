@@ -12,7 +12,6 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
 
         this.sightings = ko.observableArray();
-        this.sighting_list = ko.observableArray();
     
         // stuff to enable infinite scroll
         this.nextPage = '';
@@ -22,10 +21,10 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         });
 
         // detect scroll
-        $(sighting_list).scroll(function() {
+        $('#sighting_list').scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
-            self.sightings.infinitescroll.scrollY($(sighting_list).scrollTop());
+            self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
 
             var l1 = self.sightings.peek().length;
             var l2 = self.sightings.infinitescroll.lastVisibleIndex.peek();

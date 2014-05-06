@@ -61,7 +61,10 @@
         shim: {
           infinitescroll: ['knockout'],
           bootstrap: ['jquery'],
-          csrf: ['jquery']
+          csrf: ['jquery'],
+          'underscore' : {
+              exports : '_'
+          },
         },
 
         deps: ['jquery', 'bootstrap', 'knockout', 'csrf'],

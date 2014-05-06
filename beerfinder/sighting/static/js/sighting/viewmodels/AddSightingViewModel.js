@@ -17,7 +17,6 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         this.selectedVenue = ko.observable(null);
         this.location = {}; // TODO: populate this.
         
-        this.venue_list = ko.observableArray();
         this.venues = ko.observableArray();
         this.searchVenues = ko.observableArray(); // for venues returned via search
         
@@ -44,10 +43,10 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         });
         
         // detect scroll
-        $(venue_list).scroll(function() {
+        $('#venue_list').scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
-            self.venues.infinitescroll.scrollY($(venue_list).scrollTop());
+            self.venues.infinitescroll.scrollY($('#venue_list').scrollTop());
             
             // add more items if scroll reaches the last 15 items
             if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 50) {

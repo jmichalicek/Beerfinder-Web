@@ -15,7 +15,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel
 
         this.activeNavSection = ko.observable('beer_list');
         this.beers = ko.observableArray();
-        this.beer_list = ko.observableArray();
+        //this.beer_list = ko.observableArray();
         
         // stuff to enable infinite scroll
         this.nextPage = '';
@@ -30,7 +30,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel
         });
 
         // detect scroll
-        $(beer_list).scroll(function() {
+        $('#beer_list').scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
             self.beers.infinitescroll.scrollY($(beer_list).scrollTop());

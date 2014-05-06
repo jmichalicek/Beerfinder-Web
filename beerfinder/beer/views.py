@@ -17,7 +17,7 @@ def beer_detail(request, beer_slug):
     # the template could use this Beer object, but it will use the api for consistency
     beer = get_object_or_404(Beer, slug=beer_slug)
 
-    serialized = BeerSerializer(beer)
+    serialized = BeerSerializer(beer, context={'request': request})
 
     return render_to_response('beer/detail.html',
                               {'beer': JSONRenderer().render(serialized.data)},
