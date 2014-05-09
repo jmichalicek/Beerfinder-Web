@@ -1,4 +1,5 @@
 Django==1.6.4
+Fabric==1.8.3
 Pillow==2.4.0
 Unidecode==0.04.14
 amqp==1.4.5
@@ -10,14 +11,17 @@ django-allauth==0.16.1
 django-celery==3.1.10
 django-extensions==1.3.5
 djangorestframework==2.3.13
+ecdsa==0.11
 factory-boy==2.3.1
 foursquare==20130707
 honcho==0.5.0
 httplib2==0.9
 kombu==3.0.15
 oauthlib==0.6.1
+paramiko==1.12.4
 poster==0.8.1
 psycopg2==2.5.2
+pycrypto==2.6.1
 python-openid==2.2.5
 pytz==2014.2
 redis==2.9.1
