@@ -21,6 +21,7 @@ class Beer(models.Model):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL)
     slug = models.SlugField(max_length=150)
     normalized_name = models.CharField(max_length=75, blank=True, db_index=True, help_text='normalized, simplified name for easy searching')
+    style = models.ForeignKey('Style', blank=True, null=True)
 
     class Meta:
         unique_together = (('name', 'brewery'),)
@@ -155,3 +156,112 @@ class Brewery(models.Model):
         super(Brewery, self).save(*args, **kwargs)
 
 
+class Style(models.Model):
+    """
+    A style of beer
+
+    :ivar name: The name of the style
+    :type name: str
+    """
+
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=50, blank=True)
+
+    class Meta:
+        ordering = ('name',)
+
+    def __unicode__(self):
+        return u'{0}'.format(self.name)
+
+    @staticmethod
+    def normalize_name(name):
+        """
+        Normalize a string to be used as the name
+        or to be compared to stored normalized_name of existing
+        models
+
+        :param name: The name string to normalize
+        :type name: str or unicode str
+
+        :rtype: unicode str
+        """
+        normalized = name.strip()
+        normalized = re.sub(r'\s+', ' ', normalized)
+        #normalized = unidecode(u'{0}'.format(normalized))
+        # the below re takes anything that is not a capital ascii letter, lowercase ascii letter
+        # or ascii digit and removes it.  \w is not used because underscore should be removed
+        # normalized = re.sub(r'[^A-Za-z0-9\s]+', '', normalized)
+        return u'{0}'.format(normalized)
+
+    def generate_slug(self):
+        """
+        Generate a slug from the brewery name and beer name
+
+        :returns: the generated slug
+        :rtype: str
+        """
+        # almost guaranteed unique because name is unique
+        # but the normalization could change that.
+        # allow it to be saved even if not unique and catch the errors later for now
+        return slugify(u'{0}'.format(Style.normalize_name(self.name)))
+
+    def save(self, *args, **kwargs):
+        self.name = Style.normalize_name(self.name)
+
+        if not self.slug:
+            self.slug = self.generate_slug()
+
+        super(Style, self).save(*args, **kwargs)
+
+
+class ServingType(models.Model):
+    """
+    How the beer found was offered
+
+    :ivar name: the name of the serving type
+    """
+
+    name = models.CharField(max_length=25, unique=True)
+    description = models.TextField(blank=True)
+    slug = models.SlugField(max_length=25, blank=True)
+
+    def __unicode__(self):
+        return u'{0}'.format(self.name)
+
+    class Meta:
+        ordering = ('name', )
+
+    @staticmethod
+    def normalize_name(name):
+        """
+        Normalize a string to be used as the name
+        or to be compared to stored normalized_name of existing
+        models
+
+        :param name: The name string to normalize
+        :type name: str or unicode str
+
+        :rtype: unicode str
+        """
+        normalized = name.strip()
+        normalized = re.sub(r'\s+', ' ', normalized)
+        return u'{0}'.format(normalized)
+    def generate_slug(self):
+        """
+        Generate a slug from the brewery name and beer name
+
+        :returns: the generated slug
+        :rtype: str
+        """
+        # almost guaranteed unique because name is unique
+        # but the normalization could change that.
+        # allow it to be saved even if not unique and catch the errors later for now
+        return slugify(u'{0}'.format(ServingType.normalize_name(self.name)))
+
+    def save(self, *args, **kwargs):
+        self.name = Style.normalize_name(self.name)
+
+        if not self.slug:
+            self.slug = self.generate_slug()
+
+        super(ServingType, self).save(*args, **kwargs)

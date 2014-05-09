@@ -9,6 +9,7 @@ define(['jquery', 'knockout', 'beer/models/BeerModel'], function($, ko, BeerMode
         this.date_sighted = ko.observable(data.date_sighted);
         this.venue = ko.observable(data.venue);
         this.sighted_by = ko.observable(data.sighted_by);
+        this.servingTypes = ko.observableArray(data.serving_types || []);
         this.image = ko.observable(data.image);
         this.url = ko.observable(data.url);
         this.webUrl = ko.computed(function () {

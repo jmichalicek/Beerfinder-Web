@@ -9,6 +9,7 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel'], function($, ko, Brewe
         this.name = ko.observable(data.name);
         this.brewery = ko.observable(new BreweryModel(data.brewery));
         this.slug = ko.observable(data.slug);
+        this.style = ko.observable(data.style);
         
         this.viewUrl = ko.computed(function () {
             return '/beer/'.concat(self.slug(), '/');

@@ -12,6 +12,7 @@ class Sighting(gis_models.Model):
     image = models.ImageField(upload_to='sighting_images/%Y/%m/%d', blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
     comment = models.TextField(blank=True)
+    serving_types = models.ManyToManyField('beer.ServingType', blank=True, help_text="How was the beer available")
 
     objects = gis_models.GeoManager()
 

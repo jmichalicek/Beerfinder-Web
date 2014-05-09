@@ -2,7 +2,7 @@ from django.forms import widgets
 from rest_framework import serializers
 from rest_framework import pagination
 
-from beer.serializers import BeerSerializer
+from beer.serializers import BeerSerializer, ServingTypeSerializer
 from venue.serializers import VenueSerializer
 
 from .models import Sighting, SightingConfirmation, Comment
@@ -11,10 +11,11 @@ class SightingSerializer(serializers.HyperlinkedModelSerializer):
     sighted_by = serializers.Field()
     beer = BeerSerializer()
     venue = VenueSerializer()
+    serving_types = ServingTypeSerializer(many=True)
 
     class Meta:
         model = Sighting
-        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment',)
+        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment', 'serving_types')
 
 
 class DistanceSightingSerializer(SightingSerializer):

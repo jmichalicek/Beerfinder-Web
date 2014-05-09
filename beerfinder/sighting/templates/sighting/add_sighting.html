@@ -19,6 +19,23 @@
       display: block;
       position: relative;
       height: 125px;
+    margin: 10px 0;
+  }
+
+  .venue_item .btn {
+    position: absolute;
+    bottom: 0px;
+  }
+
+  #venue_list li.venue_item:first-child .venue_item_container {
+    border-top: none;
+    height: 125px;
+    padding: 5px;
+  }
+  .venue_item .venue_item_container {
+    border-top: 2px solid gray;
+    height: 125px;
+    padding: 5px;
   }
 
   .full-height {
@@ -43,12 +60,12 @@
         <li class="venue_item">
           {# magic to not draw the items which are not visible which makes this far more scalable #}
           <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
-          <div style="border: 2px solid black; height: 125px;">
+          <div class="venue_item_container">
             <span data-bind="text: name"></span><br>
             <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
             <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
             <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
-            <button data-bind="click: $parent.setSelectedVenue" class="btn">Select Location</button>
+            <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
           </div>
           <!-- /ko -->
         </li>
