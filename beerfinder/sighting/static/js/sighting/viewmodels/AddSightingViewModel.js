@@ -1,6 +1,7 @@
 // look at https://github.com/thinkloop/knockout-js-infinite-scroll/blob/master/infinitescroll.js
 // for infinite scrolling the locations
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel'], function ($, ko, infinitescroll, VenueModel, FoursquareVenueModel) {
+define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
+        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, ko, infinitescroll, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
 
     return function (data) {
         "use strict";
@@ -16,13 +17,16 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         this.activeNavSection = ko.observable('');
         this.selectedVenue = ko.observable(null);
         this.location = {}; // TODO: populate this.
+        this.selectedServingTypes = ko.observableArray([]);
         
         this.venues = ko.observableArray();
         this.searchVenues = ko.observableArray(); // for venues returned via search
         
         this.comment = ko.observable("");
-        this.beer = ko.observable(data.beer);
+        this.beer = ko.observable(new BeerModel(data.beer));
         this.image = ko.observable(null);
+
+        this.servingTypes = ko.observableArray([]);
         
         this.discoverView = ko.observable(true); // determine whether to show discover or search lists
         this.searchListVisible = ko.computed(function () {
@@ -81,10 +85,17 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
             var i = $('#sighting_image');
             var im = document.getElementById('sighting_image');
             var formData = new FormData();
+            // find a way to do this without using formdata?
+            // currently using formdata due to the image upload
             formData.append('foursquare_venue_id', self.selectedVenue().id());
             formData.append('comment', self.comment());
-            formData.append('beer', self.beer().slug);
+            formData.append('beer', self.beer().slug());
             formData.append('image', $('#sighting_image')[0].files[0]);
+
+            // cannot just append an array with FormData objects
+            ko.utils.arrayForEach(self.selectedServingTypes(), function (item) {
+                formData.append('serving_types', item);
+            });
             
             $.ajax({url: '/api/sightings/',
                     type: 'POST',
@@ -93,7 +104,8 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
                     contentType: false,
                     processData: false,
                    }).done(function (data) {
-                       window.location = '/sightings/' + data['id'] + '/';
+                       var sighting = new SightingModel(data);
+                       window.location = sighting.webUrl();
                    }).error(function (data) {
                        // todo: real error handling for varying errors.  Trying again may be pointless.
                        // also, display this in a better manner
@@ -159,8 +171,8 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         };
         
         this.searchForVenue = function () {
-            requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
-                             query: self.searchTerm()};
+            var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
+                                 query: self.searchTerm()};
             
             $.ajax({url: '/api/foursquare_venues/search/',
                     type: 'GET',
@@ -172,6 +184,20 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
                        });
                        self.searchVenues(resultItems);
                    });
+        };
+
+        /* Populate servingtTypes array so that the form can be populated */
+        this.getServingTypes = function () {
+            $.ajax({
+                url: '/api/serving_types/',
+                type: 'GET',
+            }).done(function (data) {
+                var resultItems = [];
+                ko.utils.arrayForEach(data['results'], function(item) {
+                    resultItems.push(new ServingTypeModel(item));
+                });
+                self.servingTypes(resultItems);
+            });
         };
     };
 });

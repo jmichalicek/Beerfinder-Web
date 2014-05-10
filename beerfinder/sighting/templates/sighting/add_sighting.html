@@ -79,12 +79,12 @@
       <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
       <ul id="search_list" data-bind="foreach: searchVenues" class="list-unstyled">
         <li class="venue_item">
-          <div style="border: 2px solid black; height: 125px;">
+          <div class="venue_item_container">
             <span data-bind="text: name"></span><br>
             <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
             <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
             <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
-            <button data-bind="click: $parent.setSelectedVenue" class="btn">Select Location</button>
+            <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
           </div>
         </li>
       </ul>
@@ -111,9 +111,19 @@
   </div>
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
-      <form>
-      <label for="sighting_image">Attach an image:</label><br>
-      <input id="sighting_image"  type="file" name="image" autocomplete="off" /><br>
+      <form role="form">
+        <div class="form-group">
+          <label for="sighting_image">Attach an image:</label><br>
+          <input id="sighting_image"  type="file" name="image" autocomplete="off" /><br>
+        </div>
+        <div class="form-group">
+          How was the beer available?<br>
+          <ul class="list-unstyled">
+          <!-- ko foreach: servingTypes -->
+          <li><label><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes"> <span data-bind="text: name"></span></label></li>
+          <!-- /ko -->
+          </ul>
+        </div>
       <button class="btn btn-primary" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
       {% csrf_token %}
       </form>
@@ -128,6 +138,7 @@ require(['knockout', 'sighting/viewmodels/AddSightingViewModel'], function (ko, 
     var vm = new AddSightingViewModel({beer: {{ beer|safe }}});
     ko.applyBindings(vm);
     vm.getLocation();
+    vm.getServingTypes();
 });
 </script>
 {% endblock javascript %}

@@ -6,4 +6,4 @@ class SightingModelForm(forms.ModelForm):
 
     class Meta:
         model = Sighting
-        fields = ('user', 'image', 'comment', 'venue', 'beer')
+        fields = ('user', 'image', 'comment', 'venue', 'beer', 'serving_types')

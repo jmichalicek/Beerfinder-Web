@@ -29,7 +29,6 @@ class SightingViewSet(viewsets.ModelViewSet):
         """
         Does a whole bunch of extra special stuff
         """
-
         try:
             beer = Beer.objects.get(slug=request.DATA.get('beer'))
         except Beer.DoesNotExist:
@@ -42,7 +41,9 @@ class SightingViewSet(viewsets.ModelViewSet):
             venue = Venue.retrieve_from_foursquare(foursquare_id)
             venue.save()
 
-        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id, 'comment': request.DATA.get('comment', '')}
+        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id,
+                     'comment': request.DATA.get('comment', ''),
+                     'serving_types': request.DATA.getlist('serving_types', [])}
 
         sighting_form = SightingModelForm(form_data, request.FILES)
         # This should be doable using the serializer as the form, but I'm missing something

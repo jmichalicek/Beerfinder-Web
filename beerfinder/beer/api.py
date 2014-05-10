@@ -1,10 +1,10 @@
 from django.db.models import Q
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 
 from .forms import AddBeerForm
-from .models import Beer, Brewery
-from .serializers import BeerSerializer, BrewerySerializer
+from .models import Beer, Brewery, ServingType
+from .serializers import BeerSerializer, BrewerySerializer, ServingTypeSerializer
 
 class BeerViewSet(viewsets.ModelViewSet):
     """
@@ -69,3 +69,9 @@ class BeerViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
+
+class ServingTypeAPIView(generics.ListAPIView):
+    queryset = ServingType.objects.all()
+    serializer_class = ServingTypeSerializer
+    lookup_field = 'slug'
+    paginate_by = 25
