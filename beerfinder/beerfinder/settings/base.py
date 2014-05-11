@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'djcelery',
+    'south',
 
     # my apps
     'accounts',
