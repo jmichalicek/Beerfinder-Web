@@ -1,9 +1,15 @@
 from django import forms
 
-from .models import Sighting, SightingConfirmation
+from .models import Sighting, SightingConfirmation, SightingImage
 
 class SightingModelForm(forms.ModelForm):
 
     class Meta:
         model = Sighting
-        fields = ('user', 'image', 'comment', 'venue', 'beer', 'serving_types')
+        fields = ('user', 'comment', 'venue', 'beer', 'serving_types')
+
+class SightingImageForm(forms.ModelForm):
+
+    class Meta:
+        model = SightingImage
+        fields = ('original', 'user', 'sighting')

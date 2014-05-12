@@ -1,4 +1,5 @@
-define(['jquery', 'knockout', 'beer/models/BeerModel'], function($, ko, BeerModel) {
+define(['jquery', 'knockout', 'beer/models/BeerModel', 'sighting/models/SightingImageModel'],
+       function($, ko, BeerModel, SightingImageModel) {
     return function (data) {
         "use strict";
         var self = this;
@@ -10,12 +11,22 @@ define(['jquery', 'knockout', 'beer/models/BeerModel'], function($, ko, BeerMode
         this.venue = ko.observable(data.venue);
         this.sighted_by = ko.observable(data.sighted_by);
         this.servingTypes = ko.observableArray(data.serving_types || []);
-        this.image = ko.observable(data.image);
         this.url = ko.observable(data.url);
         this.webUrl = ko.computed(function () {
             return '/sightings/' + self.id() + '/';
         });
 
         this.distance = ko.observable(data.distance || 0)
+
+        this.images = ko.observableArray([]);
+        this.primaryImage = ko.computed(function () {
+            return self.images()[0];
+        });
+
+        // setup the images
+        ko.utils.arrayForEach(data.images, function (image) {
+            self.images.push(new SightingImageModel(image));
+        });
+
     };
 });

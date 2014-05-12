@@ -4,12 +4,14 @@ from django.utils import timezone
 
 from django.contrib.gis.db import models as gis_models
 
+from .imagekit_generators import *
+
 class Sighting(gis_models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_sighted = models.DateTimeField(blank=True, default=timezone.now)
     venue = models.ForeignKey('venue.Venue')
     beer = models.ForeignKey('beer.Beer')
-    image = models.ImageField(upload_to='sighting_images/%Y/%m/%d', blank=True, null=True)
+#    image = models.ImageField(upload_to='sighting_images/%Y/%m/%d', blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
     comment = models.TextField(blank=True)
     serving_types = models.ManyToManyField('beer.ServingType', blank=True, help_text="How was the beer available")
@@ -58,3 +60,94 @@ class Comment(models.Model):
             return self.user.username
 
         return u'Anonymous'
+
+
+class SightingImage(models.Model):
+    """
+    An image to go with a sighting with several pre-sized versions to chose from and a master
+    to use for any other sizing needs.
+
+    :ivar user: the user who uploaded the image
+    :ivar sighting: the :class:`sighting.models.Sighting` the image goes with
+    :date_created: when the image was uploaded
+    :original: the full size, unaltered master image
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True)
+    sighting = models.ForeignKey('Sighting', related_name='sighting_images')
+    date_created = models.DateTimeField(auto_now_add=True, blank=True)
+
+    original = models.ImageField(max_length=250, upload_to='sighting_images/%Y/%m/%d', height_field='original_height',
+                                 width_field='original_width')
+    original_height = models.IntegerField(blank=True, null=True)
+    original_width = models.IntegerField(blank=True, null=True)
+
+    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', height_field='thumbnail_height',
+                                  width_field='thumbnail_width', blank=True, default='')
+    thumbnail_height = models.IntegerField(blank=True, null=True)
+    thumbnail_width = models.IntegerField(blank=True, null=True)
+
+    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', height_field='small_height',
+                                  width_field='small_width', blank=True, default='')
+    small_height = models.IntegerField(blank=True, null=True)
+    small_width = models.IntegerField(blank=True, null=True)
+
+    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', height_field='medium_height',
+                                  width_field='medium_width', blank=True, default='')
+    medium_height = models.IntegerField(blank=True, null=True)
+    medium_width = models.IntegerField(blank=True, null=True)
+
+    def generate_images(self):
+        """
+        Generate resized images from the master
+        """
+        if self.original:
+            base_name = self.original.name
+            print 'self.original is %s' % self.original
+            print dir(self.original)
+            from django.core.files.images import ImageFile
+
+            if not self.thumbnail:
+                try:
+                    image_generator = SightingImageThumbnail(source=self.original)
+                    result = ImageFile(image_generator.generate())
+                    self.thumbnail.save(base_name + '.thumbnail.jpg', result)
+                finally:
+                    self.original.close()
+                    self.thumbnail.close()
+
+            if not self.small:
+                try:
+                    image_generator = SightingImageSmall(source=self.original)
+                    result = ImageFile(image_generator.generate())
+                    self.small.save(base_name + '.small.jpg', result)
+                finally:
+                    self.original.close()
+                    self.small.close()
+
+            if not self.medium:
+                try:
+                    image_generator = SightingImageMedium(source=self.original)
+                    result = ImageFile(image_generator.generate())
+                    self.medium.save(base_name + '.medium.jpg', result)
+                finally:
+                    self.original.close()
+                    self.medium.close()
+
+    def save(self, generate_images=False, *args, **kwargs):
+        """
+        Saves and then checks for the resized versions and runs
+        imagekit's generate on them if they do not exist.  This is done
+        rather than using ProcessedImageField for the sake of cleaner
+        migrations which do not rely on imagekit being installed by referencing ProcessedImageField.
+
+        :param generate_images: Automatically generate the resized images on save if True.  This can be problematic
+          with the async backend and atomic transactions
+        :type generate_images: bool
+        """
+        try:
+            super(SightingImage, self).save(*args, **kwargs)
+        except Exception, e:
+            print e
+            raise
+        if generate_images:
+            self.generate_images()

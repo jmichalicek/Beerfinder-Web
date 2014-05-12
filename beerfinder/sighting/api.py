@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.gis.geos import Point, fromstr, GEOSGeometry
+from django.db import transaction
 
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action, link
 
@@ -12,11 +12,12 @@ import foursquare
 from beer.models import Beer
 from venue.models import Venue
 
-from .forms import SightingModelForm
+from .forms import SightingModelForm, SightingImageForm
 from .models import Sighting, SightingConfirmation
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
-                          PaginatedDistanceSightingSerializer, DistanceSightingSerializer)
+                          PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
+                          SightingImageSerializer)
 
 class SightingViewSet(viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
@@ -45,15 +46,47 @@ class SightingViewSet(viewsets.ModelViewSet):
                      'comment': request.DATA.get('comment', ''),
                      'serving_types': request.DATA.getlist('serving_types', [])}
 
-        sighting_form = SightingModelForm(form_data, request.FILES)
-        # This should be doable using the serializer as the form, but I'm missing something
-        # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
-        if sighting_form.is_valid():
-            sighting = sighting_form.save()
-            serialized = SightingSerializer(sighting)
-            return Response(serialized.data, status=201) #201, created
-        else:
-            return Response({'form_errors': sighting_form.errors}, status=400)
+        transaction.set_autocommit(False)
+        try:
+            sighting_form = SightingModelForm(form_data)
+            # This should be doable using the serializer as the form, but I'm missing something
+            # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
+            if sighting_form.is_valid():
+                sighting = sighting_form.save()
+            else:
+                transaction.rollback()
+                return Response({'form_errors': sighting_form.errors}, status=400)
+
+            if request.FILES:
+                # muck with the files dict because we receive the image in a param called 'image'
+                # but the form needs it to be named 'original'
+                file_dict = {'original': request.FILES.get('image')}
+                image_form = SightingImageForm({'sighting': sighting.id, 'user': request.user.id}, file_dict)
+                if image_form.is_valid():
+                    image = image_form.save()
+                    transaction.commit()
+
+                    # commit before generate_images in case of imagekit async backend
+                    try:
+                        image.generate_images()
+                    except Exception, e:
+                        transaction.rollback()
+                        raise
+                    else:
+                        # extra commit here in case imagekit backend is not async
+                        # or CELERY_ALWAYS_EAGER=True so that the updated model will be saved
+                        transaction.commit()
+                else:
+                    transaction.rollback()
+                    return Response({'form_errors': image_form.errors}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # no files to try to save, just commit the sighting
+                transaction.commit()
+        finally:
+            transaction.set_autocommit(True)
+
+        serialized = SightingSerializer(sighting)
+        return Response(serialized.data, status=201)
 
     def pre_save(self, obj):
         obj.user = self.request.user

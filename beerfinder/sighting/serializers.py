@@ -3,19 +3,32 @@ from rest_framework import serializers
 from rest_framework import pagination
 
 from beer.serializers import BeerSerializer, ServingTypeSerializer
+from core.serializer_fields import HyperlinkedImageField
 from venue.serializers import VenueSerializer
 
-from .models import Sighting, SightingConfirmation, Comment
+from .models import Sighting, SightingConfirmation, Comment, SightingImage
+
+class SightingImageSerializer(serializers.ModelSerializer):
+    original = HyperlinkedImageField(allow_empty_file=True)
+    thumbnail = HyperlinkedImageField(allow_empty_file=True)
+    small = HyperlinkedImageField(allow_empty_file=True)
+    medium = HyperlinkedImageField(allow_empty_file=True)
+
+    class Meta:
+        model = SightingImage
+        fields = ('id', 'original', 'thumbnail', 'small', 'medium', 'original_height', 'original_width')
+
 
 class SightingSerializer(serializers.HyperlinkedModelSerializer):
     sighted_by = serializers.Field()
     beer = BeerSerializer()
     venue = VenueSerializer()
     serving_types = ServingTypeSerializer(many=True)
+    images = SightingImageSerializer(source='sighting_images', many=True)
 
     class Meta:
         model = Sighting
-        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment', 'serving_types')
+        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'images', 'sighted_by', 'comment', 'serving_types')
 
 
 class DistanceSightingSerializer(SightingSerializer):
