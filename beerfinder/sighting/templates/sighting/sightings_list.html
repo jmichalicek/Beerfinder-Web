@@ -35,10 +35,17 @@
         <li class="sighting_item">
           <!-- ko if: $index() >= $root.sightings.infinitescroll.firstHiddenIndex() -->
           <a style="display: block" data-bind="attr: {href: webUrl }">
-            <span data-bind="text: beer().name"></span><br>
-            <small><span data-bind="text: beer().brewery().name"></span></small>
-            Seen at at <span data-bind="text: venue().name"></span><br>
-            <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
+            <div class="pull-right" data-bind="if: images()[0]">
+              <img data-bind="attr: {src: images()[0].thumbnailUrl}" height="75"></img>
+            </div>
+
+            <div>
+              <span data-bind="text: beer().name"></span><br>
+              <small><span data-bind="text: beer().brewery().name"></span></small>
+              Seen at at <span data-bind="text: venue().name"></span><br>
+              <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
+            </div>
+            <hr>
           </a>
           <!-- /ko -->
         </li>

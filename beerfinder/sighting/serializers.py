@@ -42,7 +42,7 @@ class DistanceSightingSerializer(SightingSerializer):
 
     class Meta:
         model = Sighting
-        fields = ('url', 'id', 'date_sighted', 'venue', 'beer', 'image', 'sighted_by', 'comment', 'distance')
+        fields = SightingSerializer.Meta.fields + ('distance', )
 
     def transform_distance(self, obj, value):
         return obj.distance.mi

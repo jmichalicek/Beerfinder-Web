@@ -20,7 +20,7 @@ from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           SightingImageSerializer)
 
 class SightingViewSet(viewsets.ModelViewSet):
-    queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'location').all()
+    queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
     serializer_class = SightingSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     paginate_by = 25
@@ -91,7 +91,7 @@ class SightingViewSet(viewsets.ModelViewSet):
     def pre_save(self, obj):
         obj.user = self.request.user
 
-    def get_queryset(self):
+    def get_queryset(self, prefetch=True):
         queryset = self.queryset
 
         # I am not settled on this and may switch to url path params for by beer sightings
@@ -101,6 +101,8 @@ class SightingViewSet(viewsets.ModelViewSet):
         if beer_slug:
             queryset = queryset.filter(beer__slug=beer_slug)
 
+        if prefetch:
+            queryset = queryset.prefetch_related('sighting_images', 'serving_types')
         return queryset
 
     def get_nearby_sightings(self, request, *args, **kwargs):
@@ -112,8 +114,9 @@ class SightingViewSet(viewsets.ModelViewSet):
 
         #origin = fromstr("Point({0} {1})".format(longitude, latitude))
         origin = Point(float(longitude), float(latitude))
-        queryset = self.get_queryset().distance(origin, field_name='venue__point').order_by('distance')
+        queryset = self.get_queryset(prefetch=False).distance(origin, field_name='venue__point').order_by('distance')
 
+        queryset = queryset.prefetch_related('sighting_images', 'serving_types')
         paginator = Paginator(queryset, 25)
         page_number = request.QUERY_PARAMS.get('page')
         try:
