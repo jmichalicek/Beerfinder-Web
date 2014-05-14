@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 #from account.serializers import UserSerializer
 
-from .models import Beer, Brewery, ServingType
+from .models import Beer, Brewery, ServingType, Style
 
 class BrewerySerializer(serializers.ModelSerializer):
 
@@ -12,9 +12,19 @@ class BrewerySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'slug',)
 
 
+class BeerStyleSerializer(serializers.ModelSerializer):
+    """
+    Serializer for :class:`beer.models.Style`
+    """
+
+    class Meta:
+        model = Style
+        fields = ('id', 'name', 'slug')
+
+
 class BeerSerializer(serializers.HyperlinkedModelSerializer):
     brewery = BrewerySerializer()
-    style = serializers.RelatedField() # make this SlugRelatedField?
+    style = BeerStyleSerializer() # make this SlugRelatedField?
 
     class Meta:
         model = Beer

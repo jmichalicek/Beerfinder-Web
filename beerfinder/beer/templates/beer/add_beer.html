@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block additional_css %}
+<style>
+#style_selection {cursor: pointer}
+</style>
+{% endblock additional_css %}
 {% block body %}
 <div class="container">
   <div class="row" id="main_content">
@@ -8,10 +13,31 @@
       <div class="alert alert-danger"><span data-bind="text: $data"></span></div>
       <!-- /ko -->
       <form data-bind="submit: addBeer">
-        <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" data-bind="value: beerName"></input><br>
-        <!-- make this an auto-fill thingy of breweries -->
-        <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" data-bind="value: breweryName"></input><br>
-        <button type="submit" class="button btn-primary">Save</button>
+        <div class="form-group">
+          <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" data-bind="value: beerName"></input><br>
+        </div>
+        <div class="form-group">
+          <!-- make this an auto-fill thingy of breweries -->
+          <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" data-bind="value: breweryName"></input><br>
+        </div>
+        <!-- not sure about this... -->
+        <!-- <div class="btn-default btn-large" data-bind="visible: styleButtonVisible, click: showStylePicker"> -->
+        <div id="style_selection" class="panel panel-default">
+          <div class="panel-heading" data-bind="click: showStylePicker">
+            <b>Style:</b> <span data-bind="text: selectedStyle() ? selectedStyle().name() : 'Not Selected'"></span><br>
+            <small data-bind="text: selectedStyle() ? 'Click to change' : 'Click to select'"></small>
+          </div>
+          <div class="panel-body" data-bind="visible: stylePickerVisible">
+            <div class="form-group" data-bind="visible: stylePickerVisible">
+              <ul class="list-unstyled list-group">
+              <!-- ko foreach: styles -->
+              <li class="list-group-item" data-bind="text: name, click: $parent.selectStyle"></li>
+              <!-- /ko -->
+              </ul>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save</button>
       </form>
     </div>
   </div>
@@ -23,6 +49,7 @@ requirejs(['knockout', 'beer/viewmodels/AddBeerViewModel'], function (ko, AddBee
     "use strict";
     var vm = new AddBeerViewModel();
     ko.applyBindings(vm);
+    vm.getStyles();
 });
 </script>
 {% endblock javascript %}

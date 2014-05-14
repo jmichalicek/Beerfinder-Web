@@ -9,6 +9,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     {% endblock stylesheets %}
+    {% block additional_css %}{% endblock additional_css %}
+    
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">

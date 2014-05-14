@@ -1,4 +1,5 @@
-define(['jquery', 'knockout', 'beer/models/BreweryModel'], function($, ko, BreweryModel) {
+define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleModel'],
+       function($, ko, BreweryModel, StyleModel) {
     return function (data) {
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
@@ -7,9 +8,9 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel'], function($, ko, Brewe
 
         this.id = ko.observable(data.id);
         this.name = ko.observable(data.name);
-        this.brewery = ko.observable(new BreweryModel(data.brewery));
+        this.brewery = ko.observable(new BreweryModel(ko.toJS(data.brewery)));
         this.slug = ko.observable(data.slug);
-        this.style = ko.observable(data.style);
+        this.style = ko.observable(data.style ? new StyleModel(ko.toJS(data.style)) : undefined);
         
         this.viewUrl = ko.computed(function () {
             return '/beer/'.concat(self.slug(), '/');
@@ -52,9 +53,10 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel'], function($, ko, Brewe
             var slug = self.slug();
             var brewery_name = self.brewery().name();
             var brewery_id = self.brewery().id();
+            var style_id = self.style().id();
             return $.ajax({url: url,
                            method: 'PUT',
-                           data: {id: self.id(), name: self.name(), slug: self.slug(), brewery: self.brewery().id()}
+                           data: {id: id, name: name, slug: slug, brewery: brewery_id, style: style_id}
                           });
         };
 
@@ -63,9 +65,12 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel'], function($, ko, Brewe
          */
         this.create = function () {
             var url = self.BASE_URL;
+            if(self.style() && self.style().id()) {
+                postData.style = self.style().id();
+            }
             return $.ajax({url: url,
                            method: 'POST',
-                           data: {beer: self.name(), brewery: self.brewery().name()}
+                           data: postData
                           });
         };
     };

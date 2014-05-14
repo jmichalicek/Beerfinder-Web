@@ -3,8 +3,8 @@ from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 
 from .forms import AddBeerForm
-from .models import Beer, Brewery, ServingType
-from .serializers import BeerSerializer, BrewerySerializer, ServingTypeSerializer
+from .models import Beer, Brewery, ServingType, Style
+from .serializers import BeerSerializer, BrewerySerializer, ServingTypeSerializer, BeerStyleSerializer
 
 class BeerViewSet(viewsets.ModelViewSet):
     """
@@ -40,12 +40,14 @@ class BeerViewSet(viewsets.ModelViewSet):
         """
         # Use standard django form or a serializer to create (but not save!) the base Beer model
         # this model may or may not have a brewery.  Perform nfkd normalization on the beer name.
+
         form = AddBeerForm(request.DATA)
         if not form.is_valid():
             return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
         beer_name = form.cleaned_data.get('beer')
         brewery_name = form.cleaned_data.get('brewery')
+        style = form.cleaned_data.get('style')
 
         # just checking name directly here.  Duplicates that get created
         # due to spelling errors, etc. will get dealt with separately
@@ -55,12 +57,13 @@ class BeerViewSet(viewsets.ModelViewSet):
             beer = Beer.objects.get(name=beer_name, brewery_id=brewery.id)
             beer_created = False
         except Beer.DoesNotExist:
-            self.object = Beer(name=beer_name, brewery=brewery)
+            self.object = Beer(name=beer_name, brewery=brewery, style=style)
             self.pre_save(self.object)
             self.object.save()
             self.post_save(self.object, created=True)
             beer_created = True
 
+        # I think the form already handles this... oh well.
         if not beer_created:
             # simulate form errors format
             return Response({'non_field_errors': ['This beer already exists']}, status=status.HTTP_400_BAD_REQUEST)
@@ -70,8 +73,15 @@ class BeerViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
 
+
 class ServingTypeAPIView(generics.ListAPIView):
     queryset = ServingType.objects.all()
     serializer_class = ServingTypeSerializer
     lookup_field = 'slug'
+    paginate_by = 25
+
+
+class BeerStyleAPIView(generics.ListAPIView):
+    queryset = Style.objects.all()
+    serializer_class = BeerStyleSerializer
     paginate_by = 25

@@ -2,7 +2,7 @@ from django import forms
 
 import re
 
-from .models import Beer, Brewery
+from .models import Beer, Brewery, Style
 
 
 class AddBeerForm(forms.Form):
@@ -15,6 +15,7 @@ class AddBeerForm(forms.Form):
 
     beer = forms.CharField(max_length=75)
     brewery = forms.CharField(max_length=75)
+    style = forms.ModelChoiceField(Style.objects.all(), required=False)
 
     def clean(self, *args, **kwargs):
         cleaned_data = super(AddBeerForm, self).clean(*args, **kwargs)
