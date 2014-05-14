@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block stylesheets %}
-{{ block.super }}
+{% block additional_css %}
 <!-- so that an inner div can be set to always full screen -->
 <style type="text/css">
   html, body {
@@ -25,7 +24,7 @@
       height: 100%;
   }
 </style>
-{% endblock stylesheets %}
+{% endblock additional_css %}
 
 {% block body %}
 <div id="search_box_container" class="container">
