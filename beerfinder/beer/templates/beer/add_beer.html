@@ -29,10 +29,8 @@
           </div>
           <div class="panel-body" data-bind="visible: stylePickerVisible">
             <div class="form-group" data-bind="visible: stylePickerVisible">
-              <ul class="list-unstyled list-group">
-              <!-- ko foreach: styles -->
-              <li class="list-group-item" data-bind="text: name, click: $parent.selectStyle"></li>
-              <!-- /ko -->
+              <ul class="list-unstyled list-group" data-bind="foreach: styles"> {# add infinite scroll #}
+                <li class="list-group-item" data-bind="text: name, click: $parent.selectStyle"></li>
               </ul>
             </div>
           </div>
