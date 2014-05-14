@@ -4,8 +4,11 @@
 <div class="container">
   <div class="row" id="main_content">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <span data-bind="text: beer().name()"></span><br>
-      <span data-bind="text: beer().brewery().name"></span>
+      <span data-bind="text: beer().name"></span><br>
+      <span data-bind="text: beer().brewery().name"></span><br>
+      <!-- ko if: beer().style -->
+      <span data-bind="text: beer().style().name"></span>
+      <!-- /ko -->
     </div>
   <!--</div>
   <div class="row"> -->
