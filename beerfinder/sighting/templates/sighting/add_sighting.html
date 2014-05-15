@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block stylesheets %}
-{{ block.super }}
+{% block additional_css %}
 <!-- so that an inner div can be set to always full screen -->
 <style type="text/css">
   html, body {
@@ -41,8 +40,12 @@
   .full-height {
       height: 100%;
   }
+
+  #id_sighting_comment {
+      width: 100%;
+  }
 </style>
-{% endblock stylesheets %}
+{% endblock additional_css %}
 {% block body %}
 <div id="search_box_container" class="container">
   <div class="row">
@@ -106,7 +109,10 @@
 <div id="submit_sighting" class="container" data-bind="visible: selectedVenue">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <textarea data-bind="value: comment"></textarea>
+      <div class="form-group">
+        <label for="id_sighting_comment">Comment:</label>
+        <textarea id="id_sighting_comment" data-bind="value: comment"></textarea>
+      </div>
     </div>
   </div>
   <div class="row">
@@ -119,16 +125,20 @@
         <div class="form-group">
           How was the beer available?<br>
           <ul class="list-unstyled">
-          <!-- ko foreach: servingTypes -->
-          <li><label><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes"> <span data-bind="text: name"></span></label></li>
-          <!-- /ko -->
+            <!-- ko foreach: servingTypes -->
+            <li><label><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes"> <span data-bind="text: name"></span></label></li>
+            <!-- /ko -->
           </ul>
         </div>
-      <button class="btn btn-primary" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
+        <button class="btn btn-primary" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
       {% csrf_token %}
       </form>
     </div>
   </div>
+</div>
+
+<div data-bind="visible: showSpinner" id='ajax_loader' class="col-xs-1" style="padding: 10px; position: fixed; left: 50%; top: 50%; display: none; border: 1px solid black;">
+  <i class="fa fa-cog fa-spin" style="font-size: 8em;"></i>
 </div>
 {% endblock body %}
 {% block javascript %}

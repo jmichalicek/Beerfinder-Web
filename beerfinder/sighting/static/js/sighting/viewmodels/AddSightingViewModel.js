@@ -27,7 +27,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         this.image = ko.observable(null);
 
         this.servingTypes = ko.observableArray([]);
-        
+        this.submitInProgress = ko.observable(false);
         this.discoverView = ko.observable(true); // determine whether to show discover or search lists
         this.searchListVisible = ko.computed(function () {
             return !self.selectedVenue() && !self.discoverView();
@@ -78,10 +78,14 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         // end infinite scroll stuff
         
         this.sightingReady = ko.computed(function () {
-            return self.selectedVenue() && self.beer(); // probably will add more checks/conditions here
+            return self.selectedVenue() && self.beer() && !self.submitInProgress(); // probably will add more checks/conditions here
         });
         
+        this.showSpinner = ko.observable(false);
         this.submitSighting = function () {
+          
+            self.showSpinner(true);
+            self.submitInProgress(true);
             var i = $('#sighting_image');
             var im = document.getElementById('sighting_image');
             var formData = new FormData();
@@ -110,6 +114,9 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
                        // todo: real error handling for varying errors.  Trying again may be pointless.
                        // also, display this in a better manner
                        alert('There was an error addinging your sighting. Please try again.');
+                   }).complete(function (data) {
+                       self.showSpinner(false);
+                       self.submitInProgress(false);
                    });
         };
         
