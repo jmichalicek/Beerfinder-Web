@@ -5,6 +5,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
 
+        this.showLoadingSpinner = ko.observable(false);
         this.location = {}; // TODO: populate this.
 
         this.sightings = ko.observableArray();
@@ -54,6 +55,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         // end infinite scroll stuff
 
         this.getSightings = function() {
+            self.showLoadingSpinner(true);
             self.requestInProgress = true;
             var url = '/api/sightings/';
 
@@ -70,8 +72,9 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
                        });
                        self.sightings(currentList);
                        self.nextPage = data.next;
-                   }).complete(function () {
+                   }).always(function () {
                        self.requestInProgress = false;
+                       self.showLoadingSpinner(false);
                    });
         };
     };

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block body %}
-<div class="container" id="sighting_container">
+<div class="container" id="sighting_container" style="display: none" data-bind="visible: true">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <h1 data-bind="text: sighting().beer().name"></h1>
+      <a href="#" data-bind="attr: {href: sighting().beer().viewUrl}"><h1 data-bind="text: sighting().beer().name"></h1></a>
       <h2><small data-bind="text: sighting().beer().brewery().name"></small></h2>
       <span data-bind="text: sighting().date_sighted()"></span><br>
       Sighted by <span data-bind="text: sighting().sighted_by()"></span><br>
@@ -31,8 +31,10 @@
 <div class="container" id="comments_container">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <a href="#" data-bind="click: toggleShowComment, visible: showComment() == false">Add Comment</a>
-      <form role="form" data-bind="submit: addComment, visible: showComment">
+      <h3>Comments <i class="fa fa-comment-o"></i></h3>
+      <a href="#" data-bind="click: toggleShowComment, visible: showComment() == false" style="display: none"><i class="fa fa-plus fa-1x"></i>&nbsp;Add Comment</a>
+      <hr>
+      <form role="form" data-bind="submit: addComment, visible: showComment" style="display: none">
         <div class="form-group">
           <label for="comment_text" class="sr-only">Comment:</label>
           <textarea id="comment_text" name="text" autocomplete="off" style="width: 100%"></textarea>
@@ -41,18 +43,23 @@
       </form>
     </div>
   </div>
-  <div class="row">
+  <div class="row" style="display: none" data-bind="visible: true" id="comments_list">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <ul class="list-unstyled" data-bind="foreach: comments">
         <li>
           <p data-bind="text: text"></p>
           <small>From <span data-bind="text: comment_by"></span> on <span data-bind="text: date_created"></span></small>
+          <hr>
         </li>
       </ul>
       <a href="#" data-bind="click: getComments, visible: nextCommentPage">Get more comments</a>
     </div>
   </div>
 </div>
+<div data-bind="visible: showLoadingSpinner" class="loading-spinner">
+  <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
+</div>
+
 {% endblock body %}
 
 {% block javascript %}

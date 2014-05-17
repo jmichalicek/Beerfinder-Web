@@ -65,6 +65,7 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleMode
          */
         this.create = function () {
             var url = self.BASE_URL;
+            var postData = {beer: self.name(), brewery: self.brewery().name()};
             if(self.style() && self.style().id()) {
                 postData.style = self.style().id();
             }

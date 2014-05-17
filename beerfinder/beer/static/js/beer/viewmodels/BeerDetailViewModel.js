@@ -4,6 +4,8 @@ define(['jquery', 'knockout', 'beer/models/BeerModel'], function($, ko, BeerMode
         "use strict";
         var self = this;
 
+        this.showLoadingSpinner = ko.observable(false);
+
         this.activeNavSection = ko.observable('beer_list');
         this.beer = ko.observable(new BeerModel(data.beer));
         this.sightings = ko.observableArray();

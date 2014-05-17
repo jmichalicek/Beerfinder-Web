@@ -63,7 +63,7 @@
         <li class="venue_item">
           {# magic to not draw the items which are not visible which makes this far more scalable #}
           <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
-          <div class="venue_item_container">
+          <div class="venue_item_container" style="display: none" data-bind="visible: true">
             <span data-bind="text: name"></span><br>
             <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
             <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
@@ -76,7 +76,7 @@
     </div>
   </div>
 </div>
-<div id="search_list_container" class="container full-height" data-bind="visible: searchListVisible">
+<div id="search_list_container" class="container full-height" data-bind="visible: searchListVisible" style="display: none">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden">
       <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
@@ -94,7 +94,7 @@
     </div>
   </div>
 </div>
-<div id="selected_venue" class="container" data-bind="visible: selectedVenue">
+<div id="selected_venue" class="container" data-bind="visible: selectedVenue" style="display: none">
  <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3" data-bind="if: selectedVenue">
       <span><b>Selected Location:</b></span><br>
@@ -106,7 +106,7 @@
     </div>
   </div>
 </div>
-<div id="submit_sighting" class="container" data-bind="visible: selectedVenue">
+<div id="submit_sighting" class="container" data-bind="visible: selectedVenue" style="display: none">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <div class="form-group">
@@ -137,18 +137,19 @@
   </div>
 </div>
 
-<div data-bind="visible: showSpinner" id='ajax_loader' class="col-xs-1" style="padding: 10px; position: fixed; left: 50%; top: 50%; display: none; border: 1px solid black;">
-  <i class="fa fa-cog fa-spin" style="font-size: 8em;"></i>
+<div data-bind="visible: showLoadingSpinner" class="loading-spinner">
+  <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
 </div>
+
 {% endblock body %}
 {% block javascript %}
 <script type="text/javascript">
 require(['knockout', 'sighting/viewmodels/AddSightingViewModel'], function (ko, AddSightingViewModel) {
     "use strict";
     var vm = new AddSightingViewModel({beer: {{ beer|safe }}});
-    ko.applyBindings(vm);
     vm.getLocation();
     vm.getServingTypes();
+    ko.applyBindings(vm);
 });
 </script>
 {% endblock javascript %}

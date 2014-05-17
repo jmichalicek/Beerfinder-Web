@@ -40,12 +40,12 @@
   <div class="row full-height">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden;">
       <!-- ko if: mode() == Modes.SEARCH && beers.infinitescroll.displayItems().length == 0 -->
-      No matching beer found.  <a href="{% url 'add_beer' %}">Add it?</a>
+      <span style="display: none" data-bind="visible: true">No matching beer found.  <a href="{% url 'add_beer' %}">Add it?</a></span>
       <!-- /ko -->
       <ul id="beer_list" data-bind="foreach: beers.infinitescroll.displayItems" class="list-unstyled">
         <li class="beer_item">
           <!-- ko if: $index() >= $root.beers.infinitescroll.firstHiddenIndex() -->
-          <div>
+          <div style="display: none" data-bind="visible: true">
             <div>
               <span data-bind="text: name"></span><br>
               <span data-bind="text: brewery().name"></span>
@@ -64,6 +64,10 @@
     </div>
   </div>
 </div>
+<div data-bind="visible: showLoadingSpinner" class="loading-spinner">
+  <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
+</div>
+
 {% endblock body %}
 {% block javascript %}
 <script type="text/javascript">

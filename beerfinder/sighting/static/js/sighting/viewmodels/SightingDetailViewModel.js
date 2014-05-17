@@ -4,6 +4,7 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
 
+        this.showLoadingSpinner = ko.observable(false);
         this.nextCommentPage = ko.observable(null);
         this.sighting = ko.observable(new SightingModel(data.sighting));
         this.activeNavSection = ko.observable('');
@@ -43,6 +44,7 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
             }).done(function (data) {
                 //TODO: Something still not right... getting a 201 response but this is not happening
                 self.comments.unshift(new SightingCommentModel(data));
+                self.showComment(false);
             }).fail(function (data) {
                 console.log(data);
             });

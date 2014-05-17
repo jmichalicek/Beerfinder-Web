@@ -7,6 +7,8 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel
         "use strict";
         var self = this;
 
+        this.showLoadingSpinner = ko.observable(false);
+
         this.mode = ko.observable(Modes.LIST);  // other option is search
         this.searchTerm = ko.observable();
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
@@ -76,8 +78,6 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel
             // and eventually even separate endpoint.
             // This was here based on misreading a response.  I think I won't need it.
             if(self.mode() === Modes.SEARCH) {
-                //    url += self.nextPage ? '&' : '?';
-                //    url += 'search=' + self.searchTerm();
                 requestParams = {search: self.searchTerm()};
             }
 

@@ -11,6 +11,7 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
         this.selectedStyle = ko.observable();
         this.formErrors = ko.observableArray([]);
         this.stylePickerVisible = ko.observable(false);
+        this.showLoadingSpinner = ko.observable(false);
         
         this.showStylePicker = function () {
             self.stylePickerVisible(true);
@@ -22,6 +23,7 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
         };
 
         this.addBeer = function() {
+            self.showLoadingSpinner(true);
             var beer = new BeerModel({name: self.beerName(),
                                       brewery: new BreweryModel({name: self.breweryName()}),
                                       style: new StyleModel(self.selectedStyle()),
@@ -41,6 +43,8 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
                     });
                 });
                 self.formErrors(errorList);
+            }).always(function (data) {
+                self.showLoadingSpinner(false);
             });
         };
 

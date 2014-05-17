@@ -2,7 +2,8 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
     return function () {
         "use strict";
         var self = this;
-        
+
+        self.showLoadingSpinner = ko.observable(false);
         this.location = {}; // TODO: populate this.
         this.activeNavSection = ko.observable('nearby_sightings');
         this.sightings = ko.observableArray();
@@ -76,12 +77,14 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
                        });
                        self.sightings(currentList);
                        self.nextPage = data.next;
-                   }).complete(function () {
+                   }).always(function () {
                        self.requestInProgress = false;
+                       self.showLoadingSpinner(false);
                    });  
         };
 
         this.initialize = function () {
+            self.showLoadingSpinner(true);
             navigator.geolocation.getCurrentPosition(self.getNearbySightings);
         };
 

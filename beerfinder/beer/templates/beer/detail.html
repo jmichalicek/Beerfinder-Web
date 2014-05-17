@@ -2,7 +2,11 @@
 {% load static %}
 {% block body %}
 <div class="container">
-  <div class="row" id="main_content">
+  <div class="row" id="main_content" style="display: none" data-bind="visible: true">
+    <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
+      <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
+    </div>
+    
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <span data-bind="text: beer().name"></span><br>
       <span data-bind="text: beer().brewery().name"></span><br>
@@ -10,8 +14,6 @@
       <span data-bind="text: beer().style().name"></span>
       <!-- /ko -->
     </div>
-  <!--</div>
-  <div class="row"> -->
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <ul class="list-inline btn-group">
         <li>
@@ -30,29 +32,37 @@
         <li data-bind="css:{active: activeSightingTab() == SightingTabs.NEARBY}"><a href="#" data-bind="click: changeTab.bind($data, SightingTabs.NEARBY)">Nearby Sightings</a></li>
       </ul>
     </div>
-    <div id="recent_sighting_list" data-bind="visible: tabManager.activeSightingTab() == SightingTabs.RECENT">
+    <div id="recent_sighting_list" data-bind="visible: tabManager.activeSightingTab() == SightingTabs.RECENT" style="display: none">
       <div data-bind="foreach: sightings" class="col-xs-12 col-sm-6 col-sm-offset-3">
         <a style="display: block" data-bind="attr: {href: webUrl }">
-          <div class="pull-left">
-            <span data-bind="text: venue().name"></span><br>
-            <span data-bind="text: sighted_by"></span> on <span data-bind="text: date_sighted"></span>
-          </div>
-          <div class="pull-right" data-bind="if: images()[0]">
-            <img data-bind="attr: {src: images()[0].thumbnailUrl}" height="75" ></img>
+          <div class="media">
+            <div class="pull-left">
+              <span data-bind="text: venue().name"></span><br>
+              <span data-bind="text: sighted_by"></span> on <span data-bind="text: date_sighted"></span>
+            </div>
+            <div class="pull-right" data-bind="if: images()[0]">
+              <img data-bind="attr: {src: images()[0].thumbnailUrl}" height="75" class="media-object" ></img>
+            </div>
           </div>
         </a>
       </div>
     </div>
-    <div id="nearby_sighting_list" data-bind="visible: tabManager.activeSightingTab() == SightingTabs.NEARBY" class="col-xs-12 col-sm-6 col-sm-offset-3">
+    <div id="nearby_sighting_list" data-bind="visible: tabManager.activeSightingTab() == SightingTabs.NEARBY" class="col-xs-12 col-sm-6 col-sm-offset-3" style="display: none">
+      <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
+        <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
+      </div>
+
       <div data-bind="foreach: sightings">
         <a style="display: block" data-bind="attr: {href: webUrl }">
-          <div class="pull-left">
-            <span data-bind="text: venue().name"></span><br>
-            <span data-bind="text: distance"></span> miles away<br>
-            <span data-bind="text: sighted_by"></span> on <span data-bind="text: date_sighted"></span>
-          </div>
-          <div class="pull-right" data-bind="if: images()[0]">
-            <img data-bind="attr: {src: images()[0].thumbnailUrl}" height="75"></img>
+          <div class="media">
+            <div class="pull-left">
+              <span data-bind="text: venue().name"></span><br>
+              <span data-bind="text: distance().toFixed(2)"></span> miles away<br>
+              <span data-bind="text: sighted_by"></span> on <span data-bind="text: date_sighted"></span>
+            </div>
+            <div class="pull-right" data-bind="if: images()[0]">
+              <img data-bind="attr: {src: images()[0].thumbnailUrl}" height="75"></img>
+            </div>
           </div>
         </a>
       </div>
@@ -81,6 +91,7 @@ require(['knockout', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/Bee
     var nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager});
     ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
     nearbyVm.getSightings();
+
 });
 </script>
 {% endblock javascript %}

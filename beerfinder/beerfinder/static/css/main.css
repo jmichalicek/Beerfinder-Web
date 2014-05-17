@@ -1,14 +1,33 @@
+a, a:not(.btn), a:not(.btn):hover, a:not(.btn):visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:not(.btn):hover {
+    opacity: .7;
+}
+
 body {
       padding-top: 60px;
       position: relative;
       }
 
-// bootstrap 3 actually has a class to do this already.
-ul.markerless {
-    padding-left: 0px;
-    list-style: none inside none;
-}
-
 a.icon {
    color: inherit;
 }
+
+.loading-spinner {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+/* sighting detail */
+#comments_list li {
+    margin-top: 10px;
+}
+/* end sighting detail */

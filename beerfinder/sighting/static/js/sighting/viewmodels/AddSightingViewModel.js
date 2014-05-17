@@ -7,7 +7,8 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         "use strict";
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
-        
+
+        this.showLoadingSpinner = ko.observable(false);
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
         this.venuesPerRequest = 50;
         this.maxResults = null;
@@ -84,7 +85,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         this.showSpinner = ko.observable(false);
         this.submitSighting = function () {
           
-            self.showSpinner(true);
+            self.showLoadingSpinner(true);
             self.submitInProgress(true);
             var i = $('#sighting_image');
             var im = document.getElementById('sighting_image');
@@ -114,8 +115,8 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
                        // todo: real error handling for varying errors.  Trying again may be pointless.
                        // also, display this in a better manner
                        alert('There was an error addinging your sighting. Please try again.');
-                   }).complete(function (data) {
-                       self.showSpinner(false);
+                   }).always(function (data) {
+                       self.showLoadingSpinner(false);
                        self.submitInProgress(false);
                    });
         };
@@ -129,6 +130,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
         };
         
         this.getLocation = function () {
+            self.showLoadingSpinner(true);
             navigator.geolocation.getCurrentPosition(self.geoLocationCallback);
         };
         
@@ -160,8 +162,9 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
                                });
                            });
                            self.venues(existingItems);
-                       }).complete(function () {
+                       }).always(function () {
                            self.requestInProgress = false;
+                           self.showLoadingSpinner(false);
                        });
             }
         };
