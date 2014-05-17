@@ -7,6 +7,18 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action, link
 
+from rest_framework_extensions.cache.decorators import cache_response
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
+from rest_framework_extensions.key_constructor.bits import (
+    KeyBitBase,
+    RetrieveSqlQueryKeyBit,
+    ListSqlQueryKeyBit,
+    PaginationKeyBit,
+    UserKeyBit,
+    QueryParamsKeyBit
+)
+
 import foursquare
 
 from beer.models import Beer
@@ -19,7 +31,7 @@ from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
                           SightingImageSerializer)
 
-class SightingViewSet(viewsets.ModelViewSet):
+class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
     serializer_class = SightingSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
@@ -174,6 +186,7 @@ class SightingViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=400)
 
     @link()
+    @cache_respons(2)
     def comments(self, request, *args, **kwargs):
         """
         Get the comments for a sighting

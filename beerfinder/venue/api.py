@@ -4,6 +4,17 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.decorators import link
 
+from rest_framework_extensions.cache.decorators import cache_response
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
+from rest_framework_extensions.key_constructor.bits import (
+    KeyBitBase,
+    RetrieveSqlQueryKeyBit,
+    ListSqlQueryKeyBit,
+    PaginationKeyBit,
+    UserKeyBit,
+    QueryParamsKeyBit
+)
+
 import foursquare
 
 from .models import Venue
@@ -15,17 +26,30 @@ class VenueViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
 
+# Is there some way that the lat and lon could be generalized a bit so
+# that they could be used as part of the cache key instead of user
+class FoursquareVenueListKeyConstructor(DefaultKeyConstructor):
+    user = UserKeyBit()
+    offset  = QueryParamsKeyBit(
+        ['offset',]
+    )
+
+class FoursquareSearchListKeyConstructor(DefaultKeyConstructor):
+    user = UserKeyBit()
+    offset_and_search = QueryParamsKeyBit(
+        ['query', ]
+
 class FoursquareVenueViewSet(viewsets.ViewSet):
     """
     A ViewSet to work as a passthrough for communicating with Foursquare's Venue API
     while not worrying about any local models.
     """
 
+    @cache_response(60 * 3, key_func=FoursquareVenueListKeyConstructor())
     def list(self, request):
         """
         Uses foursquare venue explore to get nearby venues
         """
-
         latitude = request.QUERY_PARAMS.get('latitude', None)
         longitude = request.QUERY_PARAMS.get('longitude', None)
         offset = request.QUERY_PARAMS.get('offset', 0)
@@ -42,6 +66,7 @@ class FoursquareVenueViewSet(viewsets.ViewSet):
 
         return Response(venues)
 
+    @cache_response(60 * 3, key_func=FoursquareSearchListKeyConstructor())
     def search(self, request):
         """
         User the Foursquare venue search endpoint and return the results

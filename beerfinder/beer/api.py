@@ -2,11 +2,23 @@ from django.db.models import Q
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 
+from rest_framework_extensions.cache.decorators import cache_response
+from rest_framework_extensions.cache.mixins import CacheResponseMixin
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
+from rest_framework_extensions.key_constructor.bits import (
+    KeyBitBase,
+    RetrieveSqlQueryKeyBit,
+    ListSqlQueryKeyBit,
+    PaginationKeyBit,
+    UserKeyBit,
+    QueryParamsKeyBit
+)
+
 from .forms import AddBeerForm
 from .models import Beer, Brewery, ServingType, Style
 from .serializers import BeerSerializer, BrewerySerializer, ServingTypeSerializer, BeerStyleSerializer
 
-class BeerViewSet(viewsets.ModelViewSet):
+class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     Basic ViewSet for Beer API endpoints.
     """
@@ -80,8 +92,16 @@ class ServingTypeAPIView(generics.ListAPIView):
     lookup_field = 'slug'
     paginate_by = 25
 
+    @cache_response(60 * 15)
+    def get(self, *args, **kwargs):
+        return super(ServingTypeAPIView, self).get(*args, **kwargs)
+
 
 class BeerStyleAPIView(generics.ListAPIView):
     queryset = Style.objects.all()
     serializer_class = BeerStyleSerializer
     paginate_by = 25
+
+    @cache_response(60 * 15)
+    def get(self, *args **kwargs):
+        return super(ServingTypeAPIView, self).get(*args, **kwargs)

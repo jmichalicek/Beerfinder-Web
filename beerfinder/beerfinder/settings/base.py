@@ -180,3 +180,7 @@ TWITTER_API_SECRET = os.environ.get('TWITTER_API_SECRET')
 DEFAULT_FROM_EMAIL = 'jmichalicek@gmail.com'
 
 IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = 'imagekit.cachefiles.backends.Celery'
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 5
+}
