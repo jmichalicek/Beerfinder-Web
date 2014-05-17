@@ -1,5 +1,5 @@
 // Be sure to load js/sightings/models.js first
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function($, ko, infinitescroll, SightingModel) {
+define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function($, _, ko, infinitescroll, SightingModel) {
     return function (data) {
         "use strict";
         var self = this;
@@ -22,10 +22,10 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         });
 
         // detect scroll
-        $('#sighting_list').scroll(function() {
+        $('#sighting_list').scroll(_.debounce(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
-            self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
+            //self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
 
             var l1 = self.sightings.peek().length;
             var l2 = self.sightings.infinitescroll.lastVisibleIndex.peek();
@@ -34,7 +34,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
                     self.getSightings();
                 }
             }
-        });
+        }, 250));
 
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
