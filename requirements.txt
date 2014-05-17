@@ -1,4 +1,4 @@
-Django==1.6.4
+Django==1.6.5
 Fabric==1.8.3
 Pillow==2.4.0
 South==0.8.4
@@ -14,6 +14,7 @@ django-celery==3.1.10
 django-extensions==1.3.5
 django-imagekit==3.2.1
 djangorestframework==2.3.13
+drf-extensions==0.2.3
 ecdsa==0.11
 factory-boy==2.3.1
 foursquare==20130707
@@ -24,12 +25,12 @@ oauthlib==0.6.1
 paramiko==1.12.4
 pilkit==1.1.7
 poster==0.8.1
-psycopg2==2.5.2
+psycopg2==2.5.3
 pycrypto==2.6.1
 python-openid==2.2.5
-pytz==2014.2
+pytz==2014.3
 redis==2.9.1
-requests==2.2.1
+requests==2.3.0
 requests-oauthlib==0.4.0
 simplejson==3.4.1
 six==1.6.1
