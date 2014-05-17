@@ -27,8 +27,6 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
             // or we make a bunch of requests for the same data and make a mess of things
             //self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
 
-            var l1 = self.sightings.peek().length;
-            var l2 = self.sightings.infinitescroll.lastVisibleIndex.peek();
             if (self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25) {
                 if(!self.requestInProgress && self.nextPage) {
                     self.getSightings();
