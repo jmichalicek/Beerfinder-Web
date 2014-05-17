@@ -1,7 +1,7 @@
 // look at https://github.com/thinkloop/knockout-js-infinite-scroll/blob/master/infinitescroll.js
 // for infinite scrolling the locations
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
-        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, ko, infinitescroll, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
+define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
+        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, _, ko, infinitescroll, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
 
     return function (data) {
         "use strict";
@@ -52,12 +52,12 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel'
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
             self.venues.infinitescroll.scrollY($('#venue_list').scrollTop());
-            
             // add more items if scroll reaches the last 15 items
             if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 50) {
-                self.getNearbyVenues();
+                _.debounce(self.getNearbyVenues(), 250);
             }
         });
+        
         
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {

@@ -1,7 +1,7 @@
 var Modes = Object.freeze({LIST: 'list',
                            SEARCH: 'search'});
 
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel', 'beer/models/BeerModel'], function($, ko, infinitescroll, BreweryModel, BeerModel) {
+define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel', 'beer/models/BeerModel'], function($, _, ko, infinitescroll, BreweryModel, BeerModel) {
 
     return function () {
         "use strict";
@@ -41,7 +41,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'beer/models/BreweryModel
             if (self.beers.peek().length - self.beers.infinitescroll.lastVisibleIndex.peek() <= 50) {
                 // only do it if there's not already a request in progress and we have a next page to get
                 if(!self.requestInProgress && self.nextPage) {
-                    self.getBeerList();
+                    _.debounce(self.getBeerList(), 250);
                 }
             }
         });

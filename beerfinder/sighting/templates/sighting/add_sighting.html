@@ -4,7 +4,7 @@
 <!-- so that an inner div can be set to always full screen -->
 <style type="text/css">
   html, body {
-  height: 95%;
+  height: 100%;
   margin: 0;
   }
 
@@ -13,12 +13,12 @@
       height: 100%;
       position: absolute;
       width: 100%;
-}
+  }
   .venue_item {
       display: block;
       position: relative;
       height: 125px;
-    margin: 10px 0;
+      margin: 10px 0;
   }
 
   .venue_item .btn {
@@ -62,7 +62,7 @@
       <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="list-unstyled">
         <li class="venue_item">
           {# magic to not draw the items which are not visible which makes this far more scalable #}
-          <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() -->
+          <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() - 25 -->
           <div class="venue_item_container" style="display: none" data-bind="visible: true">
             <span data-bind="text: name"></span><br>
             <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
