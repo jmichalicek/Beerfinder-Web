@@ -93,8 +93,8 @@ class ServingTypeAPIView(generics.ListAPIView):
     paginate_by = 25
 
     @cache_response(60 * 15)
-    def get(self, *args, **kwargs):
-        return super(ServingTypeAPIView, self).get(*args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return super(ServingTypeAPIView, self).get(request, *args, **kwargs)
 
 
 class BeerStyleAPIView(generics.ListAPIView):
@@ -103,5 +103,5 @@ class BeerStyleAPIView(generics.ListAPIView):
     paginate_by = 25
 
     @cache_response(60 * 15)
-    def get(self, *args **kwargs):
-        return super(ServingTypeAPIView, self).get(*args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return super(BeerStyleAPIView, self).get(request, *args, **kwargs)

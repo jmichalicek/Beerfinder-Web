@@ -7,12 +7,14 @@ amqp==1.4.5
 anyjson==0.3.3
 billiard==3.3.0.17
 celery==3.1.11
--e git+git@github.com:kennethreitz/dj-database-url.git@ebb012f3afbeb72b884c67b59c9b820694b18a38#egg=dj_database_url-master
+distribute==0.6.24
+-e git+git@github.com:kennethreitz/dj-database-url.git@ebb012f3afbeb72b884c67b59c9b820694b18a38#egg=dj_database_url-dev
 django-allauth==0.16.1
 django-appconf==0.6
 django-celery==3.1.10
 django-extensions==1.3.5
 django-imagekit==3.2.1
+django-redis-cache==0.13.0
 djangorestframework==2.3.13
 drf-extensions==0.2.3
 ecdsa==0.11
@@ -34,3 +36,4 @@ requests==2.3.0
 requests-oauthlib==0.4.0
 simplejson==3.4.1
 six==1.6.1
+uWSGI==2.0.4

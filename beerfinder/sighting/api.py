@@ -186,7 +186,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             return Response(serializer.errors, status=400)
 
     @link()
-    @cache_respons(2)
+    @cache_response(2)
     def comments(self, request, *args, **kwargs):
         """
         Get the comments for a sighting

@@ -37,7 +37,7 @@ class FoursquareVenueListKeyConstructor(DefaultKeyConstructor):
 class FoursquareSearchListKeyConstructor(DefaultKeyConstructor):
     user = UserKeyBit()
     offset_and_search = QueryParamsKeyBit(
-        ['query', ]
+        ['query', ])
 
 class FoursquareVenueViewSet(viewsets.ViewSet):
     """
