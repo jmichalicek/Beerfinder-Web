@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.contrib.gis.db import models as gis_models
 
 from .imagekit_generators import *
+from imagekit.cachefiles import ImageCacheFile, LazyImageCacheFile
 
 class Sighting(gis_models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
@@ -101,15 +102,16 @@ class SightingImage(models.Model):
         """
         if self.original:
             base_name = self.original.name
-            print 'self.original is %s' % self.original
-            print dir(self.original)
-            from django.core.files.images import ImageFile
+#            from django.core.files.images import ImageFile
 
             if not self.thumbnail:
                 try:
                     image_generator = SightingImageThumbnail(source=self.original)
-                    result = ImageFile(image_generator.generate())
-                    self.thumbnail.save(base_name + '.thumbnail.jpg', result)
+                    filename = base_name + '.thumbnail.jpg'
+                    result = ImageCacheFile(image_generator, name=filename).generate()
+                    #self.thumbnail.save(base_name + '.thumbnail.jpg', result)
+                    self.thumbnail.name = filename
+                    self.save()
                 finally:
                     self.original.close()
                     self.thumbnail.close()
@@ -117,8 +119,11 @@ class SightingImage(models.Model):
             if not self.small:
                 try:
                     image_generator = SightingImageSmall(source=self.original)
-                    result = ImageFile(image_generator.generate())
-                    self.small.save(base_name + '.small.jpg', result)
+                    filename = base_name + '.small.jpg'
+                    result = ImageCacheFile(image_generator, name=filename).generate()
+                    #self.small.save(base_name + '.small.jpg', result)
+                    self.small.name = filename
+                    self.save()
                 finally:
                     self.original.close()
                     self.small.close()
@@ -126,8 +131,11 @@ class SightingImage(models.Model):
             if not self.medium:
                 try:
                     image_generator = SightingImageMedium(source=self.original)
-                    result = ImageFile(image_generator.generate())
-                    self.medium.save(base_name + '.medium.jpg', result)
+                    filename = base_name + '.medium.jpg'
+                    result = ImageCacheFile(image_generator, name=filename).generate()
+                    #self.medium.save(base_name + '.medium.jpg', result)
+                    self.medium.name = filename
+                    self.save()
                 finally:
                     self.original.close()
                     self.medium.close()

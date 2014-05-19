@@ -22,4 +22,3 @@ EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
 EMAIL_PORT = os.environ.get('SMTP_PORT')
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = True
-DEBUG = True
