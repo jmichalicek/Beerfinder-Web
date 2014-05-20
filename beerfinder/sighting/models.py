@@ -81,18 +81,15 @@ class SightingImage(models.Model):
     original_height = models.IntegerField(blank=True, null=True)
     original_width = models.IntegerField(blank=True, null=True)
 
-    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', height_field='thumbnail_height',
-                                  width_field='thumbnail_width', blank=True, default='')
+    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
     thumbnail_height = models.IntegerField(blank=True, null=True)
     thumbnail_width = models.IntegerField(blank=True, null=True)
 
-    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', height_field='small_height',
-                                  width_field='small_width', blank=True, default='')
+    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
     small_height = models.IntegerField(blank=True, null=True)
     small_width = models.IntegerField(blank=True, null=True)
 
-    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', height_field='medium_height',
-                                  width_field='medium_width', blank=True, default='')
+    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
     medium_height = models.IntegerField(blank=True, null=True)
     medium_width = models.IntegerField(blank=True, null=True)
 
@@ -102,43 +99,45 @@ class SightingImage(models.Model):
         """
         if self.original:
             base_name = self.original.name
-#            from django.core.files.images import ImageFile
 
             if not self.thumbnail:
                 try:
                     image_generator = SightingImageThumbnail(source=self.original)
                     filename = base_name + '.thumbnail.jpg'
-                    result = ImageCacheFile(image_generator, name=filename).generate()
+                    result = ImageCacheFile(image_generator, name=filename) #.generate()
+                    result.generate()
                     #self.thumbnail.save(base_name + '.thumbnail.jpg', result)
                     self.thumbnail.name = filename
                     self.save()
                 finally:
                     self.original.close()
-                    self.thumbnail.close()
+                    #self.thumbnail.close()
 
             if not self.small:
                 try:
                     image_generator = SightingImageSmall(source=self.original)
                     filename = base_name + '.small.jpg'
-                    result = ImageCacheFile(image_generator, name=filename).generate()
+                    result = ImageCacheFile(image_generator, name=filename) #.generate()
+                    result.generate()
                     #self.small.save(base_name + '.small.jpg', result)
                     self.small.name = filename
                     self.save()
                 finally:
                     self.original.close()
-                    self.small.close()
+                    #self.small.close()
 
             if not self.medium:
                 try:
                     image_generator = SightingImageMedium(source=self.original)
                     filename = base_name + '.medium.jpg'
-                    result = ImageCacheFile(image_generator, name=filename).generate()
+                    result = ImageCacheFile(image_generator, name=filename) #.generate()
+                    result.generate()
                     #self.medium.save(base_name + '.medium.jpg', result)
                     self.medium.name = filename
                     self.save()
                 finally:
                     self.original.close()
-                    self.medium.close()
+                    #self.medium.close()
 
     def save(self, generate_images=False, *args, **kwargs):
         """

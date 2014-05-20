@@ -6,4 +6,4 @@ class HyperlinkedImageField(ImageField):
     An ImageField which returns the actual url to the image
     """
     def to_native(self, value):
-        return value.url
+        return value.url if value else ''

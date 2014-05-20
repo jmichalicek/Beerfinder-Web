@@ -49,5 +49,16 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
                 console.log(data);
             });
         };
+
+        this.imageUrl = ko.computed(function () {
+            var image = self.sighting().primaryImage();
+
+            // not really the right way to do this fallback with knockout, but it works
+            var pic = document.getElementById('sighting_image');
+            pic.onerror = function () {
+                pic.src = image.originalUrl();
+            };
+            return image.mediumUrl() ? image.mediumUrl() : image.originalUrl();
+        });
     };
 });
