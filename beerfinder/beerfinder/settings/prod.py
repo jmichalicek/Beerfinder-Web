@@ -16,9 +16,9 @@ CACHES = {
 
 ALLOWED_HOSTS = ['beer.bash-shell.net']
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
+EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ.get('SMTP_HOST')
 EMAIL_HOST_USER = os.environ.get('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
-EMAIL_PORT = os.environ.get('SMTP_PORT')
-EMAIL_USE_SSL = True
-EMAIL_USE_TLS = True
+EMAIL_PORT = os.environ.get('SMTP_PORT', 587)

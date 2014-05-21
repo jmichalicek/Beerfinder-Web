@@ -12,15 +12,22 @@ from .models import WatchedBeer
 
 logger = logging.getLogger(__name__)
 
-@celery.task
+@celery.task(max_retries=3)
 def send_watchlist_email(sighting_id):
     """
     Send emails about a sighting to people watching that beer
     """
     template_path = 'watchlist/email/beer_sighted.html'
-    sighting = Sighting.objects.select_related('beer', 'beer_brewery').get(id=sighting_id)
+
+    try:
+        sighting = Sighting.objects.select_related('beer', 'beer_brewery').get(id=sighting_id)
+    except Sighting.DoesNotExist:
+        # happens if the task runs but the db commit has not occured where the sighting was added
+        # 60 seconds should be WAY more than enough.  Really we probably need a fraction of a second.
+        raise send_watchlist_email.retry(countdown=60, exc=exc)
 
     emails = WatchedBeer.objects.select_related('user').filter(beer_id=sighting.beer_id, user__send_watchlist_email=True).values_list('user__email')
+
     context = Context({'sighting': sighting})
     email_text = render_to_string(template_path, {}, context_instance=context)
 
