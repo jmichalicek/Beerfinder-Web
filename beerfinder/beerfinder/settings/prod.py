@@ -22,3 +22,4 @@ EMAIL_HOST = os.environ.get('SMTP_HOST')
 EMAIL_HOST_USER = os.environ.get('SMTP_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD')
 EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
+REGISTRATION_OPEN = True

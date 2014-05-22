@@ -1,0 +1,14 @@
+{{ sighting.beer }} from your watchlist has been seen on {{ sighting.date_sighted }} at the following location.
+
+{% with location=sighting.venue %}
+{% if location.name %}{{ location.name }}{% endif %}
+{% if location.street_address %}{{ location.street_address }}{% endif %}
+{% if location.city or location.state %}{% if location.city %}{{ location.city }}{% endif %}{% if location.city and location.state%}, {% endif %}{{ location.state }}{% endif %} 
+{% if location.postal_code %}{{ location.postal_code }}{% endif %}
+{% endwith %}
+
+View the sighting:
+http://{{ site.domain }}{% url 'sighting_detail' sighting.id %}
+
+Manage your watchlist:
+http://{{ site.domain }}{% url 'accounts_edit_profile' %}

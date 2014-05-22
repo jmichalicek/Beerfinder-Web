@@ -1,8 +1,12 @@
 import celery
 from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.template import Context, Template
 from django.template.loader import render_to_string
+
+from django.core.mail import EmailMultiAlternatives
+from django.core import mail
 
 import logging
 
@@ -17,7 +21,9 @@ def send_watchlist_email(sighting_id):
     """
     Send emails about a sighting to people watching that beer
     """
-    template_path = 'watchlist/email/beer_sighted.html'
+    current_site = Site.objects.get_current()
+    html_template_path = 'watchlist/email/beer_sighted.html'
+    text_template_path = 'watchlist/email/beer_sighted.txt'
 
     try:
         sighting = Sighting.objects.select_related('beer', 'beer_brewery').get(id=sighting_id)
@@ -26,14 +32,23 @@ def send_watchlist_email(sighting_id):
         # 60 seconds should be WAY more than enough.  Really we probably need a fraction of a second.
         raise send_watchlist_email.retry(countdown=60, exc=exc)
 
-    emails = WatchedBeer.objects.select_related('user').filter(beer_id=sighting.beer_id, user__send_watchlist_email=True).values_list('user__email')
+    emails = WatchedBeer.objects.select_related('user').filter(beer_id=sighting.beer_id, user__send_watchlist_email=True).values_list('user__email', flat=True)
 
-    context = Context({'sighting': sighting})
-    email_text = render_to_string(template_path, {}, context_instance=context)
+    context = Context({'sighting': sighting,
+                       'site': current_site})
+    text_email = render_to_string(text_template_path, {}, context_instance=context)
+    html_email = render_to_string(html_template_path, {}, context_instance=context)
 
+    # use a single smtp connection to send all emails
+    connection = mail.get_connection()
+    connection.open()
+
+    messages = []
     for email in emails:
-        try:
-            send_mail('A beer on your watchlist has been seen!', email_text,
-                      settings.DEFAULT_FROM_EMAIL, [email[0]])
-        except Exception as e:
-            logger.exception(e)
+        msg = EmailMultiAlternatives('A beer on your watchlist has been seen!', text_email, settings.DEFAULT_FROM_EMAIL, [email])
+        msg.attach_alternative(html_email, "text/html")
+        messages.append(msg)
+
+    if messages:
+        connection.send_messages(messages)
+    connection.close()
