@@ -54,6 +54,15 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
                 }
             }
         };
+
+        this.clearImage = function (data, e) {
+            var target = $(e.currentTarget).data('target');
+            var fileField = $('#' + target);
+            //fileField.replaceWith(fileField.val('').clone(true, true));
+            fileField.val('');
+            fileField.files = [];
+            self.image(undefined);
+        };
         
         // stuff to enable infinite scroll
         this.venues.extend({
