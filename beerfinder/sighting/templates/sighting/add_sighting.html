@@ -120,7 +120,11 @@
       <form role="form">
         <div class="form-group">
           <label for="sighting_image">Attach an image:</label><br>
-          <input id="sighting_image"  type="file" name="image" autocomplete="off" /><br>
+
+          <div>
+            <img height="150" src="" data-bind="attr: {src: image}"></img>
+          </div>
+          <input id="sighting_image"  type="file" name="image" autocomplete="off" data-bind="event {change: showImageThumbnail}" />
         </div>
         <div class="form-group">
           How was the beer available?<br>

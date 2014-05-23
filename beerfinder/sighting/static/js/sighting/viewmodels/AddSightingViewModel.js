@@ -36,6 +36,24 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
         this.venueListVisible = ko.computed(function () {
             return !self.selectedVenue() && self.discoverView();
         });
+
+        this.showImageThumbnail = function (data, e) {
+            var x = data;
+            var element = e.currentTarget;
+            var files = !!element.files ? element.files : [];
+            
+            if(!files.length || !window.FileReader) {
+                return;
+            }
+
+            if(/^image/.test(files[0].type)) {
+                var reader = new FileReader();
+                reader.readAsDataURL(files[0]);
+                reader.onloadend = function() { // set image data as background of div
+                    self.image(this.result);
+                }
+            }
+        };
         
         // stuff to enable infinite scroll
         this.venues.extend({
