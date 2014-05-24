@@ -1,5 +1,8 @@
 from django.core.paginator import Paginator, InvalidPage, EmptyPage, PageNotAnInteger, Page
 
+# This InfinitePager and InfinitePage class came from a reddit post
+# but I cannot find the original reddit post or the site it linked to.
+# I have only slightly modified it.
 class InfinitePaginator(Paginator):
     """ HACK: To avoid unneseccary `SELECT COUNT(*) ...`
     paginator has an infinity page number and a count of elements.
