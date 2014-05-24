@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework import pagination
 
 from beer.serializers import BeerSerializer, ServingTypeSerializer
-from core.serializer_fields import HyperlinkedImageField
+from core.serializers import HyperlinkedImageField
 from venue.serializers import VenueSerializer
 
 from .models import Sighting, SightingConfirmation, Comment, SightingImage
