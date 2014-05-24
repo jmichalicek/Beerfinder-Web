@@ -22,6 +22,8 @@ from rest_framework_extensions.key_constructor.bits import (
 import foursquare
 
 from beer.models import Beer
+from core.paginator import InfinitePaginator, InfinitePage
+from core.cache_keys import DefaultPaginatedListKeyConstructor
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
@@ -30,6 +32,7 @@ from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
                           SightingImageSerializer)
+
 
 class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
@@ -129,14 +132,14 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         queryset = self.get_queryset(prefetch=False).distance(origin, field_name='venue__point').order_by('distance')
 
         queryset = queryset.prefetch_related('sighting_images', 'serving_types')
-        paginator = Paginator(queryset, 25)
+        paginator = InfinitePaginator(queryset, 25)
         page_number = request.QUERY_PARAMS.get('page')
         try:
             page = paginator.page(page_number)
         except PageNotAnInteger:
             page = paginator.page(1)
         except EmptyPage:
-            page = paginator.page(paginator.num_pages)
+            page = paginator.page(1)
 
         serializer_context = {'request': request}
         serialized = PaginatedDistanceSightingSerializer(page,
@@ -164,7 +167,8 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         Mark a sighting as no longer available
         """
         sighting = self.get_object()
-        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': False})
+        serializer_context = {'request': request}
+        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': False}, context=serializer_context)
         if confirmation_serializer.is_valid():
             confirmation = confirmation_serializer.save()
             return Response(SightingSerializer(sighting).data, status=201)
@@ -175,7 +179,8 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     @action(methods=['post'])
     def add_comment(self, request, *args, **kwargs):
         sighting = self.get_object()
-        serializer = SightingCommentSerializer(data=request.POST)
+        serializer_context = {'request': request}
+        serializer = SightingCommentSerializer(data=request.POST, context=serializer_context)
         if serializer.is_valid():
             serializer.object.user = request.user
             serializer.object.sighting = sighting
@@ -186,14 +191,14 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             return Response(serializer.errors, status=400)
 
     @link()
-    @cache_response(2)
+    @cache_response(10, key_func=DefaultPaginatedListKeyConstructor())
     def comments(self, request, *args, **kwargs):
         """
         Get the comments for a sighting
         """
         sighting = self.get_object()
         queryset = sighting.comments.all()
-        paginator = Paginator(queryset, 10)
+        paginator = InfinitePaginator(queryset, 10)
 
         page = request.QUERY_PARAMS.get('page')
         try:
@@ -201,7 +206,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         except PageNotAnInteger:
             comments = paginator.page(1)
         except EmptyPage:
-            comments = paginator.page(paginator.num_pages)
+            comments = paginator.page(1)
 
         serializer_context = {'request': request}
         serializer = PaginatedSightingCommentSerializer(comments,

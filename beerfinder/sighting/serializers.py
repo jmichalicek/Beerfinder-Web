@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework import pagination
 
 from beer.serializers import BeerSerializer, ServingTypeSerializer
-from core.serializers import HyperlinkedImageField
+from core.serializers import HyperlinkedImageField, InfinitePaginationSerializer
 from venue.serializers import VenueSerializer
 
 from .models import Sighting, SightingConfirmation, Comment, SightingImage
@@ -61,7 +61,7 @@ class SightingCommentSerializer(serializers.ModelSerializer):
         fields = ('date_created', 'text', 'comment_by')
 
 
-class PaginatedSightingCommentSerializer(pagination.PaginationSerializer):
+class PaginatedSightingCommentSerializer(InfinitePaginationSerializer):
     """
     Does exactly what the name sounds like.  It's for paginating SightCommentSerializer
     """
@@ -69,6 +69,6 @@ class PaginatedSightingCommentSerializer(pagination.PaginationSerializer):
         object_serializer_class = SightingCommentSerializer
 
 
-class PaginatedDistanceSightingSerializer(pagination.PaginationSerializer):
+class PaginatedDistanceSightingSerializer(InfinitePaginationSerializer):
     class Meta:
         object_serializer_class = DistanceSightingSerializer

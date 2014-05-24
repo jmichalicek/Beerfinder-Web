@@ -5,7 +5,7 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
         data = typeof data !== 'undefined' ? data : {};
 
         this.showLoadingSpinner = ko.observable(false);
-        this.nextCommentPage = ko.observable(null);
+        this.nextCommentPage = ko.observable(1);
         this.sighting = ko.observable(new SightingModel(data.sighting));
         this.activeNavSection = ko.observable('');
         this.comments = ko.observableArray([]);
@@ -18,10 +18,11 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
             self.showComment(!self.showComment());
         }
         this.getComments = function () {
-            var url = self.nextCommentPage() ||  '/api/sightings/' + self.sighting().id() + '/comments/';
+            var url = '/api/sightings/' + self.sighting().id() + '/comments/';
+            var params = {};
             $.ajax({
                 url: url,
-                data: {page: self.commentPage}
+                data: {page: self.nextCommentPage()}
             }).done(function (data) {
                 var currentComments = self.comments()
                 ko.utils.arrayForEach(data.results, function(comment) {
