@@ -1,9 +1,15 @@
-a:not(.btn):not(.navbar-brand):not(.nav.navbar), a:not(.btn):not(.navbar-brand):not(.nav.navbar):hover, a:not(.btn):not(.navbar-brand):visited {
+
+#page_body a, #page_body a:visited, #page_body a:not(.btn):visited, #page_body a:hover {
     text-decoration: none;
     color: inherit;
 }
 
-a:not(.btn):not(.navbar-brand):not(.nav.navbar):hover {
+/* set back to what bootstrap does for nav pills because the above screws it all up */
+#page_body .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+    color: #FFFFFF;
+}
+
+#page_body a:hover {
     opacity: .7;
 }
 
@@ -12,6 +18,9 @@ body {
       position: relative;
       }
 
+#page_body {
+    height: 100%;
+}
 a.icon {
    color: inherit;
 }

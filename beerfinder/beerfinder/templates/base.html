@@ -9,7 +9,7 @@
     {% block stylesheets %}
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}"/>
+    {# <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}"/> #}
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}"/>
     {% endblock stylesheets %}
@@ -44,8 +44,9 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
+    <div id="page_body">
     {% block body %}{% endblock body %}
-
+    </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
     <script type="text/javascript">
       require.config({
