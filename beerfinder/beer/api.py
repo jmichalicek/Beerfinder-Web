@@ -37,12 +37,18 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         # with django haystack implementing proper full text search
         queryset = self.queryset.select_related('brewery');
         search_term = self.request.QUERY_PARAMS.get('search', None)
+        brewery_name = self.request.QUERY_PARAMS.get('brewery_name', None)
+        name = self.request.QUERY_PARAMS.get('name', None)
         if search_term is not None and search_term.strip() != '':
             queryset = queryset.filter(Q(name__icontains=search_term)
                                        | Q(normalized_name__icontains=Beer.normalize_for_name(search_term))
                                        | Q(brewery__name__icontains=search_term)
                                        | Q(brewery__normalized_name__icontains=Brewery.normalize_for_name(search_term))
                                        )
+        if brewery_name:
+            queryset = queryset.filter(brewery__name__icontains=brewery_name)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
 
         return queryset
 

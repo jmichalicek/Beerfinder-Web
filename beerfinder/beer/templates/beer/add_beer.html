@@ -14,11 +14,19 @@
       <!-- /ko -->
       <form data-bind="submit: addBeer">
         <div class="form-group">
-          <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" data-bind="value: beerName"></input><br>
+          <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" list="beer_options" autocomplete="off" data-bind="value: beerName, valueUpdate: 'afterkeydown', event: { keypress: getBeerSuggestions}"></input>
+          <datalist id="beer_options" data-bind="foreach: beerDataListOptions">
+            <option data-bind="text: name"></option>
+          </datalist>
+          <br>
         </div>
         <div class="form-group">
           <!-- make this an auto-fill thingy of breweries -->
-          <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" data-bind="value: breweryName"></input><br>
+          <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: getBrewerySuggestions }"></input>
+          <datalist id="brewery_options" data-bind="foreach: breweryDataListOptions">
+            <option data-bind="text: name"></option>
+          </datalist>
+          <br>
         </div>
         <!-- not sure about this... -->
         <!-- <div class="btn-default btn-large" data-bind="visible: styleButtonVisible, click: showStylePicker"> -->

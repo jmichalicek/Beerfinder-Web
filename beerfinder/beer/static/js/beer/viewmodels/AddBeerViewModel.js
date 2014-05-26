@@ -12,6 +12,8 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
         this.formErrors = ko.observableArray([]);
         this.stylePickerVisible = ko.observable(false);
         this.showLoadingSpinner = ko.observable(false);
+        this.beerDataListOptions = ko.observableArray([]);
+        this.breweryDataListOptions = ko.observableArray([]);
         
         this.showStylePicker = function () {
             self.stylePickerVisible(true);
@@ -59,6 +61,37 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
                 });
                 self.styles(styles);
             });
+        };
+
+        this.getBeerSuggestions = function () {
+            var requestData = {};
+            if(self.beerName()) {
+                requestData.name = self.beerName();
+            } else {
+                return true;
+            }
+
+            if(self.breweryName()) {
+                requestData.brewery_name = self.breweryName();
+            }
+
+            _.debounce(
+                $.ajax({
+                    url: '/api/beer/',
+                    data: requestData,
+                    type: 'GET'
+                }).done(function (data) {
+                    var suggestions = [];
+                    ko.utils.arrayForEach(data.results, function(beer) {
+                        suggestions.push(beer);
+                    });
+                    self.beerDataListOptions(suggestions);
+                }), 
+                400);
+            return true;
+        };
+
+        this.getBrewerySuggestions = function () {
         };
     };
 });
