@@ -1,9 +1,9 @@
-a, a:not(.btn), a:not(.btn):hover, a:not(.btn):visited {
+a:not(.btn):not(.navbar-brand):not(.nav.navbar), a:not(.btn):not(.navbar-brand):not(.nav.navbar):hover, a:not(.btn):not(.navbar-brand):visited {
     text-decoration: none;
     color: inherit;
 }
 
-a:not(.btn):hover {
+a:not(.btn):not(.navbar-brand):not(.nav.navbar):hover {
     opacity: .7;
 }
 
