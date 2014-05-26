@@ -12,7 +12,6 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
         this.formErrors = ko.observableArray([]);
         this.stylePickerVisible = ko.observable(false);
         this.showLoadingSpinner = ko.observable(false);
-        this.beerDataListOptions = ko.observableArray([]);
         this.breweryDataListOptions = ko.observableArray([]);
         
         this.showStylePicker = function () {
@@ -63,33 +62,28 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
             });
         };
 
-        this.getBeerSuggestions = function () {
+        this.getBrewerySuggestions = _.debounce(function () {
             var requestData = {};
-            if(self.beerName()) {
-                requestData.name = self.beerName();
-            } else {
+         
+            if(!self.breweryName()) {
                 return true;
             }
-
-            if(self.breweryName()) {
-                requestData.brewery_name = self.breweryName();
-            }
-
-            _.debounce(
-                $.ajax({
-                    url: '/api/beer/',
-                    data: requestData,
-                    type: 'GET'
-                }).done(function (data) {
-                    var suggestions = [];
-                    ko.utils.arrayForEach(data.results, function(beer) {
-                        suggestions.push(beer);
-                    });
-                    self.beerDataListOptions(suggestions);
-                }), 
-                400);
+           
+            requestData.brewery_name = self.breweryName();
+            
+            $.ajax({
+                url: '/api/brewery/',
+                data: requestData,
+                type: 'GET'
+            }).done(function (data) {
+                var suggestions = [];
+                ko.utils.arrayForEach(data.results, function(brewery) {
+                    suggestions.push(new BreweryModel(brewery));
+                });
+                self.breweryDataListOptions(suggestions);
+            });
             return true;
-        };
+        }, 400);
 
         this.getBrewerySuggestions = function () {
         };

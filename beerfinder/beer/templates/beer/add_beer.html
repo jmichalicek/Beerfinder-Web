@@ -14,10 +14,7 @@
       <!-- /ko -->
       <form data-bind="submit: addBeer">
         <div class="form-group">
-          <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" list="beer_options" autocomplete="off" data-bind="value: beerName, valueUpdate: 'afterkeydown', event: { keypress: getBeerSuggestions}"></input>
-          <datalist id="beer_options" data-bind="foreach: beerDataListOptions">
-            <option data-bind="text: name"></option>
-          </datalist>
+          <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" autocomplete="off" data-bind="value: beerName"></input>
           <br>
         </div>
         <div class="form-group">

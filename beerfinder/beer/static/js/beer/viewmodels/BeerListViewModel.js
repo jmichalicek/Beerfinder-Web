@@ -11,6 +11,8 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
 
         this.mode = ko.observable(Modes.LIST);  // other option is search
         this.searchTerm = ko.observable();
+        this.beerDataListOptions = ko.observableArray([]);
+
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
         this.itemsPerRequest = 50;
         this.morePages = ko.observable(true);
@@ -114,6 +116,27 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
             self.getBeerList();
         };
 
+        this.getBeerSuggestions = _.debounce(function () {
+            var requestData = {};
+            if(self.searchTerm()) {
+                requestData.name = self.searchTerm();
+            } else {
+                return true;
+            }
+
+            $.ajax({
+                url: '/api/beer/',
+                data: requestData,
+                type: 'GET'
+            }).done(function (data) {
+                var suggestions = [];
+                ko.utils.arrayForEach(data.results, function(beer) {
+                    suggestions.push(beer);
+                });
+                self.beerDataListOptions(suggestions);
+            });
+            return true;
+        }, 400);
 
         this.initialize = function () {
             self.getBeerList();
