@@ -77,7 +77,8 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.request",
                                # allauth specific context processors
                                "allauth.account.context_processors.account",
-                               "allauth.socialaccount.context_processors.socialaccount",)
+                               "allauth.socialaccount.context_processors.socialaccount",
+                               "core.context_processors.site_processor")
 
 ROOT_URLCONF = 'beerfinder.urls'
 
