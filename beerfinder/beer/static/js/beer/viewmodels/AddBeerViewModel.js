@@ -69,7 +69,7 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
                 return true;
             }
            
-            requestData.brewery_name = self.breweryName();
+            requestData.name = self.breweryName();
             
             $.ajax({
                 url: '/api/brewery/',
@@ -82,10 +82,9 @@ define(['jquery', 'knockout', 'underscore', 'beer/models/BeerModel', 'beer/model
                 });
                 self.breweryDataListOptions(suggestions);
             });
+            
             return true;
         }, 400);
 
-        this.getBrewerySuggestions = function () {
-        };
     };
 });

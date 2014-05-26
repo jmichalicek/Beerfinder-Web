@@ -31,7 +31,7 @@
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <form data-bind="submit: submitSearchHandler">
-        <input placeholder="Find a beer..." id="id_beer_name" type="text" list="beer_options" autocomplete="off" data-bind="value: searchTerm, valueUpdate: 'afterkeydown', event: { keypress: getBeerSuggestions}"></input><button type="submit" class="btn">Search</button>
+        <input placeholder="Find a beer..." id="id_beer_name" type="text" list="beer_options" autocomplete="off" data-bind="value: searchTerm, valueUpdate: 'afterkeydown', event: { keypress: function () {getBeerSuggestions(); return true}}"></input><button type="submit" class="btn">Search</button>
           <datalist id="beer_options" data-bind="foreach: beerDataListOptions">
             <option data-bind="text: name"></option>
           </datalist>

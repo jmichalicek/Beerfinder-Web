@@ -131,7 +131,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
             }).done(function (data) {
                 var suggestions = [];
                 ko.utils.arrayForEach(data.results, function(beer) {
-                    suggestions.push(beer);
+                    suggestions.push(new BeerModel(beer));
                 });
                 self.beerDataListOptions(suggestions);
             });

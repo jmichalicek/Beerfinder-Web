@@ -9,5 +9,6 @@ router.register(r'beer', api.BeerViewSet)
 urlpatterns = patterns('api',
                        url(r'^serving_types/$', api.ServingTypeAPIView.as_view()),
                        url(r'^beer_styles/$', api.BeerStyleAPIView.as_view()),
+                       url(r'^brewery/$', api.BreweryAPIView.as_view()),
                        url(r'^', include(router.urls)),
                        )

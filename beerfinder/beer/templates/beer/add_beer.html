@@ -18,8 +18,8 @@
           <br>
         </div>
         <div class="form-group">
-          <!-- make this an auto-fill thingy of breweries -->
-          <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: getBrewerySuggestions }"></input>
+          <!-- use the function on keypress, otherwise the first round of typing in the field is ignored for some reason -->
+          <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: function () {getBrewerySuggestions(); return true}}"></input>
           <datalist id="brewery_options" data-bind="foreach: breweryDataListOptions">
             <option data-bind="text: name"></option>
           </datalist>

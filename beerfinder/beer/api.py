@@ -14,9 +14,25 @@ from rest_framework_extensions.key_constructor.bits import (
     QueryParamsKeyBit
 )
 
+from core.paginator import InfinitePaginator, InfinitePage
+from core.cache_keys import DefaultPaginatedListKeyConstructor
+
 from .forms import AddBeerForm
 from .models import Beer, Brewery, ServingType, Style
-from .serializers import BeerSerializer, BrewerySerializer, ServingTypeSerializer, BeerStyleSerializer
+from .serializers import (BeerSerializer, BrewerySerializer, ServingTypeSerializer, BeerStyleSerializer,
+                          PaginatedBrewerySerializer, PaginatedBeerSerializer)
+
+
+
+class BreweryListKeyConstructor(DefaultPaginatedListKeyConstructor):
+    name = QueryParamsKeyBit(
+        ['name'])
+
+
+class BeerListKeyConstructor(DefaultPaginatedListKeyConstructor):
+    name = QueryParamsKeyBit(
+        ['name', 'brewery_name', 'search', 'page_size'])
+
 
 class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
@@ -28,6 +44,7 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     lookup_field = 'slug'
     paginate_by = 25
     paginate_by_param = 'page_size'
+    list_cache_key_func = BeerListKeyConstructor()
 
     def pre_save(self, obj):
         obj.created_by = self.request.user
@@ -90,6 +107,29 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)
+
+
+class BreweryAPIView(generics.ListAPIView):
+    queryset = Brewery.objects.all()
+    serializer_class = BrewerySerializer
+    pagination_serializer_class = PaginatedBrewerySerializer
+    paginator = InfinitePaginator
+    paginate_by = 25
+
+    def get_queryset(self):
+        # implementing search here, but may move to its own endpoint
+        # with django haystack implementing proper full text search
+
+        queryset = super(BreweryAPIView, self).get_queryset()
+        name = self.request.QUERY_PARAMS.get('name', None)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+
+        return queryset
+
+    @cache_response(60 * 15, key_func=BreweryListKeyConstructor())
+    def get(self, request, *args, **kwargs):
+        return super(BreweryAPIView, self).get(request, *args, **kwargs)
 
 
 class ServingTypeAPIView(generics.ListAPIView):
