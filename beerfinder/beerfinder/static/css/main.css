@@ -1,15 +1,28 @@
 
-#page_body a, #page_body a:visited, #page_body a:not(.btn):visited, #page_body a:hover {
+a, a:not(.btn):visited, a:not(.btn):hover {
     text-decoration: none;
     color: inherit;
 }
 
-/* set back to what bootstrap does for nav pills because the above screws it all up */
-#page_body .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+/* fight with bootstrap to make my a stylings not break navbar */
+#top_navbar.navbar-inverse .navbar-header .navbar-brand,
+#top_navbar.navbar-inverse .navbar-header .navbar-brand a
+{
+    color: #999999;
+}
+
+#top_navbar.navbar-inverse .navbar-header .navbar-brand:hover,
+#top_navbar.navbar-inverse .navbar-header .navbar-brand:focus
+{
     color: #FFFFFF;
 }
 
-#page_body a:hover {
+#top_navbar a:hover {
+    opacity: 1;
+}
+/* end bootstrap fighting */
+
+a:not(.btn):hover {
     opacity: .7;
 }
 
