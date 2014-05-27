@@ -179,7 +179,7 @@ BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True}
 TWITTER_API_KEY = os.environ.get('TWITTER_API_KEY')
 TWITTER_API_SECRET = os.environ.get('TWITTER_API_SECRET')
 
-DEFAULT_FROM_EMAIL = 'jmichalicek@gmail.com'
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
 
 IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = 'imagekit.cachefiles.backends.Celery'
 
