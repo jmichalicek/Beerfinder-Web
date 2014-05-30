@@ -37,10 +37,6 @@
     padding: 5px;
   }
 
-  .full-height {
-      height: 100%;
-  }
-
   #id_sighting_comment {
       width: 100%;
   }
@@ -131,9 +127,9 @@
         </div>
         <div class="form-group">
           How was the beer available?<br>
-          <ul class="list-unstyled">
+          <ul class="list-unstyled" id="sighting_serving_type_selection">
             <!-- ko foreach: servingTypes -->
-            <li><label><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes"> <span data-bind="text: name"></span></label></li>
+            <li><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes, attr: {id: 'id_serving_type_' + id()}"><label data-bind="attr: {for: 'id_serving_type_' + id()}">&nbsp;<span data-bind="text: name"></span></label></li>
             <!-- /ko -->
           </ul>
         </div>

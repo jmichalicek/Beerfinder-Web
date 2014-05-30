@@ -53,3 +53,61 @@ a.icon {
     margin-top: 10px;
 }
 /* end sighting detail */
+
+/* add sighting */
+#sighting_serving_type_selection input[type="checkbox"] {
+    display: none;
+}
+
+#sighting_serving_type_selection input[type="checkbox"] + label > span {
+    position: relative;
+}
+
+#sighting_serving_type_selection input[type="checkbox"]:checked + label > span {
+    top: -7px;
+    left: -14px;
+}
+#sighting_serving_type_selection input[type="checkbox"] + label {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    border: 1px solid black;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: black;
+    -webkit-transition: color .5s ease-in-out, background .5s ease-in-out;
+    -moz-transition: color .5s ease-in-out, background .5s ease-in-out;
+    -ms-transition: color .5s ease-in-out, background .5s ease-in-out;
+    -o-transition: color .5s ease-in-out, background .5s ease-in-out;
+    transition: color .5s ease-in-out, background .5s ease-in-out;
+
+}
+
+#sighting_serving_type_selection input[type="checkbox"]:checked + label {
+    background-color: grey;
+    opacity: .25;
+    color: white;
+}
+
+input[type="checkbox"] + label:before {
+    content: "";
+    opacity: 0;
+    -webkit-transition: content .5s ease-in-out, opacity .5s ease-in-out;
+    -moz-transition: content .5s ease-in-out, opacity .5s ease-in-out;
+    -ms-transition: content .5s ease-in-out, opacity .5s ease-in-out;
+    -o-transition: content .5s ease-in-out, opacity .5s ease-in-out;
+    transition: content .5s ease-in-out, opacity .5s ease-in-out;
+
+}
+#sighting_serving_type_selection input[type="checkbox"]:checked + label:before {
+    content: "\2714";
+    font-size: 36px;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    left: -5px;
+    opacity: 1;
+    color: white;
+}
+/* end add sighting */
