@@ -7,24 +7,26 @@
       <a href="#" data-bind="attr: {href: sighting().beer().viewUrl}"><h1 data-bind="text: sighting().beer().name"></h1></a>
       <h2><small data-bind="text: sighting().beer().brewery().name"></small></h2>
       <span data-bind="text: sighting().date_sighted()"></span><br>
-      Sighted by <span data-bind="text: sighting().sighted_by()"></span><br>
-      <div data-bind="if: sighting().primaryImage()">
-        <img id="sighting_image" data-bind="attr:{src: imageUrl }" width="375" />
-      </div>
+      <small>Sighted by <span data-bind="text: sighting().sighted_by()"></span></small>
     </div>
-  </div><br>
+  </div>
+<br>
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      Location:<br>
-      <span data-bind="text: sighting().venue().name"></span><br>
-      <span data-bind="text: sighting().venue().street_address"></span><br>
-      <span data-bind="text: sighting().venue().city"></span>, <span data-bind="text: sighting().venue().state"></span><br>
-      <span data-bind="text: sighting().venue().postal_code"></span>
-      <br><br>
+      <address>
+        <strong><span data-bind="text: sighting().venue().name"></span></strong><br>
+        <span data-bind="text: sighting().venue().street_address"></span><br>
+        <span data-bind="text: sighting().venue().city"></span>, <span data-bind="text: sighting().venue().state"></span><br>
+        <span data-bind="text: sighting().venue().postal_code"></span>
+      </address>
       This beer is available as:<br>
       <!-- ko foreach: sighting().servingTypes -->
       <span class="label label-success" data-bind="text: $data.name"></span>
       <!-- /ko -->
+
+      <div data-bind="if: sighting().primaryImage()" class="media">
+        <img id="sighting_image" data-bind="attr:{src: imageUrl }" width="375" class="img-thumbnail img-responsive media-object" />
+      </div>
     </div>
   </div>
 </div><br>

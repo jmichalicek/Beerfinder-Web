@@ -16,9 +16,16 @@
   }
   .sighting_item {
     display: block;
-    position: relative;
-    height: 75px;
+    height: 100px;
+    border-bottom: 1px solid #C0C0C0;
   }
+
+  .sighting_list_image {
+    width: 85px;
+    height: 85px;
+    margin-right: 5px;
+  }
+
 </style>
 {% endblock additional_css %}
 
@@ -26,26 +33,20 @@
 <div class="container full-height">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden">
-      <ul id="sighting_list" data-bind="foreach: sightings.infinitescroll.displayItems" class="list-unstyled">
-        <li class="sighting_item">
+      <ul id="sighting_list" data-bind="foreach: sightings.infinitescroll.displayItems" class="media-list">
+        <li class="sighting_item media" style="display: none" data-bind="visible: true">
           <!-- ko if: $index() >= $root.sightings.infinitescroll.firstHiddenIndex() -->
-          <div style="display: none" data-bind="visible: true">
-            <a style="display: block" data-bind="attr: {href: webUrl }">
-              <div class="media">
-                <div class="pull-right" data-bind="if: images()[0]">
-                  <img data-bind="attr: {src: images()[0].thumbnailUrl}" height="75" class="media-object"></img>
-                </div>
-
-                <div class="media-body">
-                  <span data-bind="text: beer().name" class="media-heading"></span><br>
-                  <small><span data-bind="text: beer().brewery().name"></span></small>
-                  Seen at at <span data-bind="text: venue().name"></span><br>
-                  <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span><br>
-                </div>
-                <hr>
-              </div>
-            </a>
-          </div>
+          <a style="display: block" data-bind="attr: {href: webUrl }">
+            <div class="pull-right sighting_list_image" data-bind="if: images()[0]">
+              <img data-bind="attr: {src: images()[0].thumbnailUrl}" class="media-object img-responsive"></img>
+            </div>
+            <div class="media-body">
+              <span data-bind="text: beer().name" class="media-heading"></span><br>
+              <small><span data-bind="text: beer().brewery().name"></span></small>
+              Seen at at <span data-bind="text: venue().name"></span><br>
+                <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span></small><br>
+            </div>
+          </a>
           <!-- /ko -->
         </li>
       </ul>
