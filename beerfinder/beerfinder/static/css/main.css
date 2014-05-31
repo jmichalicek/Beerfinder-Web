@@ -81,7 +81,7 @@ a.icon {
     -ms-transition: color .5s ease-in-out, background .5s ease-in-out;
     -o-transition: color .5s ease-in-out, background .5s ease-in-out;
     transition: color .5s ease-in-out, background .5s ease-in-out;
-
+    cursor: pointer;
 }
 
 #sighting_serving_type_selection input[type="checkbox"]:checked + label {

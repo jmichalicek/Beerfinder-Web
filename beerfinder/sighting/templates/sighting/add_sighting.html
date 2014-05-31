@@ -46,8 +46,11 @@
 <div id="search_box_container" class="container">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <form data-bind="submit: submitSearchHandler">
-        <input type="text" placeholder="Place to search for..." data-bind="value: searchTerm"><button type="submit" class="btn">Search</button>
+      <form data-bind="submit: submitSearchHandler" class="form-inline">
+        <div class="form-group">
+          <input type="text" placeholder="Place to search for..." data-bind="value: searchTerm" class="form-control">
+        </div>
+        <button type="submit" class="btn">Search</button>
       </form>
     </div>
   </div>
@@ -60,10 +63,12 @@
           {# magic to not draw the items which are not visible which makes this far more scalable #}
           <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() - 25 -->
           <div class="venue_item_container" style="display: none" data-bind="visible: true">
-            <span data-bind="text: name"></span><br>
-            <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
-            <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-            <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+            <address>
+              <strong><span data-bind="text: name"></span></strong><br>
+              <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
+              <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+              <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+            </address>
             <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
           </div>
           <!-- /ko -->
@@ -79,11 +84,13 @@
       <ul id="search_list" data-bind="foreach: searchVenues" class="list-unstyled">
         <li class="venue_item">
           <div class="venue_item_container">
-            <span data-bind="text: name"></span><br>
-            <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
-            <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-            <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
-            <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
+            <address>
+              <strong><span data-bind="text: name"></span></strong><br>
+              <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
+              <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+              <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+              </address>
+              <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
           </div>
         </li>
       </ul>
@@ -91,14 +98,16 @@
   </div>
 </div>
 <div id="selected_venue" class="container" data-bind="visible: selectedVenue" style="display: none">
- <div class="row">
+  <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3" data-bind="if: selectedVenue">
-      <span><b>Selected Location:</b></span><br>
-      <span data-bind="text: selectedVenue().name"></span><br>
-      <span data-bind="text: selectedVenue().location().address"></span><br>
-      <span data-bind="text: selectedVenue().location().city"></span>, <span data-bind="text: selectedVenue().location().state"></span><br>
-      <span data-bind="text: selectedVenue().location().postalCode"></span><br>
-      <a href="#" data-bind="click: clearSelectedVenue"><small>Select a different location</small></a>
+      <div class="form-group">
+      <address>
+        <strong><span data-bind="text: selectedVenue().name"></span></strong><br>
+        <span data-bind="text: selectedVenue().location().address"></span><br>
+        <span data-bind="text: selectedVenue().location().city"></span>, <span data-bind="text: selectedVenue().location().state"></span><br>
+        <span data-bind="text: selectedVenue().location().postalCode"></span><br>
+      </address>
+      <a href="#" class="btn btn-default" data-bind="click: clearSelectedVenue"><small>Change Location</small></a></div>
     </div>
   </div>
 </div>
@@ -106,22 +115,22 @@
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <div class="form-group">
-        <label for="id_sighting_comment">Comment:</label>
-        <textarea id="id_sighting_comment" data-bind="value: comment"></textarea>
+        <label for="id_sighting_comment" class="control-label">Comment:</label>
+        <textarea id="id_sighting_comment" data-bind="value: comment" class="form-control"></textarea>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <form role="form">
+      <form role="form" class="form">
         <div class="form-group">
-          <label for="sighting_image">Attach an image: <button type="button" data-bind="click: clearImage, visible: image" data-target="sighting_image" class="btn">Clear Image</button></label><br>
+          <label for="sighting_image" class="control-label">Attach an image: <button type="button" data-bind="click: clearImage, visible: image" data-target="sighting_image" class="btn">Clear Image</button></label><br>
           <ul class="list-inline">
             <li>
-                <img height="150" src="" data-bind="attr: {src: image}"></img>
+              <img height="150" src="" data-bind="attr: {src: image}"></img>
             </li>
             <li>
-              <input id="sighting_image"  type="file" name="image" autocomplete="off" data-bind="event {change: showImageThumbnail}" />
+              <input id="sighting_image"  type="file" name="image" autocomplete="off" data-bind="event {change: showImageThumbnail}">
             </li>
           </ul>
         </div>
@@ -129,11 +138,11 @@
           How was the beer available?<br>
           <ul class="list-unstyled" id="sighting_serving_type_selection">
             <!-- ko foreach: servingTypes -->
-            <li><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes, attr: {id: 'id_serving_type_' + id()}"><label data-bind="attr: {for: 'id_serving_type_' + id()}">&nbsp;<span data-bind="text: name"></span></label></li>
+            <li><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes, attr: {id: 'id_serving_type_' + id()}" class="form-control"><label data-bind="attr: {for: 'id_serving_type_' + id()}" class="control-label">&nbsp;<span data-bind="text: name"></span></label></li>
             <!-- /ko -->
           </ul>
         </div>
-        <button class="btn btn-primary" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
+        <button class="btn btn-primary btn-lg" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
       {% csrf_token %}
       </form>
     </div>
