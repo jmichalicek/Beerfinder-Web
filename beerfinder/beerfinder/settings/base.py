@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'djcelery',
     'django_extensions',
+    'widget_tweaks',
     'south',
 
     # my apps

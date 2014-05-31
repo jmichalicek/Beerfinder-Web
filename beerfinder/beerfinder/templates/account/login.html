@@ -1,20 +1,27 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% block body %}
 <div class="container">
   <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+    <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
       <form class="form-horizontal" role="form" method="post" action="">
         {% csrf_token %}
         <div class="form-group">
           <label for="{{ form.login.auto_id }}">{{ form.login.label }}</label><br />
-          {{ form.login }}
+          {% render_field form.login class+="form-control input-lg" %}
+
         </div>
         <div class="form-group">
           <label for="{{ form.password.auto_id }}">{{ form.password.label }}</label><br />
-          {{ form.password }}
+          {% render_field form.password class+="form-control input-lg" %}
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-default">Login</button><br>
+          <label>{% render_field form.remember  %} Keep me logged in</label><br>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default btn-lg">Login</button>
+        </div>
+        <div class="form-group">
           <a href="{% url 'account_reset_password' %}">Forgot your password?</a><br>
           Don't have an account? <a href="{% url 'account_signup' %}">Create one!</a>
         </div>
