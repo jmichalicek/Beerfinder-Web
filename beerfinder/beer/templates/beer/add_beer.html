@@ -12,14 +12,15 @@
       <!-- ko foreach: formErrors -->
       <div class="alert alert-danger"><span data-bind="text: $data"></span></div>
       <!-- /ko -->
-      <form data-bind="submit: addBeer">
+      <form data-bind="submit: addBeer" class="form">
         <div class="form-group">
-          <label for="id_beer_name">Beer Name:</label> <input id="id_beer_name" type="text" autocomplete="off" data-bind="value: beerName"></input>
+          <label for="id_beer_name" class="control-label">Beer Name:</label> <input id="id_beer_name" type="text" autocomplete="off" data-bind="value: beerName" class="form-control input-lg"></input>
           <br>
         </div>
         <div class="form-group">
           <!-- use the function on keypress, otherwise the first round of typing in the field is ignored for some reason -->
-          <label for="id_brewery_name">Brewery:</label> <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: function () {getBrewerySuggestions(); return true}}"></input>
+          <label for="id_brewery_name" class="control-label">Brewery:</label>
+          <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: function () {getBrewerySuggestions(); return true}}" class="form-control input-lg"></input>
           <datalist id="brewery_options" data-bind="foreach: breweryDataListOptions">
             <option data-bind="text: name"></option>
           </datalist>
@@ -40,7 +41,7 @@
             </div>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary btn-lg">Save</button>
       </form>
     </div>
   </div>
