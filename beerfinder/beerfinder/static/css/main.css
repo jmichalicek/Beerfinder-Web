@@ -136,7 +136,7 @@ input[type="checkbox"] + label:before {
     border-bottom: 1px solid #C0C0C0;
 }
 
-#sighting_list .sighting_list_image {
+#sighting_list .sighting-list-image {
     width: 85px;
     height: 85px;
     margin-right: 5px;

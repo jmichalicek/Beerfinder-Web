@@ -9,7 +9,7 @@
         <li class="sighting_item media" style="display: none" data-bind="visible: true">
           <!-- ko if: $index() >= $root.sightings.infinitescroll.firstHiddenIndex() -->
           <a style="display: block" data-bind="attr: {href: webUrl }">
-            <div class="pull-right sighting_list_image" data-bind="if: images()[0]">
+            <div class="pull-right sighting-list-image" data-bind="if: images()[0]">
               <img data-bind="attr: {src: images()[0].thumbnailUrl}" class="media-object img-responsive"></img>
             </div>
             <div class="media-body">
