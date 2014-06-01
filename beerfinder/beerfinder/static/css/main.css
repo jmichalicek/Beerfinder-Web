@@ -167,3 +167,16 @@ input[type="checkbox"] + label:before {
     margin-bottom: 15px;
 }
 /* end beer detail */
+
+@media(max-width:767px){
+    .btn.scaleup {
+        border-radius: 6px;
+        font-size: 18px;
+        line-height: 1.33;
+        padding: 10px 16px;
+    }
+}
+
+@media(min-width:768px){}
+@media(min-width:992px){}
+@media(min-width:1200px){}
