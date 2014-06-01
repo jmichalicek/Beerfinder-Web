@@ -1,5 +1,5 @@
-define(['jquery', 'knockout', 'beer/models/BeerModel', 'sighting/models/SightingImageModel'],
-       function($, ko, BeerModel, SightingImageModel) {
+define(['jquery', 'knockout', 'moment', 'beer/models/BeerModel', 'sighting/models/SightingImageModel'],
+       function($, ko, moment, BeerModel, SightingImageModel) {
     return function (data) {
         "use strict";
         var self = this;
@@ -7,7 +7,7 @@ define(['jquery', 'knockout', 'beer/models/BeerModel', 'sighting/models/Sighting
 
         this.id = ko.observable(data.id);
         this.beer = ko.observable(new BeerModel(data.beer));
-        this.date_sighted = ko.observable(data.date_sighted);
+        this.date_sighted = ko.observable(moment(data.date_sighted));
         this.venue = ko.observable(data.venue);
         this.sighted_by = ko.observable(data.sighted_by);
         this.servingTypes = ko.observableArray(data.serving_types || []);

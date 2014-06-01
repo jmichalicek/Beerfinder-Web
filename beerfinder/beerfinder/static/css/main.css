@@ -161,3 +161,9 @@ input[type="checkbox"] + label:before {
 }
 
 /* end beer list */
+
+/* beer detail */
+#beer-detail-buttons {
+    margin-bottom: 15px;
+}
+/* end beer detail */

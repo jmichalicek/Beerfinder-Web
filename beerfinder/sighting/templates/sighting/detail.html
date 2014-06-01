@@ -6,8 +6,8 @@
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <a href="#" data-bind="attr: {href: sighting().beer().viewUrl}"><h1 data-bind="text: sighting().beer().name"></h1></a>
       <h2><small data-bind="text: sighting().beer().brewery().name"></small></h2>
-      <span data-bind="text: sighting().date_sighted()"></span><br>
-      <small>Sighted by <span data-bind="text: sighting().sighted_by()"></span></small>
+      <span data-bind="text: sighting().date_sighted().format('MMM D, YYYY [at] h:mma')"></span><br>
+      <small>Sighted by <span data-bind="text: sighting().sighted_by"></span></small>
     </div>
   </div>
 <br>

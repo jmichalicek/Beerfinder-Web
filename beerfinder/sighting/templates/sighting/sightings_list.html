@@ -16,7 +16,7 @@
               <span data-bind="text: beer().name" class="media-heading"></span><br>
               <small><span data-bind="text: beer().brewery().name"></span></small>
               Seen at at <span data-bind="text: venue().name"></span><br>
-              <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted"></span></small><br>
+              <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted().format('MMM D, YYYY [at] h:mma')"></span></small><br>
             </div>
           </a>
           <!-- /ko -->
