@@ -37,7 +37,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
         $('#beer_list').scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
-            self.beers.infinitescroll.scrollY($(beer_list).scrollTop());
+            self.beers.infinitescroll.scrollY($('#beer_list').scrollTop());
 
             // add more items if scroll reaches the last 15 items
             if (self.beers.peek().length - self.beers.infinitescroll.lastVisibleIndex.peek() <= 50) {
@@ -51,15 +51,17 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
             var itemsRef = $('#beer_list'),
-            itemRef = $('.beer_item').first(),
+            itemRef = $('#beer_list .beer-item').first(),
             itemsWidth = itemsRef.width(),
             itemsHeight = itemsRef.height(),
             itemWidth = itemRef.outerWidth(),
-            itemHeight = itemRef.outerHeight();
+            itemHeight = itemRef.outerHeight(true);
 
             self.beers.infinitescroll.viewportWidth(itemsWidth);
             self.beers.infinitescroll.viewportHeight(itemsHeight);
-            self.beers.infinitescroll.itemWidth(itemWidth);
+            // use itemsWidth instead of itemWidth because jQuery is being weird
+            // and picking up the itemWidth wrong on occasion.
+            self.beers.infinitescroll.itemWidth(itemsWidth);
             self.beers.infinitescroll.itemHeight(itemHeight);
 
         }

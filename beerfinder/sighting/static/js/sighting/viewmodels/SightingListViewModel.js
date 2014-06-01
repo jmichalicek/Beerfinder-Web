@@ -37,15 +37,19 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
             var itemsRef = $('#sighting_list'),
-            itemRef = $('.sighting_item').first(),
+            itemRef = $('#sighting_list .sighting_item').first(),
             itemsWidth = itemsRef.width(),
             itemsHeight = itemsRef.height(),
-            itemWidth = itemRef.outerWidth(),
-            itemHeight = itemRef.outerHeight();
+            itemWidth = itemRef.outerWidth(true),
+            itemHeight = itemRef.outerHeight(true);
             
             self.sightings.infinitescroll.viewportWidth(itemsWidth);
             self.sightings.infinitescroll.viewportHeight(itemsHeight);
-            self.sightings.infinitescroll.itemWidth(itemWidth);
+            // normally infinitescroll.itemWidth would use itemWidth from above,
+            // but jQuery is being weird and picking it up as the wrong width.
+            // Since this definitely should be only 1 column, just use the container width
+            // as a kludge until I can figure out wtf is going wrong.
+            self.sightings.infinitescroll.itemWidth(itemsWidth);
             self.sightings.infinitescroll.itemHeight(itemHeight);
         }
         updateViewportDimensions();
