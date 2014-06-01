@@ -15,14 +15,10 @@
       <!-- /ko -->
     </div>
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <ul class="list-inline btn-group">
-        <li>
-          <a data-bind="attr: {href: beer().addSightingUrl }" class="icon"><i class="fa fa-camera"></i></a>
-        </li>
-        <li>
-          <a href="#" data-bind="click: addToWatchlist" class="icon" title="Add To Watchlist"><i class="fa fa-eye"></i></a>
-        </li>
-      </ul>
+      <div class="btn-group btn-group btn-group-justified">
+          <div class="btn btn-default"><a data-bind="attr: {href: beer().addSightingUrl }" class="icon"><i class="fa fa-camera"></i><br><small>Add Sighting</small></a></div>
+          <div class="btn btn-default"><a href="#" data-bind="click: addToWatchlist" class="icon" title="Add To Watchlist"><i class="fa fa-eye"></i><br><small>Add To Watchlist</small></a></div>
+      </div>
     </div>
   </div>
   <div class="row">
