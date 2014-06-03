@@ -100,7 +100,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         finally:
             transaction.set_autocommit(True)
 
-        serialized = SightingSerializer(sighting)
+        serialized = self.get_serializer(sighting)
         return Response(serialized.data, status=201)
 
     def pre_save(self, obj):
@@ -152,10 +152,10 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         Mark a sighting as still available
         """
         sighting = self.get_object()
-        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': True})
+        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': True}, context={'request': request})
         if confirmation_serializer.is_valid():
             confirmation = confirmation_serializer.save()
-            return Response(SightingSerializer(sighting).data, status=201)
+            return Response(self.get_serializer(sighting).data, status=201)
         else:
             print confirmation_serializer.errors
             # should return a more generic error here
@@ -171,7 +171,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': False}, context=serializer_context)
         if confirmation_serializer.is_valid():
             confirmation = confirmation_serializer.save()
-            return Response(SightingSerializer(sighting).data, status=201)
+            return Response(self.get_serializer(sighting).data, status=201)
         else:
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
