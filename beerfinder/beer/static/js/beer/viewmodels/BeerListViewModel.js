@@ -73,16 +73,16 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
         this.getBeerList = function() {
             self.requestInProgress = true;
             var url = '/api/beer/';
-            if(self.nextPage) {
-                url = self.nextPage;
-            }
-
             var requestParams = {};
             // this may end up being handled in a separate function, separate observableArray,
             // and eventually even separate endpoint.
             // This was here based on misreading a response.  I think I won't need it.
             if(self.mode() === Modes.SEARCH) {
-                requestParams = {search: self.searchTerm()};
+                requestParams['search'] = self.searchTerm();
+            }
+
+            if(self.nextPage) {
+                requestParams['page'] = self.nextPage;
             }
 
             $.ajax({url: url,

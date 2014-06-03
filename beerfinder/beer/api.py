@@ -40,6 +40,8 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     queryset = Beer.objects.all()
     serializer_class = BeerSerializer
+    pagination_serializer_class = PaginatedBeerSerializer
+    paginator = InfinitePaginator
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'slug'
     paginate_by = 25
@@ -146,7 +148,7 @@ class ServingTypeAPIView(generics.ListAPIView):
 class BeerStyleAPIView(generics.ListAPIView):
     queryset = Style.objects.all()
     serializer_class = BeerStyleSerializer
-    paginate_by = 25
+    #paginate_by = 25
 
     @cache_response(60 * 15)
     def get(self, request, *args, **kwargs):
