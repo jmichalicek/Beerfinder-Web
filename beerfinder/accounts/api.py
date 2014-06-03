@@ -13,6 +13,8 @@ class UserProfileApiView(APIView):
     """
     API Views for a user to view and edit their own profile.
     """
+    permission_classes = (permissions.IsAuthenticated, )
+
     def get(self, request):
         """
         Return the profile for the current user
@@ -37,6 +39,7 @@ class ChangePasswordApiView(APIView):
     """
     Allow a user to change their password
     """
+    permission_classes = (permissions.IsAuthenticated, )
 
     def post(self, request):
 
