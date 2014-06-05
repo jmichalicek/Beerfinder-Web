@@ -1,5 +1,5 @@
 {% extends "account/base.html" %}
-
+{% load widget_tweaks %}
 {% load i18n %}
 
 {% block head_title %}{% trans "Signup" %}{% endblock %}
@@ -7,18 +7,64 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+    <div class="col-xs-10 col-xs-offset-1 col-sm-8 col-sm-offset-2 col-lg-4 col-lg-offset-4">
       <h1>{% trans "Sign Up" %}</h1>
     
-      <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+      <p>{% blocktrans %}Already have an account? Then please <a class="underline" href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
     
-      <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+      <form class="signup form" role="form" id="signup_form" method="post" action="{% url 'account_signup' %}">
         {% csrf_token %}
-        {{ form.as_p }}
-        {% if redirect_field_value %}
-        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-        {% endif %}
-      <button type="submit" class="btn btn-primary">{% trans "Sign Up" %} &raquo;</button>
+        <div class="form-group">
+          <label class="control-label{% if form.email.errors.0 %} has-error{% endif %}">
+            {{ form.email.label }}
+            {% render_field form.email class+="form-control input-lg" %}
+            {% if form.email.errors %}
+            <ul class="list-unstyled">
+              <li>{{ form.email.errors.0 }}</li>
+            </ul>
+            {% endif %}
+          </label>
+        </div>
+        <div class="form-group {% if form.username.errors.0 %}has-error{% endif %}">
+          <label class="control-label">
+            {{ form.username.label }}&nbsp;<small>(Optionally displayed throughout the site)</small>
+            {% render_field form.username class+="form-control input-lg" %}
+            {% if form.username.errors %}
+            <ul style="list-unstyled">
+              <li>
+                {{ form.username.errors.0 }}
+              </li>
+            </ul>
+            {% endif %}
+          </label>
+        </div>
+         <div class="form-group{% if form.password1.errors.0 %} has-error{% endif %}">
+           <label class="control-label">{{ form.password1.label }}{% render_field form.password1 class+="form-control input-lg" %}
+             {% if form.password1.errors %}
+             <ul style="list-unstyled">
+               <li>
+                 {{ form.password1.errors.0 }}
+               </li>
+             </ul>
+             {% endif %}
+           </label>
+         </div>
+         <div class="form-group{% if form.password2.errors.0 %} has-error{% endif %}">
+           <label class="control-label">
+             {{ form.password2.label }}{% render_field form.password2 class+="form-control input-lg" %}
+             {% if form.password2.errors %}
+             <ul style="list-unstyled">
+              <li>
+                {{ form.password2.errors.0 }}
+              </li>
+            </ul>
+             {% endif %}
+           </label>
+         </div>
+         {% if redirect_field_value %}
+         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+         {% endif %}
+         <button type="submit" class="btn btn-primary btn-lg">{% trans "Sign Up" %}</button>
       </form>
     </div>
   </div>

@@ -58,6 +58,11 @@ a.icon {
     margin-bottom: 15px;
 }
 
+.underline,
+a.underline, a:hover.underline {
+    text-decoration: underline;
+}
+
 /* sighting detail */
 #comments_list li {
     margin-top: 10px;
