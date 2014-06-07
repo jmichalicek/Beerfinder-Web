@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 import factory
 from factory.django import DjangoModelFactory
@@ -7,7 +9,7 @@ import simplejson as json
 
 from accounts.tests import UserFactory
 
-from .models import Beer, Brewery
+from .models import Beer, Brewery, ServingType, Style
 
 
 class BreweryFactory(DjangoModelFactory):
@@ -15,12 +17,26 @@ class BreweryFactory(DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "Brewery %03d" % n)
 
+
 class BeerFactory(DjangoModelFactory):
     FACTORY_FOR = Beer
 
     name = factory.Sequence(lambda n: "Beer %03d" % n)
     brewery = factory.SubFactory(BreweryFactory)
     created_by = factory.SubFactory(UserFactory)
+
+
+class ServingTypeFactory(DjangoModelFactory):
+    FACTORY_FOR = ServingType
+
+    name = factory.Sequence(lambda n: "Serving Type %03d" % n)
+    description = factory.Sequence(lambda n: "Description of ServingType %03d" % n)
+
+
+class StyleFactory(DjangoModelFactory):
+    FACTORY_FOR = Style
+
+    name = factory.Sequence(lambda n: 'Style %03d' % n)
 
 
 class BeerTestCase(TestCase):
@@ -155,3 +171,25 @@ class BeerViewSetTestCase(TestCase):
         # returns a 403 rather than 401 when not logged in due to tastypie internals
         # probably because anonymouse user is "authenticated" as being the anonymous user?
         self.assertEqual(response.status_code, 403)
+
+
+class ServingTypeAPIViewTestCase(APITestCase):
+
+    def test_list_serving_types(self):
+        for i in xrange(0, 25):
+            ServingTypeFactory.create()
+
+        response = self.client.get('/api/serving_types/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(25, len(response.data['results']))
+
+
+class StylePIViewTestCase(APITestCase):
+
+    def test_list_styles(self):
+        for i in xrange(0, 25):
+            StyleFactory.create()
+
+        response = self.client.get('/api/beer_styles/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(25, len(response.data['results']))

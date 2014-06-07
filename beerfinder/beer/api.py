@@ -49,6 +49,9 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     list_cache_key_func = BeerListKeyConstructor()
 
     def pre_save(self, obj):
+        """
+        Enforce beer's are tied to the user who created them
+        """
         obj.created_by = self.request.user
 
     def get_queryset(self):
@@ -112,6 +115,9 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
 
 
 class BreweryAPIView(generics.ListAPIView):
+    """
+    APIView to list :class:`beer.model.Brewery`
+    """
     queryset = Brewery.objects.all()
     serializer_class = BrewerySerializer
     pagination_serializer_class = PaginatedBrewerySerializer
@@ -135,20 +141,36 @@ class BreweryAPIView(generics.ListAPIView):
 
 
 class ServingTypeAPIView(generics.ListAPIView):
+    """
+    View to list :class:`beer.models.ServingType`
+    """
+
     queryset = ServingType.objects.all()
     serializer_class = ServingTypeSerializer
     lookup_field = 'slug'
-    paginate_by = 25
 
+    # fudging the pagination here as well because it's not really paginated
+    paginate_by = 1000
+
+    # again, not really paginated, so the caching does not take the page into account
     @cache_response(60 * 15)
     def get(self, request, *args, **kwargs):
         return super(ServingTypeAPIView, self).get(request, *args, **kwargs)
 
 
 class BeerStyleAPIView(generics.ListAPIView):
+    """
+    View to list :class:`beer.models.Style`
+    """
+
     queryset = Style.objects.all()
     serializer_class = BeerStyleSerializer
-    #paginate_by = 25
+
+    # Don't truly want paginated, but non-paginated list returns straight list
+    # while paginated returns {'results': [obj1, obj2,...]} so for consistency
+    # this is paginated, but to a number that should not be hit for some time,
+    # possibly not ever
+    paginate_by = 1000
 
     @cache_response(60 * 15)
     def get(self, request, *args, **kwargs):
