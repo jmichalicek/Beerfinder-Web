@@ -184,7 +184,7 @@ class ServingTypeAPIViewTestCase(APITestCase):
         self.assertEqual(25, len(response.data['results']))
 
 
-class StylePIViewTestCase(APITestCase):
+class StyleAPIViewTestCase(APITestCase):
 
     def test_list_styles(self):
         for i in xrange(0, 25):
