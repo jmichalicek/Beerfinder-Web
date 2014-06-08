@@ -29,6 +29,7 @@ a:not(.btn):hover {
 body {
       padding-top: 60px;
       position: relative;
+      padin-bottom: 25px;
       }
 
 html, body {
@@ -40,6 +41,7 @@ html, body {
 #page_body {
     height: 100%;
 }
+
 a.icon {
    color: inherit;
 }
@@ -150,6 +152,15 @@ input[type="checkbox"] + label:before {
 /* end sighting list */
 
 /* beer list */
+#beer_list_container {
+    /* allows for infinite scroll without page scroll with fixed height headers/footers */
+    position: absolute;
+    top: 100px;
+    bottom: 34px;
+    left: 0px;
+    right: 0px
+}
+
 #beer_list {
     min-height: 500px;
     overflow-y: auto;
@@ -179,6 +190,11 @@ input[type="checkbox"] + label:before {
         font-size: 18px;
         line-height: 1.33;
         padding: 10px 16px;
+    }
+
+    #beer_list_container {
+        /* because the search button drops down to a new line, so everything else must drop as well */
+        top: 145px;
     }
 }
 

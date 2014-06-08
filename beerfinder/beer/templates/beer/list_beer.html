@@ -19,7 +19,8 @@
     </div>
   </div>
 </div>
-<div class="container full-height" id="beer_list_container">
+<div id="beer_list_container">
+<div class="container full-height">
   <div class="row full-height">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden;">
       <!-- ko if: mode() == Modes.SEARCH && beers.infinitescroll.displayItems().length == 0 -->
@@ -48,7 +49,7 @@
 <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
   <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
 </div>
-
+</div>
 {% endblock body %}
 {% block javascript %}
 <script type="text/javascript">
