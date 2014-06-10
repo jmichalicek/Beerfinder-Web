@@ -117,6 +117,27 @@ class SendWatchlistEmailTest(TestCase):
         for m in mail.outbox:
             self.assertEqual(m.to, [user_2.email])
 
+    def test_no_self_notification(self):
+        """
+        Test that emails are not sent to the person who created the sighting.
+        """
+        user_1 = UserFactory.create()
+        user_2 = UserFactory.create()
+        user_3 = UserFactory.create()
+
+        beer_1 = BeerFactory.create()
+
+        user_1_watched_1 = WatchedBeerFactory.create(user=user_1, beer=beer_1)
+        user_2_watched_1 = WatchedBeerFactory.create(user=user_2, beer=beer_1)
+
+        beer_1_sighting = SightingFactory.create(user=user_1, beer=beer_1, venue=self.venue)
+
+        mail.outbox = []
+        send_watchlist_email.delay(beer_1_sighting.id)
+        self.assertEqual(len(mail.outbox), 1)
+        for m in mail.outbox:
+            self.assertEqual(m.to, [user_2.email])
+
 
 @override_settings(CELERY_ALWAYS_EAGER=True)
 class WatchlistTest(TestCase):

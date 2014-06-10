@@ -32,7 +32,7 @@ def send_watchlist_email(sighting_id):
         # 60 seconds should be WAY more than enough.  Really we probably need a fraction of a second.
         raise send_watchlist_email.retry(countdown=60, exc=exc)
 
-    emails = WatchedBeer.objects.select_related('user').filter(beer_id=sighting.beer_id, user__send_watchlist_email=True).values_list('user__email', flat=True)
+    emails = WatchedBeer.objects.select_related('user').filter(beer_id=sighting.beer_id, user__send_watchlist_email=True).exclude(user_id=sighting.user_id).values_list('user__email', flat=True)
 
     context = Context({'sighting': sighting,
                        'site': current_site})
