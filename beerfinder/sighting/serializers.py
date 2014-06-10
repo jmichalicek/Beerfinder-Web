@@ -20,6 +20,9 @@ class SightingImageSerializer(serializers.ModelSerializer):
 
 
 class SightingSerializer(serializers.HyperlinkedModelSerializer):
+    """
+    Serialize Sighting objects
+    """
     sighted_by = serializers.Field()
     beer = BeerSerializer()
     venue = VenueSerializer()
@@ -72,3 +75,11 @@ class PaginatedSightingCommentSerializer(InfinitePaginationSerializer):
 class PaginatedDistanceSightingSerializer(InfinitePaginationSerializer):
     class Meta:
         object_serializer_class = DistanceSightingSerializer
+
+
+class PaginatedSightingSerializer(InfinitePaginationSerializer):
+    """
+    Paginated version of SightingSerializer set up for Infinite Pagination
+    """
+    class Meta:
+        object_serializer_class = SightingSerializer

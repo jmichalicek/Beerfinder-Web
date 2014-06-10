@@ -61,12 +61,14 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
             self.requestInProgress = true;
             var url = '/api/sightings/';
 
+            var requestParams = {}
             if(self.nextPage) {
-                url = self.nextPage;
+                requestParams['page'] = self.nextPage;
             }
 
             $.ajax({url: url,
                     type: 'GET',
+                    data: requestParams,
                    }).done(function (data) {
                        var currentList = self.sightings();
                        ko.utils.arrayForEach(data.results, function(item) {

@@ -31,12 +31,14 @@ from .models import Sighting, SightingConfirmation
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
-                          SightingImageSerializer)
+                          SightingImageSerializer, PaginatedSightingSerializer)
 
 
 class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
     serializer_class = SightingSerializer
+    pagination_serializer_class = PaginatedSightingSerializer
+    paginator = InfinitePaginator
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     paginate_by = 25
     paginate_by_param = 'page_size'
@@ -121,14 +123,17 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         return queryset
 
     def get_nearby_sightings(self, request, *args, **kwargs):
-        # This implementation using foursquare is not really going to do the trick.
-        # This will need implemented storing latitude and longitude for each location
-        # which has a sighting locally and then figuring out the closest locally.
+        """
+        Return a list of sightings sorted by distance from the point specified.
+        """
         latitude = request.QUERY_PARAMS.get('latitude', None)
         longitude = request.QUERY_PARAMS.get('longitude', None)
 
         #origin = fromstr("Point({0} {1})".format(longitude, latitude))
         origin = Point(float(longitude), float(latitude))
+
+        # Due to how prefetch related behaves, skip it on get_queryset() and then manually do it afterwards.
+        # This will result in prefetching far fewer unnecessary rows of data
         queryset = self.get_queryset(prefetch=False).distance(origin, field_name='venue__point').order_by('distance')
 
         queryset = queryset.prefetch_related('sighting_images', 'serving_types')
