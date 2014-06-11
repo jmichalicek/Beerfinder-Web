@@ -57,6 +57,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
         // end infinite scroll stuff
 
         this.getSightings = function() {
+            var dfd = new $.Deferred();
             self.showLoadingSpinner(true);
             self.requestInProgress = true;
             var url = '/api/sightings/';
@@ -76,10 +77,24 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
                        });
                        self.sightings(currentList);
                        self.nextPage = data.next;
+                       dfd.resolve(data);
+                   }).fail(function (data) {
+                       console.log(data);
+                       dfd.resolve(false);
                    }).always(function () {
                        self.requestInProgress = false;
                        self.showLoadingSpinner(false);
                    });
+            return dfd.promise();
         };
+
+        this.prefillSightingList = function () {
+            self.getSightings().done(function (data) {
+                if($(document).height() <= $(window).height() && data.next) {
+                    self.prefillSightingList();
+                };
+            });
+        };
+        this.prefillSightingList();
     };
 });
