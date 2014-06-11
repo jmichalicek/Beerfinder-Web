@@ -21,13 +21,17 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
             infinitescroll: {}
         });
 
+        this.shouldDoRequestPage = function () {
+            return self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25;
+
+        };
         // detect scroll
         $('#sighting_list').scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
             self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
 
-            if (self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25) {
+            if (self.shouldDoRequestPage()) {
                 if(!self.requestInProgress && self.nextPage) {
                     _.debounce(self.getSightings(), 250);
                 }
@@ -90,7 +94,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
 
         this.prefillSightingList = function () {
             self.getSightings().done(function (data) {
-                if($(document).height() <= $(window).height() && data.next) {
+                if(self.shouldDoRequestPage() && data.next) {
                     self.prefillSightingList();
                 };
             });
