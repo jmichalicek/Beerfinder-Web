@@ -30,6 +30,14 @@ class Beer(models.Model):
     def __unicode__(self):
         return u'{0}'.format(self.name)
 
+    @property
+    def watcher_count(self):
+        """
+        The number of people watching this beer
+        """
+        # keep this simple for now.  It can be calculated and stored later if that becomes necessary
+        return self.watchedbeer_set.all().count()
+
     @staticmethod
     def normalize_for_name(name):
         """

@@ -77,6 +77,13 @@ whitespace characters_wheee---!"""
         self.assertEqual(beer.slug, 'a-brewery-a-beer')
         self.assertEqual(beer.normalized_name, 'A beer')
 
+    def test_watcher_count(self):
+        from watchlist.models import WatchedBeer
+        self.assertEqual(0, self.beer.watcher_count)
+
+        WatchedBeer.objects.create(user=self.user, beer=self.beer)
+        self.assertEqual(1, self.beer.watcher_count)
+
 
 class BreweryTestCase(TestCase):
     def setUp(self):
