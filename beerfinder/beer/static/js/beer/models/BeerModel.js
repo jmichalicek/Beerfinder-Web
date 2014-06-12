@@ -11,6 +11,7 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleMode
         this.brewery = ko.observable(new BreweryModel(ko.toJS(data.brewery)));
         this.slug = ko.observable(data.slug);
         this.style = ko.observable(data.style ? new StyleModel(ko.toJS(data.style)) : undefined);
+        this.watcherCount = ko.observable(data.watcher_count);
         
         this.viewUrl = ko.computed(function () {
             return '/beer/'.concat(self.slug(), '/');

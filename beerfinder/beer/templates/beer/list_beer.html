@@ -30,6 +30,7 @@
         <li class="beer-item" style="display: none" data-bind="visible: true">
           <!-- ko if: $index() >= $root.beers.infinitescroll.firstHiddenIndex() -->
           <div>
+            <div class="pull-right">Watchers <span class="badge" data-bind="text: watcherCount"></span></div>
             <h4 data-bind="text: name"></h4>
             <span data-bind="text: brewery().name"></span>
           </div>
