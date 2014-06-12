@@ -30,10 +30,11 @@ class BeerStyleSerializer(serializers.ModelSerializer):
 class BeerSerializer(serializers.HyperlinkedModelSerializer):
     brewery = BrewerySerializer()
     style = BeerStyleSerializer() # make this SlugRelatedField?
+    watcher_count = serializers.IntegerField(source='watcher_count')
 
     class Meta:
         model = Beer
-        fields = ('url', 'id', 'name', 'brewery', 'style',  'slug',)
+        fields = ('url', 'id', 'name', 'brewery', 'style',  'slug', 'watcher_count')
 
 
 class PaginatedBeerSerializer(InfinitePaginationSerializer):

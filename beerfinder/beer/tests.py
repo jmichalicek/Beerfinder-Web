@@ -121,14 +121,14 @@ whitespace characters_wheee---!"""
         self.assertEqual(brewery.normalized_name, 'A brewery')
 
 
-class BeerViewSetTestCase(TestCase):
+class BeerViewSetTestCase(APITestCase):
     """
     Test the BeerViewSet and routes to it
     """
 
     def setUp(self):
-        self.beer1 = BeerFactory()
-        self.beer2 = BeerFactory()
+        self.beer1 = BeerFactory.create()
+        self.beer2 = BeerFactory.create()
         self.user = get_user_model().objects.create_user('user@example.com', 'password')
 
     def test_get_list(self):
@@ -165,6 +165,29 @@ class BeerViewSetTestCase(TestCase):
         self.assertEqual(response_object['url'], 'http://testserver/api/beer/duff-duff-beer/')
         self.assertEqual(response_object['brewery']['name'], 'Duff')
         self.assertEqual(response_object['brewery']['slug'], 'duff')
+
+    def test_get_detail(self):
+        """
+        Test GET /api/beer/<slug>/
+        """
+        from watchlist.models import WatchedBeer
+        WatchedBeer.objects.create(user=self.user, beer=self.beer2)
+
+        response = self.client.get('/api/beer/{0}/'.format(self.beer1.slug))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(self.beer1.id, data['id'])
+        self.assertEqual(self.beer1.name, data['name'])
+        self.assertEqual('http://testserver/api/beer/{0}/'.format(self.beer1.slug), data['url'])
+        self.assertEqual(0, data['watcher_count'])
+
+        response = self.client.get('/api/beer/{0}/'.format(self.beer2.slug))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        data = response.data
+        self.assertEqual(self.beer2.id, data['id'])
+        self.assertEqual(self.beer2.name, data['name'])
+        self.assertEqual('http://testserver/api/beer/{0}/'.format(self.beer2.slug), data['url'])
+        self.assertEqual(1, data['watcher_count'])
 
     def test_create_not_logged_in(self):
         """
