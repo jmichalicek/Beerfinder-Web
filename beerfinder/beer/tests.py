@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.core.cache import cache
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -130,6 +131,7 @@ class BeerViewSetTestCase(APITestCase):
         self.beer1 = BeerFactory.create()
         self.beer2 = BeerFactory.create()
         self.user = get_user_model().objects.create_user('user@example.com', 'password')
+        cache.clear()
 
     def test_get_list(self):
         self.client.login(username=self.user.email, password='password')
@@ -144,6 +146,43 @@ class BeerViewSetTestCase(APITestCase):
 
         self.assertEqual(response_objects[1]['id'], self.beer2.id)
         self.assertEqual(response_objects[1]['name'], self.beer2.name)
+
+    def test_list_pagination(self):
+        """
+        Test a GET request to the list endpoint of BeerViewSet
+        ensuring that pagination is working as expected
+        """
+        brewery = BreweryFactory()
+        style = StyleFactory()
+
+        for i in xrange(0, 55):
+            BeerFactory.create(brewery=brewery, style=style)
+
+        response = self.client.get('/api/beer/')
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('application/json', response['Content-Type'])
+        page1 = response.data
+        self.assertEqual(25, len(page1['results']))
+        self.assertEqual(2, page1['next'])
+        self.assertIsNone(page1['previous'])
+
+        response = self.client.get('/api/beer/', {'page': 2})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('application/json', response['Content-Type'])
+        page2 = response.data
+        self.assertEqual(25, len(page2['results']))
+        self.assertEqual(3, page2['next'])
+        self.assertEqual(1, page2['previous'])
+
+        self.assertNotEqual(page2['results'], page1['results'])
+
+        response = self.client.get('/api/beer/', {'page': 3})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual('application/json', response['Content-Type'])
+        page3 = response.data
+        self.assertEqual(7, len(page3['results']))
+        self.assertEqual(2, page3['previous'])
+        self.assertIsNone(page3['next'])
 
     def test_create(self):
         """
