@@ -71,24 +71,31 @@
 
 <script type="text/javascript">
 require(['knockout', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/BeerDetailTabContainerViewModel',
-         'beer/viewmodels/RecentSightingListViewModel', 'beer/viewmodels/NearbySightingListViewModel', 'csrf'],
-        function(ko, BeerDetailViewModel, BeerDetailTabContainerViewModel, RecentSightingListViewModel, NearbySightingListViewModel) {
-    "use strict";
+         'beer/viewmodels/RecentSightingListViewModel', 'beer/viewmodels/NearbySightingListViewModel', 'core/models/LocationManagerModel', 'csrf'],
+        function(ko, BeerDetailViewModel, BeerDetailTabContainerViewModel, RecentSightingListViewModel,
+                 NearbySightingListViewModel, LocationManagerModel) {
+            "use strict";
+            
+            var beer = {{ beer|safe }};
+            var locationManager = new LocationManagerModel();
 
-    var vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
-    ko.applyBindings(vm, document.getElementById('main_content'));
+            var vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
+            ko.applyBindings(vm, document.getElementById('main_content'));
+            
+            var tabManager = new BeerDetailTabContainerViewModel();
+            ko.applyBindings(tabManager, document.getElementById('tab_container'));
+            
+            var recentVm = new RecentSightingListViewModel({parentView: vm, tabManager: tabManager,
+                                                            beer: beer});
+            ko.applyBindings(recentVm, document.getElementById('recent_sighting_list'));
+            recentVm.getSightings();
+            
+            var nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager,
+                                                            beer: beer, locationManager: locationManager});
+            ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
 
-    var tabManager = new BeerDetailTabContainerViewModel();
-    ko.applyBindings(tabManager, document.getElementById('tab_container'));
+            locationManager.getLocation();
 
-    var recentVm = new RecentSightingListViewModel({parentView: vm, tabManager: tabManager});
-    ko.applyBindings(recentVm, document.getElementById('recent_sighting_list'));
-    recentVm.getSightings();
-
-    var nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager});
-    ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
-    nearbyVm.getSightings();
-
-});
+        });
 </script>
 {% endblock javascript %}
