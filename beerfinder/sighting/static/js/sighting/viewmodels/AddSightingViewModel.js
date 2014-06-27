@@ -8,6 +8,8 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
 
+        this.locationManager = data.locationManager || new LocationManagerModel();
+
         this.showLoadingSpinner = ko.observable(false);
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
         this.venuesPerRequest = 50;
@@ -156,11 +158,6 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
             self.selectedVenue(null);
         };
         
-        this.getLocation = function () {
-            self.showLoadingSpinner(true);
-            navigator.geolocation.getCurrentPosition(self.geoLocationCallback);
-        };
-        
         this.geoLocationCallback = function (position) {
             self.location = position;
             self.getNearbyVenues();
@@ -236,5 +233,9 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
                 self.servingTypes(resultItems);
             });
         };
+
+        // initialization stuff
+        self.locationManager.registerSuccessCallback(this.geoLocationCallback);
+        self.showLoadingSpinner(true);
     };
 });
