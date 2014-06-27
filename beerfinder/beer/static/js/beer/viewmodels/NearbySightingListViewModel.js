@@ -24,7 +24,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         };
         
         this.getSightings = function () {
-            if(!self.location.location.coords) {
+            if(!self.location.coords) {
                 self.initialize();
                 return false;
             }
