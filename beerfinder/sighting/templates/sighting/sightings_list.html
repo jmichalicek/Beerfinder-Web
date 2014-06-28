@@ -13,10 +13,14 @@
               <img data-bind="attr: {src: images()[0].thumbnailUrl}" class="media-object img-responsive"></img>
             </div>
             <div class="media-body">
-              <span data-bind="text: beer().name" class="media-heading"></span><br>
-              <small><span data-bind="text: beer().brewery().name"></span></small>
-              Seen at at <span data-bind="text: venue().name"></span><br>
-              <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted().format('MMM D, YYYY [at] h:mma')"></span></small><br>
+              <h4 data-bind="text: beer().name" class="media-heading"></h4>
+              <p>
+                <small>by <span data-bind="text: beer().brewery().name"></span></small>
+              </p>
+              <p>
+                Seen at at <span data-bind="text: venue().name"></span><br>
+                <small>by <span data-bind="text: sighted_by"></span> at <span data-bind="text: date_sighted().format('MMM D, YYYY [at] h:mma')"></span></small>
+              </p>
             </div>
           </a>
           <!-- /ko -->
