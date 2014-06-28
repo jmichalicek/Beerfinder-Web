@@ -174,6 +174,7 @@ REGISTRATION_OPEN = False
 
 # celery stuff
 #BROKER_URL = 'redis://localhost:6379/0'
+CELERYD_HIJACK_ROOT_LOGGER = False
 BROKER_URL = 'redis://'
 CELERY_RESULT_BACKEND = 'redis://'
 BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True}
