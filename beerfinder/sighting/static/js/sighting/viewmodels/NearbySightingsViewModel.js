@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll, SightingModel) {
+define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'core/QueryStringParser', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll, QueryStringParser, SightingModel) {
     return function () {
         "use strict";
         var self = this;
@@ -12,6 +12,7 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'sighting/m
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
         
         this.sightings = ko.observableArray();
+        this.queryString = new QueryStringParser(window.location.href);
     
         // stuff to enable infinite scroll
         this.nextPage = '';
@@ -67,12 +68,22 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'sighting/m
         this.getSightings = function() {
             // TODO: pagination
             var url = '/api/sightings/nearby/';
-            var requestParams = {};
+
+            var dfd = new $.Deferred();
+            self.showLoadingSpinner(true);
+            self.requestInProgress = true;
+
+            var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
+
             if(self.nextPage) {
-                url = self.nextPage;
-            } else {
-                requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
+                requestParams['page'] = self.nextPage;
             }
+
+
+            if (self.queryString.params['beer']) {
+                requestParams['beer'] = self.queryString.params['beer'][0];
+            }
+
             self.requestInProgress = true;
             $.ajax({url: url,
                     type: 'GET',
@@ -84,10 +95,16 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'sighting/m
                        });
                        self.sightings(currentList);
                        self.nextPage = data.next;
+                       dfd.resolve(data);
+                   }).fail(function (data) {
+                       console.log(data);
+                       dfd.resolve(false);
                    }).always(function () {
                        self.requestInProgress = false;
                        self.showLoadingSpinner(false);
-                   });  
+                   });
+            return dfd.promise();
+
         };
 
         this.initialize = function () {
