@@ -1,5 +1,5 @@
 // Be sure to load js/sightings/models.js first
-define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function($, _, ko, infinitescroll, SightingModel) {
+define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/QueryStringParser', 'sighting/models/SightingModel'], function($, _, ko, infinitescroll, QueryStringParser, SightingModel) {
     return function (data) {
         "use strict";
         var self = this;
@@ -13,6 +13,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
 
         this.sightings = ko.observableArray();
+        this.queryString = new QueryStringParser(window.location.href);
     
         // stuff to enable infinite scroll
         this.nextPage = '';
@@ -22,8 +23,8 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
         });
 
         this.shouldDoRequestPage = function () {
+            /* Determine if we shoud request another infinite scroll page */
             return self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25;
-
         };
         // detect scroll
         $('#sighting_list').scroll(function() {
@@ -71,6 +72,10 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
                 requestParams['page'] = self.nextPage;
             }
 
+            if (self.queryString.params['beer']) {
+                requestParams['beer'] = self.queryString.params['beer'][0];
+            }
+
             $.ajax({url: url,
                     type: 'GET',
                     data: requestParams,
@@ -92,6 +97,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
             return dfd.promise();
         };
 
+        // view initialization... maybe should go into an init() method
         this.prefillSightingList = function () {
             self.getSightings().done(function (data) {
                 if(self.shouldDoRequestPage() && data.next) {
@@ -100,5 +106,9 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'sighting/m
             });
         };
         this.prefillSightingList();
+
+        
+
+        // end initialization
     };
 });
