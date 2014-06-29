@@ -1,5 +1,5 @@
 
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel', 'core/models/LocationManagerModel'], function($, ko, infinitescroll, SightingModel, LocationManagerModel) {
+define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel', 'core/models/LocationManagerModel', 'beer/models/BeerModel'], function($, ko, infinitescroll, SightingModel, LocationManagerModel, BeerModel) {
     return function (data) {
         'use strict';
         var self = this;
@@ -10,6 +10,7 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         this.tabManager = data.tabManager;
         this.parentViewModel = data.parentView;
         this.sightings = ko.observableArray();
+        this.beer = ko.observable(new BeerModel(data.beer));
         this.locationManager = data.locationManager || new LocationManagerModel();
         
         this.initialize = function () {

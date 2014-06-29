@@ -40,6 +40,14 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleMode
                           });
         };
 
+        this.recentSightingsWebURL = ko.computed(function () {
+            return '/sightings/?beer=' + self.slug();
+        });
+
+        this.nearbySightingsWebURL = ko.computed(function () {
+            return '/sightings/nearby/?beer=' + self.slug();
+        });
+
         /*
          * save an existing beer.  Currently this will probably blow up if the beer does not already exist
          */

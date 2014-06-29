@@ -187,6 +187,10 @@ input[type="checkbox"] + label:before {
 #beer-detail-buttons {
     margin-bottom: 15px;
 }
+
+.more-sightings {
+    padding: 15px;
+}
 /* end beer detail */
 
 @media(max-width:767px){

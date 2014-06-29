@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function ($, ko, infinitescroll, SightingModel) {
+define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll, SightingModel) {
     return function () {
         "use strict";
         var self = this;
@@ -21,36 +21,43 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         });
 
         // detect scroll
+        this.shouldDoRequestPage = function () {
+            /* Determine if we shoud request another infinite scroll page */
+            return self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25;
+        };
+        // detect scroll
         $('#sighting_list').scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
             self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
-        
-            var l1 = self.sightings.peek().length;
-            var l2 = self.sightings.infinitescroll.lastVisibleIndex.peek();
-            if (self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25) {
+            
+            if (self.shouldDoRequestPage()) {
                 if(!self.requestInProgress && self.nextPage) {
-                    self.getSightings();
+                    _.debounce(self.getSightings(), 250);
                 }
             }
         });
-    
+        
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
             var itemsRef = $('#sighting_list'),
-            itemRef = $('.sighting_item').first(),
+            itemRef = $('#sighting_list .sighting_item').first(),
             itemsWidth = itemsRef.width(),
             itemsHeight = itemsRef.height(),
-            itemWidth = itemRef.outerWidth(),
-            itemHeight = itemRef.outerHeight();
-
+            itemWidth = itemRef.outerWidth(true),
+            itemHeight = itemRef.outerHeight(true);
+            
             self.sightings.infinitescroll.viewportWidth(itemsWidth);
             self.sightings.infinitescroll.viewportHeight(itemsHeight);
-            self.sightings.infinitescroll.itemWidth(itemWidth);
+            // normally infinitescroll.itemWidth would use itemWidth from above,
+            // but jQuery is being weird and picking it up as the wrong width.
+            // Since this definitely should be only 1 column, just use the container width
+            // as a kludge until I can figure out wtf is going wrong.
+            self.sightings.infinitescroll.itemWidth(itemsWidth);
             self.sightings.infinitescroll.itemHeight(itemHeight);
-            
         }
         updateViewportDimensions();
+        
 
         // end infinite scroll stuff
 

@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'moment', 'vendor/infinitescroll', 'sighting/models/SightingModel'], function($, ko, moment, infinitescroll, SightingModel) {
+define(['jquery', 'knockout', 'moment', 'vendor/infinitescroll', 'sighting/models/SightingModel', 'beer/models/BeerModel'], function($, ko, moment, infinitescroll, SightingModel, BeerModel) {
     return function (data) {
         'use strict';
         var self = this;
@@ -7,7 +7,7 @@ define(['jquery', 'knockout', 'moment', 'vendor/infinitescroll', 'sighting/model
         this.tabManager = data.tabManager;
         this.parentViewModel = data.parentView;
         this.sightings = ko.observableArray();
-
+        this.beer = ko.observable(new BeerModel(data.beer));
         this.formatSightingDate = function (date) {
             
         }

@@ -42,6 +42,11 @@
             </a>
           </li>
         </ul>
+        <a href="#" data-bind="attr: {href: beer().recentSightingsWebURL}">
+          <div class="col-xs-12 btn btn-default more-sightings">
+            <p>View more sightings</p>
+          </div>
+        </a>
       </div>
       <div id="nearby_sighting_list" data-bind="visible: tabManager.activeSightingTab() == SightingTabs.NEARBY" style="display: none">
         <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
@@ -63,6 +68,12 @@
             </a>
           </li>
         </ul>
+        <a href="#" data-bind="attr: {href: beer().nearbySightingsWebURL}">
+          <div class="col-xs-12 btn btn-default more-sightings">
+            <p>View more sightings</p>
+          </div>
+        </a>
+
     </div>
   </div>
 </div>
