@@ -3,21 +3,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.gis.geos import Point, fromstr, GEOSGeometry
 from django.db import transaction
 
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action, link
 
 from rest_framework_extensions.cache.decorators import cache_response
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
-from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
-from rest_framework_extensions.key_constructor.bits import (
-    KeyBitBase,
-    RetrieveSqlQueryKeyBit,
-    ListSqlQueryKeyBit,
-    PaginationKeyBit,
-    UserKeyBit,
-    QueryParamsKeyBit
-)
+from rest_framework_extensions.key_constructor.constructors import DefaultListKeyConstructor
 
 import foursquare
 
@@ -122,35 +114,6 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             queryset = queryset.prefetch_related('sighting_images', 'serving_types')
         return queryset
 
-    def get_nearby_sightings(self, request, *args, **kwargs):
-        """
-        Return a list of sightings sorted by distance from the point specified.
-        """
-        latitude = request.QUERY_PARAMS.get('latitude', None)
-        longitude = request.QUERY_PARAMS.get('longitude', None)
-
-        #origin = fromstr("Point({0} {1})".format(longitude, latitude))
-        origin = Point(float(longitude), float(latitude))
-
-        # Due to how prefetch related behaves, skip it on get_queryset() and then manually do it afterwards.
-        # This will result in prefetching far fewer unnecessary rows of data
-        queryset = self.get_queryset(prefetch=False).distance(origin, field_name='venue__point').order_by('distance')
-
-        queryset = queryset.prefetch_related('sighting_images', 'serving_types')
-        paginator = InfinitePaginator(queryset, 25)
-        page_number = request.QUERY_PARAMS.get('page')
-        try:
-            page = paginator.page(page_number)
-        except PageNotAnInteger:
-            page = paginator.page(1)
-        except EmptyPage:
-            page = paginator.page(1)
-
-        serializer_context = {'request': request}
-        serialized = PaginatedDistanceSightingSerializer(page,
-                                                         context=serializer_context)
-        return Response(serialized.data)
-
     @action(methods=['POST'])
     def confirm_available(self, request, *args, **kwargs):
         """
@@ -218,3 +181,45 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
                                                         context=serializer_context)
 
         return Response(serializer.data)
+
+
+class NearbySightingAPIView(generics.ListAPIView):
+    """
+    View to list :class:`beer.models.ServingType`
+    """
+
+    queryset = Sighting.objects.all()
+    serializer_class = DistanceSightingSerializer
+    pagination_serializer_class = PaginatedDistanceSightingSerializer
+    paginator = InfinitePaginator
+    paginate_by = 50
+    paginate_by_param = 'page_size'
+
+    def get_queryset(self):
+        # implementing search here, but may move to its own endpoint
+        # with django haystack implementing proper full text search
+
+        request = self.request
+        queryset = super(NearbySightingAPIView, self).get_queryset()
+        beer_slug = self.request.QUERY_PARAMS.get('beer', None)
+
+        if beer_slug:
+            queryset = queryset.filter(beer__slug=beer_slug)
+
+        latitude = request.QUERY_PARAMS.get('latitude', None)
+        longitude = request.QUERY_PARAMS.get('longitude', None)
+        origin = Point(float(longitude), float(latitude))
+
+        queryset = queryset.distance(origin, field_name='venue__point').order_by('distance')
+        queryset = queryset.prefetch_related('sighting_images', 'serving_types')
+
+        return queryset
+
+    # this cache will end up more or less per user due to location awareness
+    @cache_response(60 * 5, key_func=DefaultListKeyConstructor())
+    def get(self, request, *args, **kwargs):
+        """
+        Return a list of sightings sorted by distance from the point specified.
+        """
+        print 'I did not use the cache'
+        return super(NearbySightingAPIView, self).get(request, *args, **kwargs)
