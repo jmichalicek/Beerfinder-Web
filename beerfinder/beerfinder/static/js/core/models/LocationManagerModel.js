@@ -34,8 +34,10 @@ define([], function() {
             self.failureCallbacks.push(callable);
         };
 
-        this.getLocation = function () {
-            navigator.geolocation.getCurrentPosition(self.locationSuccess, self.doFailureCallbacks, {maximumAge: 300000});
+        this.getLocation = function (maximumAge) {
+            /* should maybe default to 0 and just specify longer times if desired when called */
+            maximumAge = (!!maximumAge || maximumAge === 0 ) ? maximumAge : 30000;
+            navigator.geolocation.getCurrentPosition(self.locationSuccess, self.doFailureCallbacks, {maximumAge: maximumAge});
         };
     };
 });
