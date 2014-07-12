@@ -38,7 +38,7 @@
 <script type="text/javascript">
 require(['knockout', 'sighting/viewmodels/NearbySightingsViewModel'], function (ko, NearbySightingsViewModel) {
     var vm = new NearbySightingsViewModel();
-    ko.applyBindings(vm);
+    ko.applyBindings(vm, document.getElementById('page_body'));
     vm.initialize();
 });
 </script>

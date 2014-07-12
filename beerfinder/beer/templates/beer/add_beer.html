@@ -55,7 +55,7 @@
 requirejs(['knockout', 'beer/viewmodels/AddBeerViewModel'], function (ko, AddBeerViewModel) {
     "use strict";
     var vm = new AddBeerViewModel();
-    ko.applyBindings(vm);
+    ko.applyBindings(vm, document.getElementById('page_body'));
     vm.getStyles();
 });
 </script>

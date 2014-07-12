@@ -40,6 +40,7 @@
             {% else %}
             <li><a href="{% url 'account_login' %}">Log In</a></li>
             {% endif %}
+            <li><a href="#" data-bind="click: updateLocation"><span class="glyphicon glyphicon-screenshot"></span></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -67,34 +68,40 @@
             //underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
             underscore: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min',
             lodash: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min',
+            pubsub: 'vendor/pubsub',
         },
-
+        
         shim: {
-          infinitescroll: ['knockout'],
-          bootstrap: ['jquery'],
-          jqueryui: ['jquery'],
-          csrf: ['jquery'],
-          'underscore' : {
-              exports : '_'
-          },
+            infinitescroll: ['knockout'],
+            bootstrap: ['jquery'],
+            jqueryui: ['jquery'],
+            csrf: ['jquery'],
+            'underscore' : {
+                exports : '_'
+            },
         },
-
+        
         deps: ['jquery', 'bootstrap', 'knockout', 'csrf'],
         callback: function () {
             jQuery.ajaxSettings.traditional = true;
             $.ajaxSetup({
                 crossDomain: false, // obviates need for sameOrigin test
                 beforeSend: function(xhr, settings) {
-                  if (!csrfSafeMethod(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                  }
-               }
+                    if (!csrfSafeMethod(settings.type)) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                },
             });
+      }
+    });
 
-        },
-      });
-
-      </script>
+    require(['knockout', 'core/viewmodels/NavBarViewModel'], function(ko, NavBarViewModel) {
+        "use strict";
+        
+        var navBarViewModel = new NavBarViewModel();
+        ko.applyBindings(navBarViewModel, document.getElementById('top_navbar'));
+    });
+    </script>
 
     {% block javascript %}{% endblock javascript %}
   </body>

@@ -161,7 +161,7 @@ require(['knockout', 'sighting/viewmodels/AddSightingViewModel', 'core/models/Lo
     var beer = {{ beer|safe }};
     var locationManager = new LocationManagerModel();
     var vm = new AddSightingViewModel({beer: beer, locationManager: locationManager});
-    ko.applyBindings(vm);
+    ko.applyBindings(vm, document.getElementById('page_body'));
     vm.getServingTypes();
     locationManager.getLocation();
 });

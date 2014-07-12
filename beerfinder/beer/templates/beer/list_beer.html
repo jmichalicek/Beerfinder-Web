@@ -56,7 +56,7 @@
 <script type="text/javascript">
 require(['knockout', 'beer/viewmodels/BeerListViewModel'], function(ko, BeerListViewModel) {
     vm = new BeerListViewModel();
-    ko.applyBindings(vm);
+    ko.applyBindings(vm, document.getElementById('page_body'));
     vm.initialize();
 });
 </script>

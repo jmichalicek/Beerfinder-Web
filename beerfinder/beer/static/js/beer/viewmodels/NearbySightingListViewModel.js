@@ -1,5 +1,5 @@
 
-define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/SightingModel', 'core/models/LocationManagerModel', 'beer/models/BeerModel'], function($, ko, infinitescroll, SightingModel, LocationManagerModel, BeerModel) {
+define(['jquery', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/PubSubChannels', 'sighting/models/SightingModel', 'core/models/LocationManagerModel', 'beer/models/BeerModel'], function($, ko, infinitescroll, PubSub, PubSubChannels, SightingModel, LocationManagerModel, BeerModel) {
     return function (data) {
         'use strict';
         var self = this;
@@ -11,11 +11,10 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
         this.parentViewModel = data.parentView;
         this.sightings = ko.observableArray();
         this.beer = ko.observable(new BeerModel(data.beer));
-        this.locationManager = data.locationManager || new LocationManagerModel();
         
         this.initialize = function () {
             self.showLoadingSpinner(true);
-            self.locationManager.getLocation();
+            navigator.geolocation.getCurrentPosition(self.getNearbySightings, {maximumAge: 30000});
         };
         
         this.getNearbySightings = function (position) {
@@ -40,7 +39,16 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'sighting/models/Sighting
                                                           });
         };
 
+
+        this.geoLocationComplete = function (msg, data) {
+            /* data is going to be a location object with coords, etc */
+            self.sightings([]);
+            self.getNearbySightings(data);
+        };
+
         // initialization stuff
         self.locationManager.registerSuccessCallback(self.getNearbySightings);
+        //PubSub.subscribe('GeoLocation.start', self.geoLocationStartedListener);
+        PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.geoLocationComplete);
     };
 });

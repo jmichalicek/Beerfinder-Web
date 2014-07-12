@@ -81,14 +81,14 @@
 {% block javascript %}
 
 <script type="text/javascript">
-require(['knockout', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/BeerDetailTabContainerViewModel',
-         'beer/viewmodels/RecentSightingListViewModel', 'beer/viewmodels/NearbySightingListViewModel', 'core/models/LocationManagerModel', 'csrf'],
-        function(ko, BeerDetailViewModel, BeerDetailTabContainerViewModel, RecentSightingListViewModel,
-                 NearbySightingListViewModel, LocationManagerModel) {
+    require(['knockout', 'pubsub', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/BeerDetailTabContainerViewModel',
+         'beer/viewmodels/RecentSightingListViewModel', 'beer/viewmodels/NearbySightingListViewModel', 'core/models/LocationManagerModel',
+         'csrf'],
+            function(ko, PubSub, BeerDetailViewModel, BeerDetailTabContainerViewModel, RecentSightingListViewModel,
+                     NearbySightingListViewModel, LocationManagerModel) {
             "use strict";
             
             var beer = {{ beer|safe }};
-            var locationManager = new LocationManagerModel();
 
             var vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
             ko.applyBindings(vm, document.getElementById('main_content'));
@@ -102,11 +102,10 @@ require(['knockout', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/Bee
             recentVm.getSightings();
             
             var nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager,
-                                                            beer: beer, locationManager: locationManager});
+                                                            beer: beer});
             ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
 
             locationManager.getLocation();
-
         });
 </script>
 {% endblock javascript %}
