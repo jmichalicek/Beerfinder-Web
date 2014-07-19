@@ -40,15 +40,25 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/PubSubCha
         };
 
 
-        this.geoLocationComplete = function (msg, data) {
-            /* data is going to be a location object with coords, etc */
+        this.geoLocationComplete = function (position) {
+            self.location = position
             self.sightings([]);
-            self.getNearbySightings(data);
+            self.getNearbySightings(position);
+        };
+
+
+        this.getLocationSuccessMessageHandler = function (msg, data) {
+            /* data is going to be a location object with coords, etc */
+            self.geoLocationComplete(data);
+        };
+
+        this.initialize = function () {
+            self.showLoadingSpinner(true);
+            navigator.geolocation.getCurrentPosition(self.geoLocationComplete);
         };
 
         // initialization stuff
-        self.locationManager.registerSuccessCallback(self.getNearbySightings);
         //PubSub.subscribe('GeoLocation.start', self.geoLocationStartedListener);
-        PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.geoLocationComplete);
+        PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.getLocationSuccessMessageHandler);
     };
 });
