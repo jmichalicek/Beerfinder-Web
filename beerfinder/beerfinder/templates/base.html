@@ -40,7 +40,7 @@
             {% else %}
             <li><a href="{% url 'account_login' %}">Log In</a></li>
             {% endif %}
-            <li><a href="#" data-bind="click: updateLocation"><span class="glyphicon glyphicon-screenshot"></span></a></li>
+            <li><a id="nav-update-location" href="#" data-bind="click: updateLocation, css: {rotating: locationUpdating}"><span class="glyphicon glyphicon-screenshot"></span></a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
