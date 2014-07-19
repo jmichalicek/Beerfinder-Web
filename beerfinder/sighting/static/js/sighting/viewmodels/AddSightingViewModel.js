@@ -1,14 +1,12 @@
 // look at https://github.com/thinkloop/knockout-js-infinite-scroll/blob/master/infinitescroll.js
 // for infinite scrolling the locations
-define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
-        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, _, ko, infinitescroll, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
+define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/PubSubChannels', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
+        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, _, ko, infinitescroll, PubSub, PubSubChannels, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
 
     return function (data) {
         "use strict";
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
-
-        this.locationManager = data.locationManager || new LocationManagerModel();
 
         this.showLoadingSpinner = ko.observable(false);
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
@@ -19,7 +17,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
         
         this.activeNavSection = ko.observable('');
         this.selectedVenue = ko.observable(null);
-        this.location = {}; // TODO: populate this.
+        this.location = data.location || {}; // TODO: populate this.
         this.selectedServingTypes = ko.observableArray([]);
         
         this.venues = ko.observableArray();
@@ -160,6 +158,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
         
         this.geoLocationCallback = function (position) {
             self.location = position;
+            //PubSub.publish(PubSubChannels.GEOLOCATION_SUCCESS, position);
             self.getNearbyVenues();
         };
         
@@ -234,8 +233,18 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'venue/mode
             });
         };
 
-        // initialization stuff
-        self.locationManager.registerSuccessCallback(this.geoLocationCallback);
-        self.showLoadingSpinner(true);
+        this.getLocationSuccessMessageHandler = function (msg, data) {
+            /* data is going to be a location object with coords, etc */
+            self.selectedVenue(null);
+            self.geoLocationCallback(data);
+        };
+
+        this.initialize = function () {
+            self.showLoadingSpinner(true);
+            PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.getLocationSuccessMessageHandler);
+
+            //PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
+            navigator.geolocation.getCurrentPosition(self.geoLocationCallback);
+        };
     };
 });

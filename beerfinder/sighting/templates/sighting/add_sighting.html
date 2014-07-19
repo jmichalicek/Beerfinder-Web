@@ -156,14 +156,13 @@
 {% endblock body %}
 {% block javascript %}
 <script type="text/javascript">
-require(['knockout', 'sighting/viewmodels/AddSightingViewModel', 'core/models/LocationManagerModel'], function (ko, AddSightingViewModel, LocationManagerModel) {
+require(['knockout', 'sighting/viewmodels/AddSightingViewModel'], function (ko, AddSightingViewModel) {
     "use strict";
     var beer = {{ beer|safe }};
-    var locationManager = new LocationManagerModel();
-    var vm = new AddSightingViewModel({beer: beer, locationManager: locationManager});
+    var vm = new AddSightingViewModel({beer: beer});
     ko.applyBindings(vm, document.getElementById('page_body'));
     vm.getServingTypes();
-    locationManager.getLocation();
+    vm.initialize();
 });
 </script>
 {% endblock javascript %}
