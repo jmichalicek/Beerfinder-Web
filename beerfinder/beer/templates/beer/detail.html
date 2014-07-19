@@ -104,8 +104,7 @@
             var nearbyVm = new NearbySightingListViewModel({parentView: vm, tabManager: tabManager,
                                                             beer: beer});
             ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
-
-            locationManager.getLocation();
+            nearbyVm.initialize();
         });
 </script>
 {% endblock javascript %}
