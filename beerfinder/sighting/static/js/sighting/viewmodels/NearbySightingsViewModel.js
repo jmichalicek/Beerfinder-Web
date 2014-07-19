@@ -1,10 +1,11 @@
-define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'core/QueryStringParser', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll, QueryStringParser, SightingModel) {
-    return function () {
+define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', 'core/PubSubChannels', 'core/QueryStringParser', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll,  PubSub, PubSubChannels, QueryStringParser, SightingModel) {
+    return function (data) {
         "use strict";
         var self = this;
+        data = typeof data !== 'undefined' ? data : {};
 
         self.showLoadingSpinner = ko.observable(false);
-        this.location = {}; // TODO: populate this.
+        this.location = data.location || {};
         this.activeNavSection = ko.observable('nearby_sightings');
         this.sightings = ko.observableArray();
     
@@ -117,5 +118,20 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'core/Query
             self.location = position;
             self.getSightings();
         };
+
+        this.doLocationUpdated = function (position) {
+            self.location = position;
+            self.sightings([]);
+            self.getSightings();
+        };
+
+        this.getLocationSuccessMessageHandler = function (msg, data) {
+            /* data is going to be a location object with coords, etc */
+            self.doLocationUpdated(data);
+        };
+
+        // initialization stuff
+        PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.getLocationSuccessMessageHandler);
+
     };
 });
