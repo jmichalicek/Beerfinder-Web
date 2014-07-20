@@ -29,8 +29,8 @@ define(['knockout', 'pubsub', 'core/PubSubChannels'], function(ko, PubSub, PubSu
             self.locationUpdating(false);
         };
 
-        PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.getLocationSuccessMessageHandler);
-        PubSub.subscribe(PubSubChannels.GEOLOCATION_START, self.getLocationStartMessageHandler);
+        PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.geoLocationSuccessMessageHandler);
+        PubSub.subscribe(PubSubChannels.GEOLOCATION_START, self.geoLocationStartMessageHandler);
 
     };
 });

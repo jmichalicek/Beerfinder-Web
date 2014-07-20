@@ -38,6 +38,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         });
 
         this.showImageThumbnail = function (data, e) {
+            // make this a knockout binding?
             var x = data;
             var element = e.currentTarget;
             var files = !!element.files ? element.files : [];
@@ -158,8 +159,10 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         
         this.geoLocationCallback = function (position) {
             self.location = position;
-            //PubSub.publish(PubSubChannels.GEOLOCATION_SUCCESS, position);
-            self.getNearbyVenues();
+            PubSub.publish(PubSubChannels.GEOLOCATION_SUCCESS, position);
+
+            // will be handled by the pubsub handler
+            //self.getNearbyVenues();
         };
         
         this.getNearbyVenues = function () { 
@@ -193,6 +196,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         };
         
         this.submitSearchHandler = function () {
+            // maybe this should be renamed now.  It is used when not searching as well.
             if(self.searchTerm().length < 1) {
                 // just do regular explore if the search term was empty
                 self.discoverView(true);
@@ -233,18 +237,21 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             });
         };
 
-        this.getLocationSuccessMessageHandler = function (msg, data) {
+        this.geoLocationSuccessMessageHandler = function (msg, data) {
             /* data is going to be a location object with coords, etc */
             self.selectedVenue(null);
-            self.geoLocationCallback(data);
+            self.venues([]);
+            self.location = data;
+            self.submitSearchHandler();
         };
 
         this.initialize = function () {
             self.showLoadingSpinner(true);
-            PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.getLocationSuccessMessageHandler);
+            PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.geoLocationSuccessMessageHandler);
 
-            //PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
-            navigator.geolocation.getCurrentPosition(self.geoLocationCallback);
+            
+            PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
+            navigator.geolocation.getCurrentPosition(self.geoLocationCallback, undefined, {maximumAge: 350000});
         };
     };
 });
