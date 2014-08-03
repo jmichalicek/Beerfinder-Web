@@ -191,3 +191,4 @@ REST_FRAMEWORK_EXTENSIONS = {
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+ACCOUNT_SESSION_REMEMBER = True
