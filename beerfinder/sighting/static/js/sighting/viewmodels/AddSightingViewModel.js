@@ -1,7 +1,7 @@
 // look at https://github.com/thinkloop/knockout-js-infinite-scroll/blob/master/infinitescroll.js
 // for infinite scrolling the locations
-define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/PubSubChannels', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
-        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, _, ko, infinitescroll, PubSub, PubSubChannels, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
+define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/Constants', 'core/PubSubChannels', 'venue/models/VenueModel', 'venue/models/FoursquareVenueModel',
+        'beer/models/ServingTypeModel', 'beer/models/BeerModel', 'sighting/models/SightingModel'], function ($, _, ko, infinitescroll, PubSub, Constants, PubSubChannels, VenueModel, FoursquareVenueModel, ServingTypeModel, BeerModel, SightingModel) {
 
     return function (data) {
         "use strict";
@@ -160,9 +160,21 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.geoLocationCallback = function (position) {
             self.location = position;
             PubSub.publish(PubSubChannels.GEOLOCATION_SUCCESS, position);
-
+            PubSub.publish(PubSubChannels.GEOLOCATION_DONE, position);
             // will be handled by the pubsub handler
             //self.getNearbyVenues();
+        };
+
+        this.publishGeoLocationError = function (data) {
+            if(data.code === Constants.GEOLOCATION_FAIL_DENIED) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_DENIED, data);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_UNAVAILABLE) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_UNAVAILABLE, data);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_TIMEOUT) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_TIMEOUT, data);
+            }
+
+            PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
         };
         
         this.getNearbyVenues = function () { 
@@ -246,6 +258,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         };
 
         this.initialize = function () {
+            PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
             self.showLoadingSpinner(true);
             PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.geoLocationSuccessMessageHandler);
 

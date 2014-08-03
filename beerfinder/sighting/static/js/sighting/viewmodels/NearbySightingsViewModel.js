@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', 'core/PubSubChannels', 'core/QueryStringParser', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll,  PubSub, PubSubChannels, QueryStringParser, SightingModel) {
+define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', 'core/Constants', 'core/PubSubChannels', 'core/QueryStringParser', 'sighting/models/SightingModel'], function ($, ko, _, infinitescroll,  PubSub, Constants, PubSubChannels, QueryStringParser, SightingModel) {
     return function (data) {
         "use strict";
         var self = this;
@@ -108,15 +108,27 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
 
         };
 
-        this.initialize = function () {
-            self.showLoadingSpinner(true);
-            navigator.geolocation.getCurrentPosition(self.getNearbySightings);
+        this.publishGeoLocationSuccess = function (position) {
+            PubSub.publish(PubSubChannels.GEOLOCATION_SUCCESS, position);
+            PubSub.publish(PubSubChannels.GEOLOCATION_DONE, position);
         };
 
-        this.getNearbySightings = function (position) {
-            // to be used as a callback for html5 geolocation
-            self.location = position;
-            self.getSightings();
+        this.publishGeoLocationError = function (data) {
+            if(data.code === Constants.GEOLOCATION_FAIL_DENIED) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_DENIED, data);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_UNAVAILABLE) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_UNAVAILABLE, data);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_TIMEOUT) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_TIMEOUT, data);
+            }
+
+            PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
+        };
+
+        this.initialize = function () {
+            self.showLoadingSpinner(true);
+            PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
+            navigator.geolocation.getCurrentPosition(self.publishGeoLocationSuccess);
         };
 
         this.doLocationUpdated = function (position) {
