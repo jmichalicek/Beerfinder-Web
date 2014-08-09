@@ -3,7 +3,7 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <div id="nav_container">
+    <div id="nav_container" style="display: none" data-bind="visible: true">
       <div class="col-xs-12 col-sm-3 col-md-3">
         <ul class="nav nav-pills nav-stacked">
           <li class="active" id="profile_nav"><a href="#" data-toggle="pill" data-bind="click: showProfile">Profile</a></li>
@@ -85,7 +85,7 @@
         </div><!-- end change password panel -->
       </div>
     </div><!-- end user_info_container -->
-    <div class="container" id="watchlist_container" data-bind="visible: isActive">
+    <div class="container" id="watchlist_container" style="display: none" data-bind="visible: isActive">
       <div class="col-xs-12 col-sm-6">
         <div class="panel panel-default">
           <div class="panel-heading">
