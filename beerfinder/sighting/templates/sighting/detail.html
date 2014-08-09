@@ -10,7 +10,7 @@
       <small>Sighted by <span data-bind="text: sighting().sighted_by"></span></small>
     </div>
   </div>
-<br>
+  <br>
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <address>
@@ -23,14 +23,14 @@
       <!-- ko foreach: sighting().servingTypes -->
       <span class="label label-success" data-bind="text: $data.name"></span>
       <!-- /ko -->
-
+      
       <div data-bind="if: sighting().primaryImage()" class="media">
         <img id="sighting_image" data-bind="attr:{src: imageUrl }" width="375" class="img-thumbnail img-responsive media-object" />
       </div>
     </div>
   </div>
-</div><br>
-<div class="container" id="comments_container">
+</div>
+<div class="container" id="comments_container" style="display: none" data-bind="visible: true">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
       <h3>Comments <i class="fa fa-comment-o"></i></h3>
