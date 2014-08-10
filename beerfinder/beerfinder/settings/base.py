@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'widget_tweaks',
     'south',
-
+    'require',
     # my apps
     'accounts',
     'beer',
@@ -192,3 +192,23 @@ REST_FRAMEWORK_EXTENSIONS = {
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 ACCOUNT_SESSION_REMEMBER = True
+
+
+# django-require stuff
+STATICFILES_STORAGE = 'require.storage.OptimizedCachedStaticFilesStorage'
+REQUIRE_BASE_URL = "js"
+
+# The name of a build profile to use for your project, relative to REQUIRE_BASE_URL.
+# A sensible value would be 'app.build.js'. Leave blank to use the built-in default build profile.
+# Set to False to disable running the default profile (e.g. if only using it to build Standalone
+# Modules)
+REQUIRE_BUILD_PROFILE = 'app.build.js'
+
+# The name of the require.js script used by your project, relative to REQUIRE_BASE_URL.
+REQUIRE_JS = "vendor/require.js"
+
+# A dictionary of standalone modules to build with almond.js.
+# See the section on Standalone Modules, below.
+#REQUIRE_STANDALONE_MODULES = {}
+REQUIRE_DEBUG = DEBUG
+REQUIRE_ENVIRONMENT = "core.require_environments.DebianNodeEnvironment"
