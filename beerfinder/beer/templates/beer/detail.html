@@ -78,9 +78,7 @@
   </div>
 </div>
 {% endblock body %}
-{% block javascript %}
-
-<script type="text/javascript">
+{% block requirejs_scripts %}
     require(['knockout', 'pubsub', 'beer/viewmodels/BeerDetailViewModel', 'beer/viewmodels/BeerDetailTabContainerViewModel',
          'beer/viewmodels/RecentSightingListViewModel', 'beer/viewmodels/NearbySightingListViewModel', 'core/models/LocationManagerModel',
          'csrf'],
@@ -106,5 +104,4 @@
             ko.applyBindings(nearbyVm, document.getElementById('nearby_sighting_list'));
             nearbyVm.initialize();
         });
-</script>
-{% endblock javascript %}
+{% endblock requirejs_scripts %}

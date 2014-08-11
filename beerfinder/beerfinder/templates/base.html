@@ -57,6 +57,7 @@
     </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
     <script type="text/javascript">
+      {% comment %}
     require.config({
         baseUrl: "{% static 'js' %}",
         paths: {
@@ -101,12 +102,17 @@
             });
       }
     });
+      {% endcomment %}
 
-    require(['knockout', 'core/viewmodels/NavBarViewModel'], function(ko, NavBarViewModel) {
-        "use strict";
+    require(["{% static 'js/common.js' %}"], function() {
+        require(['knockout', 'core/viewmodels/NavBarViewModel'], function(ko, NavBarViewModel) {
+            "use strict";
         
-        var navBarViewModel = new NavBarViewModel();
-        ko.applyBindings(navBarViewModel, document.getElementById('top_navbar'));
+            var navBarViewModel = new NavBarViewModel();
+            ko.applyBindings(navBarViewModel, document.getElementById('top_navbar'));
+        });
+
+        {% block requirejs_scripts %}{% endblock requirejs_scripts %}
     });
     </script>
 

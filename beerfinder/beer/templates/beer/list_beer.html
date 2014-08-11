@@ -52,12 +52,10 @@
 </div>
 </div>
 {% endblock body %}
-{% block javascript %}
-<script type="text/javascript">
+{% block requirejs_scripts %}
 require(['knockout', 'beer/viewmodels/BeerListViewModel'], function(ko, BeerListViewModel) {
     vm = new BeerListViewModel();
     ko.applyBindings(vm, document.getElementById('page_body'));
     vm.initialize();
 });
-</script>
-{% endblock javascript %}
+{% endblock requirejs_scripts %}

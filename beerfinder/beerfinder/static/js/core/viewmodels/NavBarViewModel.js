@@ -6,7 +6,7 @@ define(['knockout', 'pubsub', 'core/PubSubChannels'], function(ko, PubSub, PubSu
         this.location = ko.observable();
         this.locationUpdating = ko.observable(false);
         this.updateLocation = function () {
-            self.locationUpdating(true);  // viewModel does not listen to it's own sent messages
+            self.locationUpdating(true);
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
             navigator.geolocation.getCurrentPosition(self.locationSuccess, self.locationError);
             $('#nav-update-location').blur();

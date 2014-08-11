@@ -8,7 +8,25 @@
  *   - 'dir' will be overidden by django-require during the build process. 
  */
 ({
-    
+    fileExclusionRegExp: /^admin$|^django_extensions$|^gis$/,
+    paths: {
+        core: 'core',
+        beer: 'beer',
+        accounts: 'accounts',
+        sighting: 'sighting',
+        watchlist: 'watchlist',
+        venue: 'venue',
+        vendor: 'vendor',
+        moment: 'vendor/moment-with-langs',
+        knockout: 'empty:',
+        jquery: 'empty:',
+        jqueryui: 'empty:',
+        bootstrap: 'vendor/bootstrap',
+//underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
+        underscore: 'empty:',
+        lodash: 'empty:',
+        pubsub: 'vendor/pubsub',
+    },
     /*
      * List the modules that will be optimized. All their immediate and deep
      * dependencies will be included in the module's file when the build is
@@ -16,7 +34,27 @@
      */
     modules: [
         {
-            name: 'beer/beer-detail',
+            name: 'common',
+            include: [
+                'vendor/bootstrap',
+                'vendor/infinitescroll',
+                'pubsub',
+                'moment',
+                'core/PubSubChannels',
+                'core/Constants',
+                'core/QueryStringParser',
+            ],
+            exclude: [
+                'knockout',
+                'underscore',
+                'jquery',
+                'jqueryui',
+            ]
+        },
+
+        {
+            name: 'core/viewmodels/NavBarViewModel',
+            exclude: ['common',]
         },
     ],
 
