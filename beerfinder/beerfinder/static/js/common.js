@@ -11,8 +11,8 @@ require.config({
         moment: 'vendor/moment-with-langs',
         knockout: '//ajax.aspnetcdn.com/ajax/knockout/knockout-3.1.0',
         jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min',
-        jqueryui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
-        bootstrap: 'vendor/bootstrap',
+        jqueryui: '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min',
+        bootstrap: '//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min',
             //underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
         underscore: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min',
         lodash: '//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.underscore.min',
@@ -20,6 +20,7 @@ require.config({
     },
 
     shim: {
+        common: ['jquery'],
         infinitescroll: ['knockout'],
         bootstrap: ['jquery'],
         jqueryui: ['jquery'],

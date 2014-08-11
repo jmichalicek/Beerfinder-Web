@@ -21,7 +21,7 @@
         knockout: 'empty:',
         jquery: 'empty:',
         jqueryui: 'empty:',
-        bootstrap: 'vendor/bootstrap',
+        bootstrap: 'empty:',
 //underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min',
         underscore: 'empty:',
         lodash: 'empty:',
@@ -36,7 +36,6 @@
         {
             name: 'common',
             include: [
-                'vendor/bootstrap',
                 'vendor/infinitescroll',
                 'pubsub',
                 'moment',
@@ -45,6 +44,7 @@
                 'core/QueryStringParser',
             ],
             exclude: [
+                'bootstrap',
                 'knockout',
                 'underscore',
                 'jquery',
@@ -56,7 +56,22 @@
             name: 'core/viewmodels/NavBarViewModel',
             exclude: ['common',]
         },
+	{
+	    name: 'beer/viewmodels/BeerListViewModel',
+	    exclude: ['common'],
+            include: ['beer/models/BreweryModel', 'beer/models/BeerModel']
+	}
     ],
+
+    shim: {
+        infinitescroll: ['knockout'],
+        bootstrap: ['jquery'],
+        jqueryui: ['jquery'],
+        csrf: ['jquery'],
+        //'underscore' : {
+        //    exports : '_'
+        //},
+    },
 
     /*
      * Allow CSS optimizations. Allowed values:
