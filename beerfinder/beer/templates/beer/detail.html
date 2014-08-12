@@ -88,7 +88,7 @@
             
             var beer = {{ beer|safe }};
 
-            var vm = new BeerDetailViewModel({beer: {{ beer|safe }}});
+            var vm = new BeerDetailViewModel({beer: beer});
             ko.applyBindings(vm, document.getElementById('main_content'));
             
             var tabManager = new BeerDetailTabContainerViewModel();

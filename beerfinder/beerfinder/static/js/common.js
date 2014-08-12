@@ -20,11 +20,10 @@ require.config({
     },
 
     shim: {
-        common: ['jquery'],
         infinitescroll: ['knockout'],
         bootstrap: ['jquery'],
         jqueryui: ['jquery'],
-        csrf: ['jquery'],
+        csrf:  ['jquery'],
         //'underscore' : {
         //    exports : '_'
         //},

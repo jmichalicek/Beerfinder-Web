@@ -56,14 +56,20 @@
             name: 'core/viewmodels/NavBarViewModel',
             exclude: ['common',]
         },
+
+        /* need to do some tweaking for these and others like this due to dynamically generated js which must be included from django templates
 	{
-	    name: 'beer/viewmodels/BeerListViewModel',
-	    exclude: ['common'],
-            include: ['beer/models/BreweryModel', 'beer/models/BeerModel']
-	}
+	    name: 'beer/beer-list',
+	    exclude: ['common',],
+            //include: ['beer/models/BreweryModel', 'beer/models/BeerModel']
+	},
+        {name: 'beer/beer-detail', exclude: ['common',]},
+        */
+
     ],
 
     shim: {
+        common: ['jquery'],
         infinitescroll: ['knockout'],
         bootstrap: ['jquery'],
         jqueryui: ['jquery'],

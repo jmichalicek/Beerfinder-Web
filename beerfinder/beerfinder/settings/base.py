@@ -195,7 +195,7 @@ ACCOUNT_SESSION_REMEMBER = True
 
 
 # django-require stuff
-STATICFILES_STORAGE = 'require.storage.OptimizedCachedStaticFilesStorage'
+STATICFILES_STORAGE = 'require.storage.OptimizedStaticFilesStorage'
 REQUIRE_BASE_URL = "js"
 
 # The name of a build profile to use for your project, relative to REQUIRE_BASE_URL.
