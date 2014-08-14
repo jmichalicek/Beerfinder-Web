@@ -1,0 +1,21 @@
+/*  sighting list */
+#sighting_list {
+  overflow-y: auto;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  
+  .sighting_item {
+    display: block;
+    height: 100px;
+    border-bottom: 1px solid #C0C0C0;
+  }
+  
+  .sighting-list-image {
+    width: 85px;
+    height: 85px;
+    margin-right: 5px;
+  }
+}
+
+/* end sighting list */

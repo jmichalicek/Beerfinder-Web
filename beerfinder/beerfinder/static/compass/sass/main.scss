@@ -1,0 +1,154 @@
+@import "bootstrap-compass";
+@import "bootstrap-variables";
+@import "bootstrap";
+@import "sightingDetail", "addSighting", "sightingList", "beerList", "beerDetail";
+
+/*a, a:not(.btn):visited, a:not(.btn):hover {
+  text-decoration: none;
+  color: inherit;
+}*/
+
+/* fight with bootstrap to make my a stylings not break navbar */
+#top_navbar.navbar-inverse .navbar-header .navbar-brand,
+#top_navbar.navbar-inverse .navbar-header .navbar-brand a {
+  color: #999999;
+}
+
+#top_navbar.navbar-inverse .navbar-header .navbar-brand:hover,
+#top_navbar.navbar-inverse .navbar-header .navbar-brand:focus {
+  color: #FFFFFF;
+}
+
+#top_navbar a:hover {
+  opacity: 1;
+}
+
+#nav-update-location {
+  outline: 0;
+}
+/* end bootstrap fighting */
+
+html {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  padding-top: 60px;
+  position: relative;
+  padding-bottom: 25px;
+  height: 100%;
+  margin: 0;
+}
+
+#page_body {
+  height: 100%;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+
+  &.icon {
+    color: inherit;
+  }
+
+  &.underline, &:hover.underline {
+    text-decoration: underline;
+  }
+  
+  &:not(.btn):hover {
+    opacity: .7;
+  }
+
+  &:not(.btn):visited, &:not(.btn):hover {
+   text-decoration: none;
+   color: inherit;
+ }
+
+}
+
+.loading-spinner {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.list-search {
+  margin-bottom: 15px;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+/* rotate anything continuously */
+/* rotation animation */
+@-webkit-keyframes rotate {
+  from { -webkit-transform:rotate(0deg); }
+  to { -webkit-transform:rotate(360deg); }
+}
+
+@-moz-keyframes rotate {
+  from { -moz-transform:rotate(0deg); }
+  to { -moz-transform:rotate(360deg); }
+}
+
+@-ms-keyframes rotate {
+  from { -ms-transform:rotate(0deg); }
+  to { -ms-transform:rotate(360deg); }
+}
+
+@-o-keyframes rotate {
+  from { -o-transform:rotate(0deg); }
+  to { -o-transform:rotate(360deg); }
+}
+
+.rotating {
+  -webkit-transform-origin: 50% 50%;
+  -webkit-animation-name: rotate;
+  -webkit-animation-duration: 1.5s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -moz-transform-origin: 50% 50%;
+  -moz-animation-name: rotate;
+  -moz-animation-duration: 1.5s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -ms-transform-origin: 50% 50%;
+  -ms-animation-name: rotate;
+  -ms-animation-duration: 1.5s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-timing-function: linear;
+  -o-transform-origin: 50% 50%;
+  -o-animation-name: rotate;
+  -o-animation-duration: 1.5s;
+  -o-animation-iteration-count: infinite;
+  -o-animation-timing-function: linear;
+}
+/* end rotation stuff */
+
+/* bootstrap screen-xs-max is 767px */
+@media(max-width: $screen-xs-max){
+  .btn {
+    &.scaleup {
+      border-radius: 6px;
+      font-size: 18px;
+      line-height: 1.33;
+      padding: 10px 16px;
+    }
+  }
+  
+  #beer_list_container {
+    /* because the search button drops down to a new line, so everything else must drop as well */
+    top: 145px;
+  }
+}
+
+@media(min-width:768px){}
+@media(min-width:992px){}
+@media(min-width:1200px){}
