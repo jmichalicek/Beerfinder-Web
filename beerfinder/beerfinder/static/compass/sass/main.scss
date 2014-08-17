@@ -2,7 +2,7 @@
 @import "bootstrap-variables";
 @import "bootstrap";
 @import "bootstrap/theme";
-@import "sightingDetail", "addSighting", "sightingList", "beerList", "beerDetail", "variables";
+@import "sightingDetail", "addSighting", "sightingList", "beerList", "beerDetail";
 
 /* fight with bootstrap to make my a stylings not break navbar */
 #top_navbar.navbar-inverse .navbar-header .navbar-brand,
