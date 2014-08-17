@@ -8527,6 +8527,21 @@ button.close {
   margin-top: 10px;
 }
 
+/* line 8, ../compass/sass/_sightingDetail.scss */
+.map {
+  border: 2px solid black;
+  height: 300px;
+  position: absolute;
+  top: 60px;
+  left: 90%;
+  -webkit-transition: left .5s;
+  transition: left .5s;
+}
+/* line 17, ../compass/sass/_sightingDetail.scss */
+.map.expand {
+  left: 0;
+}
+
 /* add sighting view styles */
 /* line 4, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"] {

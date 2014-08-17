@@ -4,3 +4,17 @@
     margin-top: 10px;
   }
 }
+
+.map {
+  border: 2px solid black;
+  height: 300px;
+  position: absolute;
+  top: 60px;
+  left: 90%;
+  -webkit-transition: left .5s;
+  transition: left .5s;
+
+  &.expand {
+    left: 0;
+  }
+}
