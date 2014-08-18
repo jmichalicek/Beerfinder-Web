@@ -8522,24 +8522,61 @@ button.close {
 }
 
 /* sighting detail view specific styles */
-/* line 3, ../compass/sass/_sightingDetail.scss */
-#comments_list li {
+/* line 2, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view {
+  overflow: hidden;
+  position: relative;
+}
+/* line 6, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view #comments_list li {
   margin-top: 10px;
 }
-
-/* line 8, ../compass/sass/_sightingDetail.scss */
-.map {
-  border: 2px solid black;
+/* line 11, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map {
   height: 300px;
   position: absolute;
   top: 60px;
   left: 90%;
   -webkit-transition: left .5s;
-  transition: left .5s;
+  transition: left .3s ease;
+  padding: 0;
+  overflow: hidden;
 }
-/* line 17, ../compass/sass/_sightingDetail.scss */
-.map.expand {
+/* line 21, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map .label-tab {
+  background-color: white;
+  width: 10%;
+  pointer-events: none;
+  border: 1px solid black;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  padding: 10px 10px;
+}
+/* line 30, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map .label-tab .label-text {
+  width: 0;
+  word-wrap: break-word;
+  text-transform: uppercase;
+  font-size: 20pt;
+}
+/* line 35, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map .label-tab .label-text:before, .sightings-list-view .map .label-tab .label-text:after {
+  content: "\29FC";
+}
+/* line 41, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map .map-container {
+  background-color: white;
+  width: 90%;
+  border: 1px solid black;
+  height: 100%;
+}
+/* line 48, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map.expand {
   left: 0;
+}
+/* line 52, ../compass/sass/_sightingDetail.scss */
+.sightings-list-view .map.expand .label-tab .label-text:before, .sightings-list-view .map.expand .label-tab .label-text:after {
+  content: "\29FD";
 }
 
 /* add sighting view styles */

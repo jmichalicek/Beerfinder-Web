@@ -1,20 +1,60 @@
 /* sighting detail view specific styles */
-#comments_list {
-  li {
-    margin-top: 10px;
+.sightings-list-view {
+  overflow: hidden;
+  position: relative;
+  #comments_list {
+    li {
+      margin-top: 10px;
+    }
   }
-}
+  
+  .map {
+    height: 300px;
+    position: absolute;
+    top: 60px;
+    left: 90%;
+    -webkit-transition: left .5s;
+    transition: left .3s ease;
+    padding: 0;
+    overflow:hidden;
 
-.map {
-  border: 2px solid black;
-  height: 300px;
-  position: absolute;
-  top: 60px;
-  left: 90%;
-  -webkit-transition: left .5s;
-  transition: left .5s;
-
-  &.expand {
-    left: 0;
+    .label-tab {
+      background-color: white;
+      width: 10%;
+      pointer-events: none;
+      border: 1px solid black;
+      margin-top: 50px;
+      margin-bottom: 50px;
+      padding:  10px 10px;
+      
+      .label-text {
+        width: 0;
+        word-wrap: break-word;
+        text-transform: uppercase;
+        font-size: 20pt;
+        &:before, &:after {
+          content: "\29FC";
+        }
+      }
+    }
+    
+    .map-container {
+      background-color: white;
+      width: 90%;
+      border: 1px solid black;
+      height: 100%;
+    }
+    
+    &.expand {
+      left: 0;
+      .label-tab { 
+        .label-text {
+          &:before, &:after {
+            content: "\29FD";
+          }
+        }
+      }
+    }
+    
   }
 }

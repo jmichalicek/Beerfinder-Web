@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block body %}
+<div class="sightings-list-view">
 <div class="container" id="sighting_container" style="display: none" data-bind="visible: true">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-sm-offset-3">
@@ -30,9 +31,14 @@
     </div>
   </div>
   <div class="col-xs-12 map" data-bind="toggleClass: 'expand'">
-<!--    <div style="width: 10%;"> -->
-      A google map goes here
-<!--     </div> -->
+    <div class="label-tab pull-left">
+      <div class="label-text">
+        map
+      </div>
+    </div>
+    <div class="pull-right map-container">
+      The map would go here
+    </div>
   </div>
 </div>
 <div class="container" id="comments_container" style="display: none" data-bind="visible: true">
@@ -66,7 +72,7 @@
 <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
   <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
 </div>
-
+</div>
 {% endblock body %}
 
 {% block requirejs_scripts %}
