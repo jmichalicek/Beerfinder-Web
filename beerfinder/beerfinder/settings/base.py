@@ -212,3 +212,5 @@ REQUIRE_JS = "vendor/require.js"
 #REQUIRE_STANDALONE_MODULES = {}
 REQUIRE_DEBUG = DEBUG
 REQUIRE_ENVIRONMENT = "core.require_environments.DebianNodeEnvironment"
+
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY', '')

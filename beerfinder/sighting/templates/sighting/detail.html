@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{% block head_js %}
+{% if GOOGLE_API_KEY %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_API_KEY }}">
+{% endif %}
+{% endblock head_js %}
 {% block body %}
 <div class="sightings-detail-view">
   <div class="container" id="sighting_container" style="display: none" data-bind="visible: true">

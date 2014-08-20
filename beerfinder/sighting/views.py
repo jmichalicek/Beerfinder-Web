@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
@@ -47,5 +48,6 @@ def sighting_detail(request, sighting_id):
     serialized = SightingSerializer(sighting)
 
     return render_to_response('sighting/detail.html',
-                              {'sighting': JSONRenderer().render(serialized.data)},
+                              {'sighting': JSONRenderer().render(serialized.data),
+                               'GOOGLE_API_KEY': settings.GOOGLE_API_KEY},
                               context_instance=RequestContext(request))
