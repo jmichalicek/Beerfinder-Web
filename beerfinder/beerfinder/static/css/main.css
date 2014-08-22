@@ -8522,71 +8522,78 @@ button.close {
 }
 
 /* sighting detail view specific styles */
-/* line 3, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view {
+/* line 4, ../compass/sass/_sightingDetail.scss */
+.sighting-detail-view {
   overflow: hidden;
   position: relative;
 }
-/* line 7, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #comments_list li {
+
+/* line 10, ../compass/sass/_sightingDetail.scss */
+#comments_list li {
   margin-top: 10px;
 }
-/* line 12, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map {
-  height: 300px;
-  position: absolute;
-  top: 60px;
-  left: calc(100% - 50px);
-  -webkit-transition: left 0.5s ease;
-  -webkit-transition-delay: 0s;
-  -moz-transition: left 0.5s ease 0s;
-  -o-transition: left 0.5s ease 0s;
-  transition: left 0.5s ease 0s;
-  transition: left .3s ease;
-  padding: 0;
-  overflow: hidden;
-  width: 100%;
-}
-/* line 23, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map > .label-tab {
-  background-color: white;
-  width: 50px;
-  pointer-events: none;
-  border: 1px solid black;
-  border-right: none;
-  margin-top: 94px;
-  margin-bottom: 94px;
-  padding: 2px 20px;
-  cursor: pointer;
-}
-/* line 34, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map > .label-tab > .label-text {
-  width: 0;
-  word-wrap: break-word;
-  text-transform: uppercase;
-  font-size: 15px;
-  font-weight: 700;
-}
-/* line 40, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map > .label-tab > .label-text:before, .sightings-detail-view #sighting-location-map > .label-tab > .label-text:after {
-  content: "\AB";
-}
-/* line 46, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map > .map-container {
-  background-color: white;
-  width: calc(100% - 50px);
-  border: 1px solid black;
-  height: 100%;
-}
-/* line 53, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map.expand {
-  left: 0;
-}
-/* line 57, ../compass/sass/_sightingDetail.scss */
-.sightings-detail-view #sighting-location-map.expand > .label-tab > .label-text:before, .sightings-detail-view #sighting-location-map.expand > .label-tab > .label-text:after {
-  content: "\BB";
+
+/* line 15, ../compass/sass/_sightingDetail.scss */
+.map-link {
+  display: none;
+  line-height: 39.599998474121094px;
+  margin-top: 20px;
 }
 
+@media (max-width: 767px) {
+  /* line 22, ../compass/sass/_sightingDetail.scss */
+  .map-link {
+    display: inline;
+  }
+
+  /* line 26, ../compass/sass/_sightingDetail.scss */
+  #comments-container {
+    position: relative;
+  }
+
+  /* line 29, ../compass/sass/_sightingDetail.scss */
+  #sighting-details {
+    -webkit-transition: left 0.5s ease;
+    -webkit-transition-delay: 0s;
+    -moz-transition: left 0.5s ease 0s;
+    -o-transition: left 0.5s ease 0s;
+    transition: left 0.5s ease 0s;
+    position: relative;
+    left: 0;
+  }
+  /* line 35, ../compass/sass/_sightingDetail.scss */
+  #sighting-details.shift-left {
+    left: -100%;
+  }
+
+  /* line 40, ../compass/sass/_sightingDetail.scss */
+  #sighting-location-map {
+    height: 100%;
+    position: absolute;
+    background-color: white;
+    top: 60px;
+    left: 100%;
+    -webkit-transition: left 0.5s ease;
+    -webkit-transition-delay: 0s;
+    -moz-transition: left 0.5s ease 0s;
+    -o-transition: left 0.5s ease 0s;
+    transition: left 0.5s ease 0s;
+    transition: left .3s ease;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+  }
+  /* line 52, ../compass/sass/_sightingDetail.scss */
+  #sighting-location-map > .map-container {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+  }
+  /* line 58, ../compass/sass/_sightingDetail.scss */
+  #sighting-location-map.expand {
+    left: 0;
+  }
+}
 /* add sighting view styles */
 /* line 4, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"] {

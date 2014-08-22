@@ -1,4 +1,4 @@
-define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/SightingCommentModel', 'ko.toggleClass'], function ($, ko, SightingModel, SightingCommentModel, toggleClass) {
+define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/SightingCommentModel', 'ko.toggleClass', 'ko.googleMap'], function ($, ko, SightingModel, SightingCommentModel, toggleClass, googleMap) {
     return function (data) {
         "use strict";
         var self = this;
@@ -9,14 +9,20 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
         this.sighting = ko.observable(new SightingModel(data.sighting));
         this.activeNavSection = ko.observable('');
         this.comments = ko.observableArray([]);
+        this.showMap = ko.observable(false);
         this.showComment = ko.observable(false);
         this.commentToggleText = ko.computed(function () {
             return self.showComment() ? "Cancel" : "Add Comment";
         });
 
+        // need venue lat/lon
+        this.sightingLocationMap = ko.observable({lat: ko.observable(-70),
+                                                  lng: ko.observable(130)});
+
         this.toggleShowComment = function () {
             self.showComment(!self.showComment());
         }
+
         this.getComments = function () {
             var url = '/api/sightings/' + self.sighting().id() + '/comments/';
             var params = {};
@@ -65,5 +71,9 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
             }
             return image.mediumUrl() ? image.mediumUrl() : image.originalUrl();
         });
+
+        this.toggleMap = function () {
+            self.showMap(!self.showMap());
+        };
     };
 });
