@@ -3,7 +3,6 @@
 /* sighting detail view specific styles */
 .sighting-detail-view {
   overflow: hidden;
-  position: relative;
 }
 
 #comments_list {
@@ -18,45 +17,63 @@
     margin-top: 20px;
 }
 
-@media(max-width: $screen-xs-max){
-  .map-link {
-    display: inline;
-  }
-  
-  #comments-container {
-    position: relative;
-  }
-  #sighting-details {
-        @include single-transition(left, .5s, ease, 0s);
+#mobile-address {
+  display: none;
+}
 
+#sighting-location-map {
+  height: 300px;
+  max-width: 549px;
+  margin-bottom: 25px;
+  padding-right: 0;
+
+  & > #map-canvas {
+    height: 300px;
+    width: 100%;
+    margin: 15px auto;
+    position: static;
+  }
+
+}
+
+@media(max-width: $screen-xs-max){
+  #sighting_container {
     position: relative;
     left: 0;
-    
+    @include single-transition(left, .5s, ease, 0s);
+
     &.shift-left {
       left: -100%;
     }
   }
-
+  .map-link {
+    display: inline;
+    position: absolute;
+    right: 30px;
+  }
+  
   #sighting-location-map {
     height: 100%;
     position: absolute;
     background-color: white;
-    top: 60px;
+    top: 0;
     left: 100%;
-    @include single-transition(left, .5s, ease, 0s);
-    transition: left .3s ease;
-    padding: 0;
+/*    @include single-transition(left, .5s, ease, 0s); */
+    padding: 0 10px;
     overflow:hidden;
     width: 100%;
     
-    & > .map-container {
-      background-color: white;
+    & > #map-canvas {
+      position: relative;
+    }
+
+    & > .map-link {
       width: 100%;
-      height: 100%;
+      position: static;
     }
-    
-    &.expand {
-      left: 0;
-    }
+
+  }
+  #mobile-address {
+    display: block;
   }
 }

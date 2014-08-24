@@ -7,7 +7,8 @@ class VenueSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Venue
-        fields = ('url', 'id', 'name', 'street_address', 'city', 'state', 'postal_code', 'foursquare_id')
+        fields = ('url', 'id', 'name', 'street_address', 'city', 'state', 'postal_code', 'latitude',
+                  'longitude', 'foursquare_id')
 
 
 class FoursquareVenueLocationSerializer(serializers.Serializer):

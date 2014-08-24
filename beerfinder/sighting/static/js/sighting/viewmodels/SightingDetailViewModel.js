@@ -15,9 +15,14 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
             return self.showComment() ? "Cancel" : "Add Comment";
         });
 
-        // need venue lat/lon
-        this.sightingLocationMap = ko.observable({lat: ko.observable(-70),
-                                                  lng: ko.observable(130)});
+        this.sightingLocationMap = ko.observable({
+            lat: ko.computed(function () {
+                return parseFloat(self.sighting().venue().latitude())
+            }),
+            lng: ko.computed(function () {
+                return parseFloat(self.sighting().venue().longitude())
+            })
+        });
 
         this.toggleShowComment = function () {
             self.showComment(!self.showComment());
