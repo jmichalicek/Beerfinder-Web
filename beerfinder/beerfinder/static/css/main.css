@@ -8527,31 +8527,36 @@ button.close {
   overflow: hidden;
 }
 
-/* line 9, ../compass/sass/_sightingDetail.scss */
+/* line 8, ../compass/sass/_sightingDetail.scss */
+#sighting-page-header {
+  max-width: 82%;
+}
+
+/* line 13, ../compass/sass/_sightingDetail.scss */
 #comments_list li {
   margin-top: 10px;
 }
 
-/* line 14, ../compass/sass/_sightingDetail.scss */
+/* line 18, ../compass/sass/_sightingDetail.scss */
 .map-link {
   display: none;
   line-height: 39.599998474121094px;
   margin-top: 20px;
 }
 
-/* line 20, ../compass/sass/_sightingDetail.scss */
+/* line 24, ../compass/sass/_sightingDetail.scss */
 #mobile-address {
   display: none;
 }
 
-/* line 24, ../compass/sass/_sightingDetail.scss */
+/* line 28, ../compass/sass/_sightingDetail.scss */
 #sighting-location-map {
   height: 300px;
   max-width: 549px;
   margin-bottom: 25px;
   padding-right: 0;
 }
-/* line 30, ../compass/sass/_sightingDetail.scss */
+/* line 34, ../compass/sass/_sightingDetail.scss */
 #sighting-location-map > #map-canvas {
   height: 300px;
   width: 100%;
@@ -8560,7 +8565,7 @@ button.close {
 }
 
 @media (max-width: 767px) {
-  /* line 40, ../compass/sass/_sightingDetail.scss */
+  /* line 44, ../compass/sass/_sightingDetail.scss */
   #sighting_container {
     position: relative;
     left: 0;
@@ -8570,19 +8575,19 @@ button.close {
     -o-transition: left 0.5s ease 0s;
     transition: left 0.5s ease 0s;
   }
-  /* line 45, ../compass/sass/_sightingDetail.scss */
+  /* line 49, ../compass/sass/_sightingDetail.scss */
   #sighting_container.shift-left {
     left: -100%;
   }
 
-  /* line 49, ../compass/sass/_sightingDetail.scss */
+  /* line 53, ../compass/sass/_sightingDetail.scss */
   .map-link {
     display: inline;
     position: absolute;
     right: 30px;
   }
 
-  /* line 55, ../compass/sass/_sightingDetail.scss */
+  /* line 59, ../compass/sass/_sightingDetail.scss */
   #sighting-location-map {
     height: 100%;
     position: absolute;
@@ -8594,17 +8599,17 @@ button.close {
     overflow: hidden;
     width: 100%;
   }
-  /* line 66, ../compass/sass/_sightingDetail.scss */
+  /* line 70, ../compass/sass/_sightingDetail.scss */
   #sighting-location-map > #map-canvas {
     position: relative;
   }
-  /* line 70, ../compass/sass/_sightingDetail.scss */
+  /* line 74, ../compass/sass/_sightingDetail.scss */
   #sighting-location-map > .map-link {
     width: 100%;
     position: static;
   }
 
-  /* line 76, ../compass/sass/_sightingDetail.scss */
+  /* line 80, ../compass/sass/_sightingDetail.scss */
   #mobile-address {
     display: block;
   }
