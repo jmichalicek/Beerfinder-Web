@@ -1,4 +1,4 @@
-require.config({
+/* require.config({
     baseUrl: "/static/js/",
     paths: {
         core: 'core',
@@ -40,4 +40,4 @@ require.config({
             },
         });
     }
-});
+}); */
