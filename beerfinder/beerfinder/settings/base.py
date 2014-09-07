@@ -49,7 +49,6 @@ INSTALLED_APPS = (
     'djcelery',
     'django_extensions',
     'widget_tweaks',
-    'south',
     'require',
     # my apps
     'accounts',
