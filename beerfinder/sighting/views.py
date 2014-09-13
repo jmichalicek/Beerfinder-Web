@@ -36,7 +36,7 @@ def add_sighting(request):
     beer_slug = request.GET.get('beer')
     beer = get_object_or_404(Beer, slug=beer_slug)
 
-    serialized = BeerSerializer(beer)
+    serialized = BeerSerializer(beer, context={'request': request})
 
     return render_to_response('sighting/add_sighting.html',
                               {'beer': JSONRenderer().render(serialized.data)},
@@ -45,7 +45,7 @@ def add_sighting(request):
 
 def sighting_detail(request, sighting_id):
     sighting = get_object_or_404(Sighting.objects.select_related('beer', 'beer__brewery', 'venue'), id=sighting_id)
-    serialized = SightingSerializer(sighting)
+    serialized = SightingSerializer(sighting, context={'request': request})
 
     return render_to_response('sighting/detail.html',
                               {'sighting': JSONRenderer().render(serialized.data),
