@@ -125,7 +125,6 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             confirmation = confirmation_serializer.save()
             return Response(self.get_serializer(sighting).data, status=201)
         else:
-            print confirmation_serializer.errors
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
@@ -221,5 +220,4 @@ class NearbySightingAPIView(generics.ListAPIView):
         """
         Return a list of sightings sorted by distance from the point specified.
         """
-        print 'I did not use the cache'
         return super(NearbySightingAPIView, self).get(request, *args, **kwargs)
