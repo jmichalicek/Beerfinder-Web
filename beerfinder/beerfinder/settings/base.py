@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 import dj_database_url
 
+try:
+    from .git_head import *
+except ImportError:
+    # could make this a modified time on a file?
+    REQUIRE_BUILD_PATH = ''
+
 SITE_ID = 1;
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -123,8 +129,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/%s/' % REQUIRE_BUILD_PATH
+STATIC_ROOT = os.path.join(BASE_DIR, 'static', REQUIRE_BUILD_PATH)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
