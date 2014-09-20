@@ -44,12 +44,16 @@
                 <input type="text" id="id_username" name="username" autocomplete="off" data-bind="value: profile().username" class="form-control"></input>
               </div>
               <div class="form-group">
-                <label for="id_send_watchlist_email" class="checkbox-inline">Receive email notification about watched beer sightings
-                <input type="checkbox" id="id_send_watchlist_email" name="send_watchlist_email" autocomplete="off" data-bind="checked: profile().sendWatchlistEmail"></input></label>
+                <label for="id_send_watchlist_email" class="checkbox-inline">
+                  <input type="checkbox" id="id_send_watchlist_email" name="send_watchlist_email" autocomplete="off" data-bind="checked: profile().sendWatchlistEmail"></input>
+                  <b>Receive email</b> notification about watched beer sightings
+                </label>
               </div>
               <div class="form-group">
-                <label for="id_show_name_on_sightings" class="checkbox-inline">Show name on sightings
-                <input type="checkbox" id="id_show_name_on_sightings" name="show_name_on_sightings" autocomplete="off" data-bind="checked: profile().showNameOnSightings"></input></label>
+                <label for="id_show_name_on_sightings" class="checkbox-inline">
+                <input type="checkbox" id="id_show_name_on_sightings" name="show_name_on_sightings" autocomplete="off" data-bind="checked: profile().showNameOnSightings"></input>
+                <b>Show</b> name on sightings
+                </label>
               </div>
               <button type="submit" class="btn btn-primary">Save Changes</button>
             </form>
