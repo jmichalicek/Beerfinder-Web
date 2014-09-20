@@ -12,6 +12,7 @@ def deploy_local():
     """
 
     save_git_sha1()
+    local("pip install -r requirements.txt")
     local("python ./beerfinder/manage.py syncdb")
     local("python ./beerfinder/manage.py migrate")
     local("python ./beerfinder/manage.py collectstatic")
