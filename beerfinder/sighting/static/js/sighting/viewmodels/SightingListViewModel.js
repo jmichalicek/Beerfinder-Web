@@ -27,16 +27,17 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
             return self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25;
         };
         // detect scroll
-        $('#sighting_list').scroll(function() {
+        $(document).scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
-            self.sightings.infinitescroll.scrollY($('#sighting_list').scrollTop());
+            self.sightings.infinitescroll.scrollY($('body').scrollTop());
 
             if (self.shouldDoRequestPage()) {
                 if(!self.requestInProgress && self.nextPage) {
                     _.debounce(self.getSightings(), 250);
                 }
             }
+            _.debounce(updateViewportDimensions(), 250);
         });
 
         // update dimensions of infinite-scroll viewport and item
@@ -50,11 +51,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
             
             self.sightings.infinitescroll.viewportWidth(itemsWidth);
             self.sightings.infinitescroll.viewportHeight(itemsHeight);
-            // normally infinitescroll.itemWidth would use itemWidth from above,
-            // but jQuery is being weird and picking it up as the wrong width.
-            // Since this definitely should be only 1 column, just use the container width
-            // as a kludge until I can figure out wtf is going wrong.
-            self.sightings.infinitescroll.itemWidth(itemsWidth);
+            self.sightings.infinitescroll.itemWidth(itemWidth);
             self.sightings.infinitescroll.itemHeight(itemHeight);
         }
         updateViewportDimensions();
@@ -93,6 +90,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
                    }).always(function () {
                        self.requestInProgress = false;
                        self.showLoadingSpinner(false);
+                       updateViewportDimensions();
                    });
             return dfd.promise();
         };

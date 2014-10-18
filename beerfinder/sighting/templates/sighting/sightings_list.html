@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block body %}
-<div class="col-xs-12 full-height" style="overflow: hidden">
-  <ul id="sighting_list" data-bind="foreach: sightings.infinitescroll.displayItems" class="media-list full-height">
+<div class="col-xs-12">
+  <ul id="sighting_list" data-bind="foreach: sightings.infinitescroll.displayItems" class="media-list">
     <li class="sighting_item media" style="display: none" data-bind="visible: true">
       <!-- ko if: $index() >= $root.sightings.infinitescroll.firstHiddenIndex() -->
       <a style="display: block" data-bind="attr: {href: webUrl }">

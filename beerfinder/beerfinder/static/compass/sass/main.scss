@@ -27,21 +27,14 @@
 }
 /* end bootstrap fighting */
 
-html {
-  height: 100%;
-  margin: 0;
-}
 
 body {
   padding-top: 52px;
-  position: relative;
-  height: 100%;
   margin: 0;
   background-color: grey;
 }
 
 #page_body {
-  height: 100%;
   padding: 10px 0 10px;
   background-color: white;
 }
@@ -76,7 +69,7 @@ a {
 }
 
 .full-height {
-    height: 100%;
+   height: 100%; 
 }
 
 .list-search {
