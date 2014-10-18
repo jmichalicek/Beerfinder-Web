@@ -5,6 +5,9 @@
 @import "sightingDetail", "addSighting", "sightingList", "beerList", "beerDetail";
 
 /* fight with bootstrap to make my a stylings not break navbar */
+#top_navbar {
+  margin-bottom: 0;
+}
 #top_navbar.navbar-inverse .navbar-header .navbar-brand,
 #top_navbar.navbar-inverse .navbar-header .navbar-brand a {
   color: #999999;
@@ -30,15 +33,17 @@ html {
 }
 
 body {
-  padding-top: 60px;
+  padding-top: 52px;
   position: relative;
-  padding-bottom: 25px;
   height: 100%;
   margin: 0;
+  background-color: grey;
 }
 
 #page_body {
   height: 100%;
+  padding: 10px 0 10px;
+  background-color: white;
 }
 
 a {

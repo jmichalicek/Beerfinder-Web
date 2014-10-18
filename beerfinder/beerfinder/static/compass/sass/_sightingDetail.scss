@@ -2,11 +2,27 @@
 
 /* sighting detail view specific styles */
 .sighting-detail-view {
-  overflow: hidden;
+  /*overflow: hidden; */
 }
 
 #sighting-page-header {
   max-width: 82%;
+}
+
+#sighting_container {
+  background-color: white;
+
+  &:before {
+    display: table;
+    clear: both;
+    content: " ";
+
+  }
+  &:after {
+    display: table;
+    clear: both;
+    content: " ";
+  }
 }
 
 #comments_list {

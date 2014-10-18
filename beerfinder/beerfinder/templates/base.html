@@ -50,8 +50,12 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-    <div id="page_body">
-    {% block body %}{% endblock body %}
+    <div class="container full-height" id="page_body">
+      <div class="row full-height">
+        <div class="col-xs-12 col-sm-9 full-height">
+      {% block body %}{% endblock body %}
+        </div>
+      </div>
     </div>
     <script src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
     {# require config here allows for cache-busting via changing static root #}
