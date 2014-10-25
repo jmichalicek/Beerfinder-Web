@@ -3,17 +3,6 @@
 {% block additional_css %}
 <!-- so that an inner div can be set to always full screen -->
 <style type="text/css">
-  html, body {
-  height: 100%;
-  margin: 0;
-  }
-
-  #venue_list, #search_list {
-      overflow-y: auto;
-      height: 100%;
-      position: absolute;
-      width: 100%;
-  }
   .venue_item {
       display: block;
       position: relative;
@@ -37,15 +26,12 @@
     padding: 5px;
   }
 
-  #id_sighting_comment {
-      width: 100%;
-  }
 </style>
 {% endblock additional_css %}
 {% block body %}
-<div id="search_box_container" class="container">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+<div class="col-xs-12">
+  <div id="search_box_container" class="container">
+    <div class="row">
       <form data-bind="submit: submitSearchHandler" class="form-inline">
         <div class="form-group">
           <input type="text" placeholder="Place to search for..." data-bind="value: searchTerm" class="form-control">
@@ -54,105 +40,87 @@
       </form>
     </div>
   </div>
-</div>
-<div id="venue_list_container" class="container full-height" data-bind="visible: venueListVisible">
-  <div class="row full-height">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden">
-      <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="list-unstyled">
-        <li class="venue_item">
-          {# magic to not draw the items which are not visible which makes this far more scalable #}
-          <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() - 25 -->
-          <div class="venue_item_container" style="display: none" data-bind="visible: true">
-            <address>
-              <strong><span data-bind="text: name"></span></strong><br>
-              <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
-              <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-              <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
-            </address>
-            <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
-          </div>
-          <!-- /ko -->
-        </li>
-      </ul>
-    </div>
+  
+  <div id="venue_list_container" data-bind="visible: venueListVisible">
+    <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="list-unstyled">
+      <li class="venue_item">
+        <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() - 25 -->
+        <div class="venue_item_container" style="display: none" data-bind="visible: true">
+          <address>
+            <strong><span data-bind="text: name"></span></strong><br>
+            <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
+            <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+            <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+          </address>
+          <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
+        </div>
+        <!-- /ko -->
+      </li>
+    </ul>
   </div>
-</div>
-<div id="search_list_container" class="container full-height" data-bind="visible: searchListVisible" style="display: none">
-  <div class="row full-height">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden">
-      <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
-      <ul id="search_list" data-bind="foreach: searchVenues" class="list-unstyled">
-        <li class="venue_item">
-          <div class="venue_item_container">
-            <address>
-              <strong><span data-bind="text: name"></span></strong><br>
-              <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
-              <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
-              <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
-              </address>
-              <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
-          </div>
-        </li>
-      </ul>
-    </div>
+  <div id="search_list_container" class="container" data-bind="visible: searchListVisible" style="display: none">
+    <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
+    <ul id="search_list" data-bind="foreach: searchVenues" class="list-unstyled">
+      <li class="venue_item">
+        <div class="venue_item_container">
+          <address>
+            <strong><span data-bind="text: name"></span></strong><br>
+            <!-- ko if: location().address --><span data-bind="text: location().address"></span><br> <!-- /ko -->
+            <span data-bind="text: location().city"></span>, <span data-bind="text: location().state"></span><br>
+            <!-- ko if: location().postalCode --><span data-bind="text: location().postalCode"></span><br> <!-- /ko -->
+          </address>
+          <button data-bind="click: $parent.setSelectedVenue" class="btn btn-primary">Select Location</button>
+        </div>
+      </li>
+    </ul>
   </div>
-</div>
-<div id="selected_venue" class="container" data-bind="visible: selectedVenue" style="display: none">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3" data-bind="if: selectedVenue">
+  
+  <div style="display: none" data-bind="visible: venueSelected">
+    <div id="selected_venue" class="container" data-bind="visible: venueSelected" style="display: none">
       <div class="form-group">
-      <address>
-        <strong><span data-bind="text: selectedVenue().name"></span></strong><br>
-        <span data-bind="text: selectedVenue().location().address"></span><br>
-        <span data-bind="text: selectedVenue().location().city"></span>, <span data-bind="text: selectedVenue().location().state"></span><br>
-        <span data-bind="text: selectedVenue().location().postalCode"></span><br>
-      </address>
-      <a href="#" class="btn btn-default" data-bind="click: clearSelectedVenue"><small>Change Location</small></a></div>
+        <address>
+          <strong><span data-bind="text: selectedVenue().name"></span></strong><br>
+          <span data-bind="text: selectedVenue().location().address"></span><br>
+          <span data-bind="text: selectedVenue().location().city"></span>, <span data-bind="text: selectedVenue().location().state"></span><br>
+          <span data-bind="text: selectedVenue().location().postalCode"></span><br>
+        </address>
+        <a href="#" class="btn btn-default" data-bind="click: clearSelectedVenue"><small>Change Location</small></a></div>
     </div>
-  </div>
-</div>
-<div id="submit_sighting" class="container" data-bind="visible: selectedVenue" style="display: none">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+    <div id="submit_sighting" class="container" data-bind="visible: venueSelected" style="display: none">
       <div class="form-group">
-        <label for="id_sighting_comment" class="control-label">Comment:</label>
-        <textarea id="id_sighting_comment" data-bind="value: comment" class="form-control"></textarea>
+      <label for="id_sighting_comment" class="control-label">Comment:</label>
+      <textarea id="id_sighting_comment" data-bind="value: comment" class="form-control"></textarea>
       </div>
     </div>
+    <form role="form" class="form">
+      <div class="form-group">
+        <label for="sighting_image" class="control-label">Attach an image: <button type="button" data-bind="click: clearImage, visible: image" data-target="sighting_image" class="btn">Clear Image</button></label><br>
+        <ul class="list-inline">
+          <li>
+            <img height="150" src="" data-bind="attr: {src: image}"></img>
+          </li>
+          <li>
+             <input id="sighting_image"  type="file" name="image" autocomplete="off" data-bind="event {change: showImageThumbnail}">
+           </li>
+         </ul>
+       </div>
+       <div class="form-group">
+         How was the beer available?<br>
+         <ul class="list-unstyled" id="sighting_serving_type_selection">
+           <!-- ko foreach: servingTypes -->
+           <li><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes, attr: {id: 'id_serving_type_' + id()}" class="form-control"><label data-bind="attr: {for: 'id_serving_type_' + id()}" class="control-label">&nbsp;<span data-bind="text: name"></span></label></li>
+           <!-- /ko -->
+         </ul>
+       </div>
+       <button class="btn btn-primary btn-lg" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
+       {% csrf_token %}
+     </form>
   </div>
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <form role="form" class="form">
-        <div class="form-group">
-          <label for="sighting_image" class="control-label">Attach an image: <button type="button" data-bind="click: clearImage, visible: image" data-target="sighting_image" class="btn">Clear Image</button></label><br>
-          <ul class="list-inline">
-            <li>
-              <img height="150" src="" data-bind="attr: {src: image}"></img>
-            </li>
-            <li>
-              <input id="sighting_image"  type="file" name="image" autocomplete="off" data-bind="event {change: showImageThumbnail}">
-            </li>
-          </ul>
-        </div>
-        <div class="form-group">
-          How was the beer available?<br>
-          <ul class="list-unstyled" id="sighting_serving_type_selection">
-            <!-- ko foreach: servingTypes -->
-            <li><input type="checkbox" name="serving_types" data-bind="value: id, checkedValue: id, checked: $parent.selectedServingTypes, attr: {id: 'id_serving_type_' + id()}" class="form-control"><label data-bind="attr: {for: 'id_serving_type_' + id()}" class="control-label">&nbsp;<span data-bind="text: name"></span></label></li>
-            <!-- /ko -->
-          </ul>
-        </div>
-        <button class="btn btn-primary btn-lg" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
-      {% csrf_token %}
-      </form>
-    </div>
+
+  <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
+    <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
   </div>
 </div>
-
-<div data-bind="visible: showLoadingSpinner" class="loading-spinner">
-  <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
-</div>
-
 {% endblock body %}
 {% block requirejs_scripts %}
 require(['knockout', 'sighting/viewmodels/AddSightingViewModel'], function (ko, AddSightingViewModel) {

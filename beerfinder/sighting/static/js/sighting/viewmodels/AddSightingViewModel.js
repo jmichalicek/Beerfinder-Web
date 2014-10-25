@@ -16,7 +16,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.searchTerm = ko.observable('');
         
         this.activeNavSection = ko.observable('');
-        this.selectedVenue = ko.observable(null);
+        this.selectedVenue = ko.observable(new FoursquareVenueModel({location: ''}));
         this.location = data.location || {}; // TODO: populate this.
         this.selectedServingTypes = ko.observableArray([]);
         
@@ -30,12 +30,15 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.servingTypes = ko.observableArray([]);
         this.submitInProgress = ko.observable(false);
         this.discoverView = ko.observable(true); // determine whether to show discover or search lists
+        this.venueSelected = ko.observable(false);
+
         this.searchListVisible = ko.computed(function () {
-            return !self.selectedVenue() && !self.discoverView();
+            return !self.venueSelected() && !self.discoverView();
         });
         this.venueListVisible = ko.computed(function () {
-            return !self.selectedVenue() && self.discoverView();
+            return !self.venueSelected() && self.discoverView();
         });
+
 
         this.showImageThumbnail = function (data, e) {
             // make this a knockout binding?
@@ -72,24 +75,26 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         
         // detect resize
         $(window).resize(function() {
-            updateViewportDimensions();
+            debouncedUpdateViewport();
         });
         
         // detect scroll
-        $('#venue_list').scroll(function() {
+        $(document).scroll(function() {
             // we need to pause watching this while an ajax request is being made
             // or we make a bunch of requests for the same data and make a mess of things
-            self.venues.infinitescroll.scrollY($('#venue_list').scrollTop());
+            self.venues.infinitescroll.scrollY($(window).scrollTop());
             // add more items if scroll reaches the last 15 items
-            if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 50) {
-                _.debounce(self.getNearbyVenues(), 250);
+            if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 20) {
+                self.debouncedNearbyVenues();
             }
+
+            debouncedUpdateViewport();
         });
         
         
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
-            var itemsRef = $('#venue_list'),
+            var itemsRef = $(window),//$('#venue_list'),
             itemRef = $('.venue_item').first(),
             itemsWidth = itemsRef.width(),
             itemsHeight = itemsRef.height(),
@@ -103,6 +108,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             
         }
         updateViewportDimensions();
+        var debouncedUpdateViewport = _.debounce(updateViewportDimensions, 250);
         
         // end infinite scroll stuff
         
@@ -151,10 +157,12 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         
         this.setSelectedVenue = function (venue) {
             self.selectedVenue(venue);
+            self.venueSelected(true);
         };
         
         this.clearSelectedVenue = function () {
-            self.selectedVenue(null);
+            self.selectedVenue(new FoursquareVenueModel({}));
+            self.venueSelected(false);
         };
         
         this.geoLocationCallback = function (position) {
@@ -203,9 +211,12 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                        }).always(function () {
                            self.requestInProgress = false;
                            self.showLoadingSpinner(false);
+                           updateViewportDimensions();
                        });
             }
         };
+
+        this.debouncedNearbyVenues = _.debounce(self.getNearbyVenues, 250);
         
         this.submitSearchHandler = function () {
             // maybe this should be renamed now.  It is used when not searching as well.
@@ -232,6 +243,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                            resultItems.push(new FoursquareVenueModel(venue));
                        });
                        self.searchVenues(resultItems);
+                       updateViewportDimensions();
                    });
         };
 
@@ -251,7 +263,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
         this.geoLocationSuccessMessageHandler = function (msg, data) {
             /* data is going to be a location object with coords, etc */
-            self.selectedVenue(null);
+            self.selectedVenue(new FoursquareVenueModel({location: {}}));
             self.venues([]);
             self.location = data;
             self.submitSearchHandler();
