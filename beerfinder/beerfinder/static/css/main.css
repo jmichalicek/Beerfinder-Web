@@ -8631,11 +8631,37 @@ button.close {
   }
 }
 /* add sighting view styles */
-/* line 4, ../compass/sass/_addSighting.scss */
+/* line 3, ../compass/sass/_addSighting.scss */
+.venue_item {
+  display: block;
+  position: relative;
+  height: 125px;
+  margin: 10px 0;
+}
+/* line 9, ../compass/sass/_addSighting.scss */
+.venue_item .btn {
+  position: absolute;
+  bottom: 0px;
+}
+/* line 14, ../compass/sass/_addSighting.scss */
+.venue_item .venue_item_container {
+  border-top: 2px solid gray;
+  height: 125px;
+  padding: 5px;
+}
+
+/* line 21, ../compass/sass/_addSighting.scss */
+.venue_item_container {
+  border-top: none;
+  height: 125px;
+  padding: 5px;
+}
+
+/* line 28, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"] {
   display: none;
 }
-/* line 7, ../compass/sass/_addSighting.scss */
+/* line 31, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"] + label {
   width: 100%;
   height: 50px;
@@ -8652,11 +8678,11 @@ button.close {
   transition: color .5s ease-in-out, background .5s ease-in-out;
   cursor: pointer;
 }
-/* line 23, ../compass/sass/_addSighting.scss */
+/* line 47, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"] + label > span {
   position: relative;
 }
-/* line 27, ../compass/sass/_addSighting.scss */
+/* line 51, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"] + label:before {
   content: "";
   opacity: 0;
@@ -8666,13 +8692,13 @@ button.close {
   -o-transition: content .5s ease-in-out, opacity .5s ease-in-out;
   transition: content .5s ease-in-out, opacity .5s ease-in-out;
 }
-/* line 39, ../compass/sass/_addSighting.scss */
+/* line 63, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"]:checked + label {
   background-color: grey;
   opacity: .25;
   color: white;
 }
-/* line 44, ../compass/sass/_addSighting.scss */
+/* line 68, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"]:checked + label:before {
   content: "\2714";
   font-size: 36px;
@@ -8683,7 +8709,7 @@ button.close {
   opacity: 1;
   color: white;
 }
-/* line 55, ../compass/sass/_addSighting.scss */
+/* line 79, ../compass/sass/_addSighting.scss */
 #sighting_serving_type_selection input[type="checkbox"]:checked + label > span {
   top: -7px;
   left: -14px;

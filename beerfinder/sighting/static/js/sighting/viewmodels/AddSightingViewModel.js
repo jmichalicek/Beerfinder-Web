@@ -17,7 +17,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         
         this.activeNavSection = ko.observable('');
         this.selectedVenue = ko.observable(new FoursquareVenueModel({location: ''}));
-        this.location = data.location || {}; // TODO: populate this.
+        this.location = data.location || {};
         this.selectedServingTypes = ko.observableArray([]);
         
         this.venues = ko.observableArray();
@@ -78,19 +78,17 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             debouncedUpdateViewport();
         });
         
-        // detect scroll
-        $(document).scroll(function() {
-            // we need to pause watching this while an ajax request is being made
-            // or we make a bunch of requests for the same data and make a mess of things
+        this.handleScroll = _.debounce(function () {
             self.venues.infinitescroll.scrollY($(window).scrollTop());
             // add more items if scroll reaches the last 15 items
             if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 20) {
                 self.debouncedNearbyVenues();
             }
+            
+            updateViewportDimensions();
+        }, 250);
+        $(document).scroll(self.handleScroll);
 
-            debouncedUpdateViewport();
-        });
-        
         
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
@@ -161,8 +159,8 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         };
         
         this.clearSelectedVenue = function () {
-            self.selectedVenue(new FoursquareVenueModel({}));
             self.venueSelected(false);
+            self.selectedVenue(new FoursquareVenueModel({}));
         };
         
         this.geoLocationCallback = function (position) {
@@ -222,12 +220,24 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             // maybe this should be renamed now.  It is used when not searching as well.
             if(self.searchTerm().length < 1) {
                 // just do regular explore if the search term was empty
-                self.discoverView(true);
-                self.getNearbyVenues();
+                self.returnToDiscoverView();
             } else {
                 self.discoverView(false);
                 self.searchForVenue();
             }
+        };
+
+        this.returnToDiscoverView = function () {
+            /**
+             * Handler for when Return To List is clicked to end search
+             */
+            self.searchTerm('');
+            self.discoverView(true);
+            self.searchVenues([]);
+            // this needs reset directly because hiding the div with the ul
+            // for this list when going to search mode confuses it.
+            self.venues.infinitescroll.displayItems(self.venues());
+            updateViewportDimensions();
         };
         
         this.searchForVenue = function () {
@@ -266,7 +276,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             self.selectedVenue(new FoursquareVenueModel({location: {}}));
             self.venues([]);
             self.location = data;
-            self.submitSearchHandler();
+            self.getNearbyVenues();
         };
 
         this.initialize = function () {

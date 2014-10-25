@@ -1,48 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block additional_css %}
-<!-- so that an inner div can be set to always full screen -->
-<style type="text/css">
-  .venue_item {
-      display: block;
-      position: relative;
-      height: 125px;
-      margin: 10px 0;
-  }
 
-  .venue_item .btn {
-    position: absolute;
-    bottom: 0px;
-  }
-
-  ul li.venue_item:first-child .venue_item_container {
-    border-top: none;
-    height: 125px;
-    padding: 5px;
-  }
-  .venue_item .venue_item_container {
-    border-top: 2px solid gray;
-    height: 125px;
-    padding: 5px;
-  }
-
-</style>
-{% endblock additional_css %}
 {% block body %}
 <div class="col-xs-12">
-  <div id="search_box_container" class="container">
-    <div class="row">
-      <form data-bind="submit: submitSearchHandler" class="form-inline">
-        <div class="form-group">
-          <input type="text" placeholder="Place to search for..." data-bind="value: searchTerm" class="form-control">
-        </div>
-        <button type="submit" class="btn">Search</button>
-      </form>
-    </div>
+  <div id="search_box_container">
+    <form data-bind="submit: submitSearchHandler" class="form-inline">
+      <div class="form-group">
+        <input type="text" placeholder="Place to search for..." data-bind="value: searchTerm" class="form-control">
+      </div>
+      <button type="submit" class="btn">Search</button>
+    </form>
   </div>
   
   <div id="venue_list_container" data-bind="visible: venueListVisible">
-    <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="list-unstyled">
+    <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="list-unstyled venue-list">
       <li class="venue_item">
         <!-- ko if: $index() >= $root.venues.infinitescroll.firstHiddenIndex() - 25 -->
         <div class="venue_item_container" style="display: none" data-bind="visible: true">
@@ -58,8 +29,8 @@
       </li>
     </ul>
   </div>
-  <div id="search_list_container" class="container" data-bind="visible: searchListVisible" style="display: none">
-    <a href="#" data-bind="click: function () {discoverView(true);}">Return to list</a><br>
+  <div id="search_list_container" data-bind="visible: searchListVisible" style="display: none">
+    <a href="#" data-bind="click: returnToDiscoverView">Return to list</a><br>
     <ul id="search_list" data-bind="foreach: searchVenues" class="list-unstyled">
       <li class="venue_item">
         <div class="venue_item_container">
@@ -76,7 +47,7 @@
   </div>
   
   <div style="display: none" data-bind="visible: venueSelected">
-    <div id="selected_venue" class="container" data-bind="visible: venueSelected" style="display: none">
+    <div id="selected_venue" data-bind="visible: venueSelected" style="display: none">
       <div class="form-group">
         <address>
           <strong><span data-bind="text: selectedVenue().name"></span></strong><br>
@@ -86,7 +57,7 @@
         </address>
         <a href="#" class="btn btn-default" data-bind="click: clearSelectedVenue"><small>Change Location</small></a></div>
     </div>
-    <div id="submit_sighting" class="container" data-bind="visible: venueSelected" style="display: none">
+    <div id="submit_sighting" data-bind="visible: venueSelected" style="display: none">
       <div class="form-group">
       <label for="id_sighting_comment" class="control-label">Comment:</label>
       <textarea id="id_sighting_comment" data-bind="value: comment" class="form-control"></textarea>

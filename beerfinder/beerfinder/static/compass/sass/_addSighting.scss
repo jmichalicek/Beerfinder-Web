@@ -1,5 +1,29 @@
 /* add sighting view styles */
 
+.venue_item {
+  display: block;
+  position: relative;
+  height: 125px;
+  margin: 10px 0;
+
+  .btn {
+    position: absolute;
+    bottom: 0px;
+  }
+
+  .venue_item_container {
+    border-top: 2px solid gray;
+    height: 125px;
+    padding: 5px;
+  }
+}
+
+.venue_item_container {
+  border-top: none;
+  height: 125px;
+  padding: 5px;
+}
+
 #sighting_serving_type_selection {
   input[type="checkbox"] {
     display: none;
