@@ -6,45 +6,41 @@
 </style>
 {% endblock additional_css %}
 {% block body %}
-<div class="container" style="display: none" data-bind="visible: true">
-  <div class="row" id="main_content">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <!-- ko foreach: formErrors -->
-      <div class="alert alert-danger"><span data-bind="text: $data"></span></div>
-      <!-- /ko -->
-      <form data-bind="submit: addBeer" class="form">
-        <div class="form-group">
-          <label for="id_beer_name" class="control-label">Beer Name:</label> <input id="id_beer_name" type="text" autocomplete="off" data-bind="value: beerName" class="form-control input-lg"></input>
-          <br>
-        </div>
-        <div class="form-group">
-          <!-- use the function on keypress, otherwise the first round of typing in the field is ignored for some reason -->
-          <label for="id_brewery_name" class="control-label">Brewery:</label>
-          <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: function () {getBrewerySuggestions(); return true}}" class="form-control input-lg"></input>
-          <datalist id="brewery_options" data-bind="foreach: breweryDataListOptions">
-            <option data-bind="text: name"></option>
-          </datalist>
-          <br>
-        </div>
-        <!-- not sure about this... -->
-        <!-- <div class="btn-default btn-large" data-bind="visible: styleButtonVisible, click: showStylePicker"> -->
-        <div id="style_selection" class="panel panel-default">
-          <div class="panel-heading" data-bind="click: showStylePicker">
-            <b>Style:</b> <span data-bind="text: selectedStyle() ? selectedStyle().name() : 'Not Selected'"></span><br>
-            <small data-bind="text: selectedStyle() ? 'Click to change' : 'Click to select'"></small>
-          </div>
-          <div class="panel-body" data-bind="visible: stylePickerVisible">
-            <div class="form-group" data-bind="visible: stylePickerVisible">
-              <ul class="list-unstyled list-group" data-bind="foreach: styles"> {# add infinite scroll #}
-                <li class="list-group-item" data-bind="text: name, click: $parent.selectStyle"></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary btn-lg">Save</button>
-      </form>
+<div class="col-xs-12" style="display: none" data-bind="visible: true">
+  <!-- ko foreach: formErrors -->
+  <div class="alert alert-danger"><span data-bind="text: $data"></span></div>
+  <!-- /ko -->
+  <form data-bind="submit: addBeer" class="form">
+    <div class="form-group">
+      <label for="id_beer_name" class="control-label">Beer Name:</label> <input id="id_beer_name" type="text" autocomplete="off" data-bind="value: beerName" class="form-control input-lg"></input>
+      <br>
     </div>
-  </div>
+    <div class="form-group">
+      <!-- use the function on keypress, otherwise the first round of typing in the field is ignored for some reason -->
+      <label for="id_brewery_name" class="control-label">Brewery:</label>
+      <input id="id_brewery_name" type="text" list="brewery_options" autocomplete="off" data-bind="value: breweryName, valueUpdate: 'afterkeydown', event: { keypress: function () {getBrewerySuggestions(); return true}}" class="form-control input-lg"></input>
+      <datalist id="brewery_options" data-bind="foreach: breweryDataListOptions">
+        <option data-bind="text: name"></option>
+      </datalist>
+      <br>
+    </div>
+    <!-- not sure about this... -->
+    <!-- <div class="btn-default btn-large" data-bind="visible: styleButtonVisible, click: showStylePicker"> -->
+    <div id="style_selection" class="panel panel-default">
+      <div class="panel-heading" data-bind="click: showStylePicker">
+        <b>Style:</b> <span data-bind="text: selectedStyle() ? selectedStyle().name() : 'Not Selected'"></span><br>
+        <small data-bind="text: selectedStyle() ? 'Click to change' : 'Click to select'"></small>
+      </div>
+      <div class="panel-body" data-bind="visible: stylePickerVisible">
+        <div class="form-group" data-bind="visible: stylePickerVisible">
+          <ul class="list-unstyled list-group" data-bind="foreach: styles">
+            <li class="list-group-item" data-bind="text: name, click: $parent.selectStyle"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+  </form>
 </div>
 <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
   <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>

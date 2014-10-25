@@ -8738,25 +8738,7 @@ button.close {
 
 /* end sighting list */
 /* beer list */
-/* line 2, ../compass/sass/_beerList.scss */
-#beer_list_container {
-  /* allows for infinite scroll without page scroll with fixed height headers/footers */
-  position: absolute;
-  top: 100px;
-  bottom: 34px;
-  left: 0px;
-  right: 0px;
-}
-
-/* line 11, ../compass/sass/_beerList.scss */
-#beer_list {
-  min-height: 500px;
-  overflow-y: auto;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
-/* line 18, ../compass/sass/_beerList.scss */
+/* line 4, ../compass/sass/_beerList.scss */
 #beer_list .beer-item {
   padding-top: 15px;
   display: block;

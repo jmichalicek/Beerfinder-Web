@@ -2,54 +2,46 @@
 {% load static %}
 
 {% block body %}
-<div id="search_box_container" class="container list-search">
-  <div class="row">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3">
-      <form data-bind="submit: submitSearchHandler" class="form-inline">
-        <div class="form-group">
-          <label class="sr-only" for="id_beer_name">Search</label>
-          <input placeholder="Find a beer..." id="id_beer_name" type="text" list="beer_options" autocomplete="off" data-bind="value: searchTerm, valueUpdate: 'afterkeydown', event: { keypress: function () {getBeerSuggestions(); return true}}" class="form-control"></input>
-        </div>
-        <button type="submit" class="btn">Search</button>
-        
-        <datalist id="beer_options" data-bind="foreach: beerDataListOptions">
-          <option data-bind="text: name"></option>
-        </datalist>
-      </form>
-    </div>
+<div class="col-xs-12">
+  <div id="search_box_container" class="list-search">
+    <form data-bind="submit: submitSearchHandler" class="form-inline">
+      <div class="form-group">
+        <label class="sr-only" for="id_beer_name">Search</label>
+        <input placeholder="Find a beer..." id="id_beer_name" type="text" list="beer_options" autocomplete="off" data-bind="value: searchTerm, valueUpdate: 'afterkeydown', event: { keypress: function () {getBeerSuggestions(); return true}}" class="form-control"></input>
+      </div>
+      <button type="submit" class="btn">Search</button>
+      
+      <datalist id="beer_options" data-bind="foreach: beerDataListOptions">
+        <option data-bind="text: name"></option>
+      </datalist>
+    </form>
   </div>
-</div>
-<div id="beer_list_container">
-<div class="container full-height">
-  <div class="row full-height">
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3 full-height" style="overflow: hidden;">
-      <!-- ko if: mode() == Modes.SEARCH && beers.infinitescroll.displayItems().length == 0 -->
-      <span style="display: none" data-bind="visible: true">No matching beer found.  <a href="{% url 'add_beer' %}">Add it?</a></span>
-      <!-- /ko -->
-      <ul id="beer_list" data-bind="foreach: beers.infinitescroll.displayItems" class="list-unstyled">
-        <li class="beer-item" style="display: none" data-bind="visible: true">
-          <!-- ko if: $index() >= $root.beers.infinitescroll.firstHiddenIndex() -->
-          <div>
-            <div class="pull-right">Watchers <span class="badge" data-bind="text: watcherCount"></span></div>
-            <h4 data-bind="text: name"></h4>
-            <span data-bind="text: brewery().name"></span>
-          </div>
-          <div>
-            <a data-bind="attr: { href: viewUrl }" class="btn btn-primary scaleup">View</a> <a data-bind="attr: {href: addSightingUrl }" class="btn btn-primary scaleup">Add Sighting</a>
-          </div>
-          <!-- /ko -->
-        </li>
-      </ul>      
-    </div>
-    {# find way to make this only show if last item in li is showing #}
-    <div class="col-xs-12 col-sm-6 col-sm-offset-3" style="margin-top: -1px">
-      <span data-bind="visible: !morePages()">Didn't see the beer you're looking for?  <a href="{% url 'add_beer' %}">Add it!</a></span>
-    </div>
+  <div id="beer_list_container">
+    <!-- ko if: mode() == Modes.SEARCH && beers.infinitescroll.displayItems().length == 0 -->
+    <span style="display: none" data-bind="visible: true">No matching beer found.  <a href="{% url 'add_beer' %}">Add it?</a></span>
+    <!-- /ko -->
+    <ul id="beer_list" data-bind="foreach: beers.infinitescroll.displayItems" class="list-unstyled">
+      <li class="beer-item" style="display: none" data-bind="visible: true">
+        <!-- ko if: $index() >= $root.beers.infinitescroll.firstHiddenIndex() -->
+        <div>
+          <div class="pull-right">Watchers <span class="badge" data-bind="text: watcherCount"></span></div>
+          <h4 data-bind="text: name"></h4>
+          <span data-bind="text: brewery().name"></span>
+        </div>
+        <div>
+          <a data-bind="attr: { href: viewUrl }" class="btn btn-primary scaleup">View</a> <a data-bind="attr: {href: addSightingUrl }" class="btn btn-primary scaleup">Add Sighting</a>
+        </div>
+        <!-- /ko -->
+      </li>
+    </ul>      
+  </div>
+  {# find way to make this only show if last item in li is showing #}
+  <div style="margin-top: -1px">
+    <span data-bind="visible: !morePages()">Didn't see the beer you're looking for?  <a href="{% url 'add_beer' %}">Add it!</a></span>
   </div>
 </div>
 <div data-bind="visible: showLoadingSpinner" class="loading-spinner">
   <i class="fa fa-spinner fa-spin" style="font-size: 8em;"></i>
-</div>
 </div>
 {% endblock body %}
 {% block requirejs_scripts %}
