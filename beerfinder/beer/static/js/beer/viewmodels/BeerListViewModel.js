@@ -34,23 +34,27 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
         });
 
         // detect scroll
-        $(document).scroll(function() {
-            // we need to pause watching this while an ajax request is being made
-            // or we make a bunch of requests for the same data and make a mess of things
+        this.handleScroll = _.debounce(function () {
             self.beers.infinitescroll.scrollY($('body').scrollTop());
 
             // add more items if scroll reaches the last 15 items
             if (self.beers.peek().length - self.beers.infinitescroll.lastVisibleIndex.peek() <= 50) {
                 // only do it if there's not already a request in progress and we have a next page to get
                 if(!self.requestInProgress && self.nextPage) {
-                    _.debounce(self.getBeerList(), 250);
+                    self.getBeerList();
                 }
             }
+
+        }, 250);
+
+        $(document).scroll(function() {
+            self.handleScroll();
         });
 
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
-            var itemsRef = $('#beer_list'),
+            //var itemsRef = $('#beer_list'),
+            var itemsRef = $('#page_body'),
             itemRef = $('#beer_list .beer-item').first(),
             itemsWidth = itemsRef.width(),
             itemsHeight = itemsRef.height(),

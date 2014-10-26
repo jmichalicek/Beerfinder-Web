@@ -27,24 +27,28 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
             /* Determine if we shoud request another infinite scroll page */
             return self.sightings.peek().length - self.sightings.infinitescroll.lastVisibleIndex.peek() <= 25;
         };
+
         // detect scroll
-        $(document).scroll(function() {
-            // we need to pause watching this while an ajax request is being made
-            // or we make a bunch of requests for the same data and make a mess of things
+        this.handleScroll = _.debounce(function () {
             self.sightings.infinitescroll.scrollY($('body').scrollTop());
-            
+
             if (self.shouldDoRequestPage()) {
                 if(!self.requestInProgress && self.nextPage) {
                     _.debounce(self.getSightings(), 250);
                 }
             }
 
-            _.debounce(updateViewportDimensions(), 250);
+            updateViewportDimensions();
+
+        }, 250);
+        $(document).scroll(function() {
+            self.handleScroll();
         });
         
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
-            var itemsRef = $('#sighting_list'),
+            //var itemsRef = $('#sighting_list'),
+            var itemsRef = $('#page_body'),
             itemRef = $('#sighting_list .sighting_item').first(),
             itemsWidth = itemsRef.width(),
             itemsHeight = itemsRef.height(),
