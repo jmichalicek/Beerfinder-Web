@@ -8793,60 +8793,83 @@ button.close {
 }
 
 /* end bootstrap fighting */
-/* line 31, ../compass/sass/main.scss */
+/* line 30, ../compass/sass/main.scss */
+#footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+/* line 37, ../compass/sass/main.scss */
+footer {
+  height: 100px;
+  padding: 25px 50px;
+  background-color: whitesmoke;
+}
+
+/* line 43, ../compass/sass/main.scss */
+#copyright {
+  position: absolute;
+  bottom: 10px;
+  right: 25px;
+}
+
+/* line 51, ../compass/sass/main.scss */
 body {
   padding-top: 52px;
   margin: 0;
   background-color: grey;
 }
 
-/* line 37, ../compass/sass/main.scss */
+/* line 57, ../compass/sass/main.scss */
 #page_body {
-  padding: 10px 0 10px;
+  padding: 10px 0 125px;
   background-color: white;
+  min-height: 800px;
 }
 
-/* line 42, ../compass/sass/main.scss */
+/* line 63, ../compass/sass/main.scss */
 a {
   text-decoration: none;
   color: inherit;
 }
-/* line 46, ../compass/sass/main.scss */
+/* line 67, ../compass/sass/main.scss */
 a.icon {
   color: inherit;
 }
-/* line 50, ../compass/sass/main.scss */
+/* line 71, ../compass/sass/main.scss */
 a.underline, a:hover.underline {
   text-decoration: underline;
 }
-/* line 54, ../compass/sass/main.scss */
+/* line 75, ../compass/sass/main.scss */
 a:not(.btn):hover {
   opacity: .7;
 }
-/* line 58, ../compass/sass/main.scss */
+/* line 79, ../compass/sass/main.scss */
 a:not(.btn):visited, a:not(.btn):hover {
   text-decoration: none;
   color: inherit;
 }
 
-/* line 65, ../compass/sass/main.scss */
+/* line 86, ../compass/sass/main.scss */
 .loading-spinner {
   position: fixed;
   left: 50%;
   top: 50%;
 }
 
-/* line 71, ../compass/sass/main.scss */
+/* line 92, ../compass/sass/main.scss */
 .full-height {
   height: 100%;
 }
 
-/* line 75, ../compass/sass/main.scss */
+/* line 96, ../compass/sass/main.scss */
 .list-search {
   margin-bottom: 15px;
 }
 
-/* line 79, ../compass/sass/main.scss */
+/* line 100, ../compass/sass/main.scss */
 .underline {
   text-decoration: underline;
 }
@@ -8854,54 +8877,54 @@ a:not(.btn):visited, a:not(.btn):hover {
 /* rotate anything continuously */
 /* rotation animation */
 @-webkit-keyframes rotate {
-  /* line 86, ../compass/sass/main.scss */
+  /* line 107, ../compass/sass/main.scss */
   from {
     -webkit-transform: rotate(0deg);
   }
 
-  /* line 87, ../compass/sass/main.scss */
+  /* line 108, ../compass/sass/main.scss */
   to {
     -webkit-transform: rotate(360deg);
   }
 }
 
 @-moz-keyframes rotate {
-  /* line 91, ../compass/sass/main.scss */
+  /* line 112, ../compass/sass/main.scss */
   from {
     -moz-transform: rotate(0deg);
   }
 
-  /* line 92, ../compass/sass/main.scss */
+  /* line 113, ../compass/sass/main.scss */
   to {
     -moz-transform: rotate(360deg);
   }
 }
 
 @-ms-keyframes rotate {
-  /* line 96, ../compass/sass/main.scss */
+  /* line 117, ../compass/sass/main.scss */
   from {
     -ms-transform: rotate(0deg);
   }
 
-  /* line 97, ../compass/sass/main.scss */
+  /* line 118, ../compass/sass/main.scss */
   to {
     -ms-transform: rotate(360deg);
   }
 }
 
 @-o-keyframes rotate {
-  /* line 101, ../compass/sass/main.scss */
+  /* line 122, ../compass/sass/main.scss */
   from {
     -o-transform: rotate(0deg);
   }
 
-  /* line 102, ../compass/sass/main.scss */
+  /* line 123, ../compass/sass/main.scss */
   to {
     -o-transform: rotate(360deg);
   }
 }
 
-/* line 105, ../compass/sass/main.scss */
+/* line 126, ../compass/sass/main.scss */
 .rotating {
   -webkit-transform-origin: 50% 50%;
   -webkit-animation-name: rotate;
@@ -8928,7 +8951,7 @@ a:not(.btn):visited, a:not(.btn):hover {
 /* end rotation stuff */
 /* bootstrap screen-xs-max is 767px */
 @media (max-width: 767px) {
-  /* line 132, ../compass/sass/main.scss */
+  /* line 153, ../compass/sass/main.scss */
   .btn.scaleup {
     border-radius: 6px;
     font-size: 18px;
@@ -8936,7 +8959,7 @@ a:not(.btn):visited, a:not(.btn):hover {
     padding: 10px 16px;
   }
 
-  /* line 140, ../compass/sass/main.scss */
+  /* line 161, ../compass/sass/main.scss */
   #beer_list_container {
     /* because the search button drops down to a new line, so everything else must drop as well */
     top: 145px;

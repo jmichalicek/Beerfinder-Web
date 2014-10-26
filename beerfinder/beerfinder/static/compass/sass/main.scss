@@ -27,6 +27,26 @@
 }
 /* end bootstrap fighting */
 
+#footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+footer {
+  height: 100px;
+  padding: 25px 50px;
+  background-color: whitesmoke;
+}
+
+#copyright {
+  position: absolute;
+  bottom: 10px;
+  right: 25px;
+}
+    
+
 
 body {
   padding-top: 52px;
@@ -35,8 +55,9 @@ body {
 }
 
 #page_body {
-  padding: 10px 0 10px;
+  padding: 10px 0 125px;
   background-color: white;
+  min-height: 800px;
 }
 
 a {
