@@ -7,5 +7,9 @@ define([], function() {
     channels.GEOLOCATION_UNAVAILABLE = channels.GEOLOCATION + '.unavailable';
     channels.GEOLOCATION_TIMEOUT = channels.GEOLOCATION + '.timeout';
     channels.GEOLOCATION_DONE = channels.GEOLOCATION + '.done'; // done for any reason
+    channels.ERRORS = 'Errors';
+    channels.ERRORS_CLEAR = channels.ERRORS + '.clear';
+    channels.ERRORS_SET = channels.ERRORS + '.set';
+    channles.ERRORS_APPEND = channels.ERRORS + '.append';
     return Object.freeze(channels);
 });

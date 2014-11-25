@@ -53,14 +53,23 @@
     <div class="container" id="page_body">
       <div class="row">
         <div class="col-xs-12 col-sm-9">
-      {% block body %}{% endblock body %}
+          <!-- this alert-messages gets its own knockout viewmodel -->
+          <div id="alert-messages">
+            <div class="alert error" style="display: none" data-bind="visible: errorMessages">
+              <ul class="" data-bind="foreach: errorMessages">
+                <li data-bind="text: $data"></li>
+              </ul>
+            </div>
+          </div>
+
+          {% block body %}{% endblock body %}
         </div>
       </div>
     </div>
     <div id="footer-container" class="container">
       <div class="row">
         <footer>
-          <div id="copyright" class="text-right">Copyright 2014 -{% now "Y" %} Justin Michalicek</div>
+          <div id="copyright" class="text-right">Copyright 2014 - {% now "Y" %} Justin Michalicek</div>
         </footer>
       </div>
     </div>
@@ -112,10 +121,14 @@
         });
 
         require(["{% static 'js/common.js' %}"], function() {
-        require(['knockout', 'core/viewmodels/NavBarViewModel'], function(ko, NavBarViewModel) {
+        require(['knockout', 'core/viewmodels/NavBarViewModel', 'core/viewmodels/ErrorMessagesViewModel'],
+                function(ko, NavBarViewModel, ErrorMessagesViewModel) {
             "use strict";
             var navBarViewModel = new NavBarViewModel();
             ko.applyBindings(navBarViewModel, document.getElementById('top_navbar'));
+
+            var errorMessagesViewModel = new ErrorMessageViewModel();
+            ko.applyBindings(errorMessagesViewModel, document.getElementById('alert-messages'));
         });
 
         {% block requirejs_scripts %}{% endblock requirejs_scripts %}
