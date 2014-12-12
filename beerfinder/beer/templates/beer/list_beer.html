@@ -47,7 +47,7 @@
 {% block requirejs_scripts %}
 require(['knockout', 'beer/viewmodels/BeerListViewModel'], function(ko, BeerListViewModel) {
     vm = new BeerListViewModel();
-    ko.applyBindings(vm, document.getElementById('page_body'));
+    ko.applyBindings(vm, document.getElementById('content'));
     vm.initialize();
 });
 {% endblock requirejs_scripts %}
