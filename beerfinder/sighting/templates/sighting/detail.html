@@ -87,7 +87,7 @@
 {% block requirejs_scripts %}
 require(['knockout', 'sighting/viewmodels/SightingDetailViewModel'], function (ko, SightingDetailViewModel) {
     vm = new SightingDetailViewModel({sighting: {{ sighting|safe }}});
-    ko.applyBindings(vm, document.getElementById('page_body'));
+    ko.applyBindings(vm, document.getElementById('content'));
     vm.getComments();
 });
 {% endblock requirejs_scripts %}

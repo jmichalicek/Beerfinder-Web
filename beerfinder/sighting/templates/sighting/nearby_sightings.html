@@ -33,7 +33,7 @@
 {% block requirejs_scripts %}
 require(['knockout', 'sighting/viewmodels/NearbySightingsViewModel'], function (ko, NearbySightingsViewModel) {
     var vm = new NearbySightingsViewModel();
-    ko.applyBindings(vm, document.getElementById('page_body'));
+    ko.applyBindings(vm, document.getElementById('content'));
     vm.initialize();
 });
 {% endblock requirejs_scripts %}

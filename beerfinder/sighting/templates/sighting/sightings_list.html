@@ -34,6 +34,6 @@
 require(['knockout', 'sighting/viewmodels/SightingListViewModel'], function (ko, SightingListViewModel) {
     "use strict";
     var vm = new SightingListViewModel();
-    ko.applyBindings(vm, document.getElementById("page_body"));
+    ko.applyBindings(vm, document.getElementById("content"));
 });
 {% endblock requirejs_scripts %}

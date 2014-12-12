@@ -33,7 +33,7 @@
           </button>
           <a class="navbar-brand" href="/#">{{ site.name }}</a>
         </div>
-
+        
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="{% url 'sightings_list' %}">All Sightings</a></li>
@@ -50,6 +50,7 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
+
     <div class="container" id="page_body">
       <div class="row">
         <div class="col-xs-12 col-sm-9">
@@ -61,8 +62,9 @@
               </ul>
             </div>
           </div>
-
+          <div id="content">
           {% block body %}{% endblock body %}
+          </div>
         </div>
       </div>
     </div>
@@ -127,7 +129,7 @@
             var navBarViewModel = new NavBarViewModel();
             ko.applyBindings(navBarViewModel, document.getElementById('top_navbar'));
 
-            var errorMessagesViewModel = new ErrorMessageViewModel();
+            var errorMessagesViewModel = new ErrorMessagesViewModel();
             ko.applyBindings(errorMessagesViewModel, document.getElementById('alert-messages'));
         });
 

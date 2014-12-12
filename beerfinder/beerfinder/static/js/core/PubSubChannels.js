@@ -10,6 +10,6 @@ define([], function() {
     channels.ERRORS = 'Errors';
     channels.ERRORS_CLEAR = channels.ERRORS + '.clear';
     channels.ERRORS_SET = channels.ERRORS + '.set';
-    channles.ERRORS_APPEND = channels.ERRORS + '.append';
+    channels.ERRORS_APPEND = channels.ERRORS + '.append';
     return Object.freeze(channels);
 });

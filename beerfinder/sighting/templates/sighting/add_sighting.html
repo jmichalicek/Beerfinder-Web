@@ -98,7 +98,7 @@ require(['knockout', 'sighting/viewmodels/AddSightingViewModel'], function (ko, 
     "use strict";
     var beer = {{ beer|safe }};
     var vm = new AddSightingViewModel({beer: beer});
-    ko.applyBindings(vm, document.getElementById('page_body'));
+    ko.applyBindings(vm, document.getElementById('content'));
     vm.getServingTypes();
     vm.initialize();
 });
