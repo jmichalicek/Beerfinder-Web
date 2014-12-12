@@ -174,10 +174,13 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.publishGeoLocationError = function (data) {
             if(data.code === Constants.GEOLOCATION_FAIL_DENIED) {
                 PubSub.publish(PubSubChannels.GEOLOCATION_DENIED, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_DENIED_MESSAGE]);
             } else if(data.code === Constants.GEOLOCATION_FAIL_UNAVAILABLE) {
                 PubSub.publish(PubSubChannels.GEOLOCATION_UNAVAILABLE, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_UNAVAILABLE_MESSAGE]);
             } else if(data.code === Constants.GEOLOCATION_FAIL_TIMEOUT) {
                 PubSub.publish(PubSubChannels.GEOLOCATION_TIMEOUT, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_TIMEOUT_MESSAGE]);
             }
 
             PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
@@ -213,7 +216,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                        });
             }
         };
-
+        
         this.debouncedNearbyVenues = _.debounce(self.getNearbyVenues, 250);
         
         this.submitSearchHandler = function () {
