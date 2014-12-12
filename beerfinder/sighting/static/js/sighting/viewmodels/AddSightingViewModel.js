@@ -282,6 +282,21 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             self.getNearbyVenues();
         };
 
+        this.publishGeoLocationError = function (data) {
+            if(data.code === Constants.GEOLOCATION_FAIL_DENIED) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_DENIED, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_DENIED_MESSAGE]);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_UNAVAILABLE) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_UNAVAILABLE, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_UNAVAILABLE_MESSAGE]);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_TIMEOUT) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_TIMEOUT, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_TIMEOUT_MESSAGE]);
+            }
+            
+            PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
+        };
+
         this.initialize = function () {
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
             self.showLoadingSpinner(true);
@@ -289,7 +304,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
             
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
-            navigator.geolocation.getCurrentPosition(self.geoLocationCallback, undefined, {maximumAge: 350000});
+            navigator.geolocation.getCurrentPosition(self.geoLocationCallback, self.publishGeoLocationError, {enableHighAccuracy: true, timeout: 10000, maximumAge: 30000});
         };
     };
 });

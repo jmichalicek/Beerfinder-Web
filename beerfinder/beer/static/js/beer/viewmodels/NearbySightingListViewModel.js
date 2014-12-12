@@ -12,11 +12,6 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/PubSubCha
         this.sightings = ko.observableArray();
         this.beer = ko.observable(new BeerModel(data.beer));
         
-        this.initialize = function () {
-            self.showLoadingSpinner(true);
-            navigator.geolocation.getCurrentPosition(self.getNearbySightings, {maximumAge: 30000});
-        };
-        
         this.getNearbySightings = function (position) {
             // to be used as a callback for html5 geolocation
             self.location = position;
@@ -46,15 +41,30 @@ define(['jquery', 'knockout', 'vendor/infinitescroll', 'pubsub', 'core/PubSubCha
             self.getNearbySightings(position);
         };
 
-
         this.getLocationSuccessMessageHandler = function (msg, data) {
             /* data is going to be a location object with coords, etc */
             self.geoLocationComplete(data);
         };
 
+        this.publishGeoLocationError = function (data) {
+            if(data.code === Constants.GEOLOCATION_FAIL_DENIED) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_DENIED, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_DENIED_MESSAGE]);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_UNAVAILABLE) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_UNAVAILABLE, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_UNAVAILABLE_MESSAGE]);
+            } else if(data.code === Constants.GEOLOCATION_FAIL_TIMEOUT) {
+                PubSub.publish(PubSubChannels.GEOLOCATION_TIMEOUT, data);
+                PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_TIMEOUT_MESSAGE]);
+            }
+            
+            PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
+        };
+
+
         this.initialize = function () {
             self.showLoadingSpinner(true);
-            navigator.geolocation.getCurrentPosition(self.geoLocationComplete);
+            navigator.geolocation.getCurrentPosition(self.geoLocationComplete, self.publishGeoLocationError, {enableHighAccuracy: true, timeout: 10000, maximumAge: 30000});
         };
 
         // initialization stuff

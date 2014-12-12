@@ -136,7 +136,7 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
         this.initialize = function () {
             self.showLoadingSpinner(true);
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
-            navigator.geolocation.getCurrentPosition(self.publishGeoLocationSuccess);
+            navigator.geolocation.getCurrentPosition(self.publishGeoLocationSuccess, self.publishGeoLocationError,  {enableHighAccuracy: true, timeout: 10000, maximumAge: 30000});
         };
 
         this.doLocationUpdated = function (position) {
