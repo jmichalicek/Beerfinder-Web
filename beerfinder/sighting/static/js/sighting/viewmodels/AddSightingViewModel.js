@@ -297,6 +297,12 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
         };
 
+        this.geoLocationLowAccuracy = function () {
+            /* Callback to use for if high accuracy geolocation fails we can try low accuracy instead */
+            navigator.geolocation.getCurrentPosition(self.geoLocationCallback, self.publishGeoLocationError,
+                                                     {enableHighAccuracy: false, timeout: 5000, maximumAge: 30000});
+        };
+
         this.initialize = function () {
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
             self.showLoadingSpinner(true);
@@ -304,7 +310,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
             
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
-            navigator.geolocation.getCurrentPosition(self.geoLocationCallback, self.publishGeoLocationError, {enableHighAccuracy: true, timeout: 10000, maximumAge: 30000});
+            navigator.geolocation.getCurrentPosition(self.geoLocationCallback, self.geoLocationLowAccuracy, {enableHighAccuracy: true, timeout: 10000, maximumAge: 30000});
         };
     };
 });
