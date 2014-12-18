@@ -8857,19 +8857,20 @@ a:not(.btn):visited, a:not(.btn):hover {
   position: fixed;
   left: 50%;
   top: 50%;
+  transform: translate(-50%, -50%);
 }
 
-/* line 92, ../compass/sass/main.scss */
+/* line 94, ../compass/sass/main.scss */
 .full-height {
   height: 100%;
 }
 
-/* line 96, ../compass/sass/main.scss */
+/* line 98, ../compass/sass/main.scss */
 .list-search {
   margin-bottom: 15px;
 }
 
-/* line 100, ../compass/sass/main.scss */
+/* line 102, ../compass/sass/main.scss */
 .underline {
   text-decoration: underline;
 }
@@ -8877,54 +8878,54 @@ a:not(.btn):visited, a:not(.btn):hover {
 /* rotate anything continuously */
 /* rotation animation */
 @-webkit-keyframes rotate {
-  /* line 107, ../compass/sass/main.scss */
+  /* line 109, ../compass/sass/main.scss */
   from {
     -webkit-transform: rotate(0deg);
   }
 
-  /* line 108, ../compass/sass/main.scss */
+  /* line 110, ../compass/sass/main.scss */
   to {
     -webkit-transform: rotate(360deg);
   }
 }
 
 @-moz-keyframes rotate {
-  /* line 112, ../compass/sass/main.scss */
+  /* line 114, ../compass/sass/main.scss */
   from {
     -moz-transform: rotate(0deg);
   }
 
-  /* line 113, ../compass/sass/main.scss */
+  /* line 115, ../compass/sass/main.scss */
   to {
     -moz-transform: rotate(360deg);
   }
 }
 
 @-ms-keyframes rotate {
-  /* line 117, ../compass/sass/main.scss */
+  /* line 119, ../compass/sass/main.scss */
   from {
     -ms-transform: rotate(0deg);
   }
 
-  /* line 118, ../compass/sass/main.scss */
+  /* line 120, ../compass/sass/main.scss */
   to {
     -ms-transform: rotate(360deg);
   }
 }
 
 @-o-keyframes rotate {
-  /* line 122, ../compass/sass/main.scss */
+  /* line 124, ../compass/sass/main.scss */
   from {
     -o-transform: rotate(0deg);
   }
 
-  /* line 123, ../compass/sass/main.scss */
+  /* line 125, ../compass/sass/main.scss */
   to {
     -o-transform: rotate(360deg);
   }
 }
 
-/* line 126, ../compass/sass/main.scss */
+/* line 128, ../compass/sass/main.scss */
 .rotating {
   -webkit-transform-origin: 50% 50%;
   -webkit-animation-name: rotate;
@@ -8951,7 +8952,7 @@ a:not(.btn):visited, a:not(.btn):hover {
 /* end rotation stuff */
 /* bootstrap screen-xs-max is 767px */
 @media (max-width: 767px) {
-  /* line 153, ../compass/sass/main.scss */
+  /* line 155, ../compass/sass/main.scss */
   .btn.scaleup {
     border-radius: 6px;
     font-size: 18px;
@@ -8959,7 +8960,7 @@ a:not(.btn):visited, a:not(.btn):hover {
     padding: 10px 16px;
   }
 
-  /* line 161, ../compass/sass/main.scss */
+  /* line 163, ../compass/sass/main.scss */
   #beer_list_container {
     /* because the search button drops down to a new line, so everything else must drop as well */
     top: 145px;
