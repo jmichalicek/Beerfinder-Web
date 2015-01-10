@@ -57,6 +57,9 @@
 }
 
 @media(max-width: $screen-xs-max){
+  .sighting-detail-view {
+    overflow-x: hidden;
+  }
   #sighting_container {
     position: relative;
     left: 0;
