@@ -226,3 +226,19 @@ class NearbySightingAPIView(generics.ListAPIView):
         Return a list of sightings sorted by distance from the point specified.
         """
         return super(NearbySightingAPIView, self).get(request, *args, **kwargs)
+
+
+class SightingImageViewset(viewsets.ModelViewSet):
+    # TODO: Make this just use CreateModelMixin and whatever it depends on until/if
+    # supporting other methods is desired?
+    serializer_class = SightingImageSerializer
+
+    def pre_save(self, obj):
+        obj.user = self.request.user
+    
+    def create(self, *args, **kwargs):
+        """
+        Create a SightingImage.  Ensures that the sighting was created by the user
+        and will only allow 1 image upload.
+        """
+        pass
