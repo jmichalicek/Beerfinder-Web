@@ -29,7 +29,7 @@ class WatchedBeerWriteableSerializer(WatchedBeerSerializer):
 
     class Meta:
         model = WatchedBeer
-        fields = ('url', 'id', 'date_added', 'beer', 'user',)
+        fields = ('url', 'id', 'date_added', 'beer')
 
 
 class PaginatedWatchedBeerSerializer(pagination.PaginationSerializer):

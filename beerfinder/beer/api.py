@@ -48,12 +48,11 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     paginate_by_param = 'page_size'
     list_cache_key_func = BeerListKeyConstructor()
 
-    def perform_create(self, obj):
+    def perform_create(self, serializer):
         """
         Enforce beer's are tied to the user who created them
         """
-        obj.created_by = self.request.user
-        super(BeerViewSet, self).perform_create(obj)
+        serializer.save(created_by=self.request.user)
 
     def get_queryset(self):
         # implementing search here, but may move to its own endpoint
@@ -80,6 +79,10 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         Create a Beer model.  Also creates a brewery if necessary.
         """
         # TODO: Stop using form and use just the serializer!  Reduce logic in this method if possible
+        #  This is more challenging than expected due to nested beer and brewery creation, but should be
+        # able to be done more cleanly.  DRF 3.0 was supposed to simplify that, I think.
+
+        # TODO: deal with all serializer errors!!!
 
         # Use standard django form or a serializer to create (but not save!) the base Beer model
         # this model may or may not have a brewery.  Perform nfkd normalization on the beer name.
@@ -96,16 +99,20 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         # due to spelling errors, etc. will get dealt with separately
         brewery, brewery_created = Brewery.objects.get_or_create(name=brewery_name)
 
+        # should be able to clean this up by moving validation and lookup logic
+        # to the serializer
         try:
             beer = Beer.objects.get(name=beer_name, brewery_id=brewery.id)
             beer_created = False
         except Beer.DoesNotExist:
-            self.object = Beer(name=beer_name, brewery=brewery, style=style)
-            self.perform_create(self.object)
+            # TODO: use serializer and perform_create() here, don't bypass drf expected behavior!
+            self.object = Beer(name=beer_name, brewery=brewery, style=style, created_by=request.user)
+            self.object.save()
             beer_created = True
 
         # I think the form already handles this... oh well.
         if not beer_created:
+            # missing lots of error conditions here!!!
             # simulate form errors format
             return Response({'non_field_errors': ['This beer already exists']}, status=status.HTTP_400_BAD_REQUEST)
 

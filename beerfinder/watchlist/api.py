@@ -15,9 +15,8 @@ class WatchListViewSet(viewsets.ModelViewSet):
     paginate_by = 25
     paginate_by_param = 'page_size'
 
-    def perform_create(self, obj):
-        obj.user = self.request.user
-        obj.save()
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         queryset = self.queryset
