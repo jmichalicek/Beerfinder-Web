@@ -9,10 +9,10 @@ from venue.serializers import VenueSerializer
 from .models import Sighting, SightingConfirmation, Comment, SightingImage
 
 class SightingImageSerializer(serializers.ModelSerializer):
-    original = HyperlinkedImageField(allow_empty_file=True)
-    thumbnail = HyperlinkedImageField(allow_empty_file=True)
-    small = HyperlinkedImageField(allow_empty_file=True)
-    medium = HyperlinkedImageField(allow_empty_file=True)
+    #original = HyperlinkedImageField(allow_empty_file=True)
+    #thumbnail = HyperlinkedImageField(allow_empty_file=True)
+    #small = HyperlinkedImageField(allow_empty_file=True)
+    #medium = HyperlinkedImageField(allow_empty_file=True)
 
     class Meta:
         model = SightingImage
@@ -23,7 +23,7 @@ class SightingSerializer(serializers.HyperlinkedModelSerializer):
     """
     Serialize Sighting objects
     """
-    sighted_by = serializers.Field()
+    #sighted_by = serializers.Field()
     beer = BeerSerializer()
     venue = VenueSerializer()
     serving_types = ServingTypeSerializer(many=True)
@@ -41,7 +41,7 @@ class DistanceSightingSerializer(SightingSerializer):
     Possibly this should just always be used and Sighting should always return distance.
     """
 
-    distance = serializers.Field()
+    #distance = serializers.Field()
 
     class Meta:
         model = Sighting
@@ -58,7 +58,7 @@ class SightingConfirmationSerializer(serializers.ModelSerializer):
 
 
 class SightingCommentSerializer(serializers.ModelSerializer):
-    comment_by = serializers.Field()
+    #comment_by = serializers.Field()
     class Meta:
         model = Comment
         fields = ('date_created', 'text', 'comment_by')

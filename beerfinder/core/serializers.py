@@ -17,10 +17,12 @@ class NextPageNumberField(serializers.Field):
     page_field = 'page'
 
     def to_native(self, value):
+        return self.to_representation(value)
+
+    def to_representation(self, value):
         if not value.has_next():
             return None
-        page = value.next_page_number()
-        return page
+        return value.next_page_number()
 
 
 class PreviousPageNumberField(serializers.Field):
@@ -30,6 +32,9 @@ class PreviousPageNumberField(serializers.Field):
     page_field = 'page'
 
     def to_native(self, value):
+        return self.to_represenatation(value)
+
+    def to_representation(self, value):
         if not value.has_previous():
             return None
         page = value.previous_page_number()

@@ -2,14 +2,17 @@ from django.forms import widgets
 from rest_framework import serializers
 from rest_framework import pagination
 
+from accounts.models import User
+from beer.models import Beer
 from beer.serializers import BeerSerializer
 
 from .models import WatchedBeer
 
 
 class WatchedBeerSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.Field()
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     beer = BeerSerializer(read_only=True)
+    # TODO: I think I need to make user a PrimaryKeyRelaedField or stop using HyperlinkedModelSerializer
 
     class Meta:
         model = WatchedBeer
@@ -22,7 +25,7 @@ class WatchedBeerWriteableSerializer(WatchedBeerSerializer):
     differently here than when reading/listing
     """
 
-    beer = serializers.SlugRelatedField(write_only=True, slug_field='slug')
+    beer = serializers.SlugRelatedField(write_only=True, slug_field='slug', queryset=Beer.objects.all())
 
     class Meta:
         model = WatchedBeer

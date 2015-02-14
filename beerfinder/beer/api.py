@@ -48,11 +48,12 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     paginate_by_param = 'page_size'
     list_cache_key_func = BeerListKeyConstructor()
 
-    def pre_save(self, obj):
+    def perform_create(self, obj):
         """
         Enforce beer's are tied to the user who created them
         """
         obj.created_by = self.request.user
+        super(BeerViewSet, self).perform_create(obj)
 
     def get_queryset(self):
         # implementing search here, but may move to its own endpoint
@@ -78,6 +79,8 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         """
         Create a Beer model.  Also creates a brewery if necessary.
         """
+        # TODO: Stop using form and use just the serializer!  Reduce logic in this method if possible
+
         # Use standard django form or a serializer to create (but not save!) the base Beer model
         # this model may or may not have a brewery.  Perform nfkd normalization on the beer name.
 
@@ -98,9 +101,7 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             beer_created = False
         except Beer.DoesNotExist:
             self.object = Beer(name=beer_name, brewery=brewery, style=style)
-            self.pre_save(self.object)
-            self.object.save()
-            self.post_save(self.object, created=True)
+            self.perform_create(self.object)
             beer_created = True
 
         # I think the form already handles this... oh well.

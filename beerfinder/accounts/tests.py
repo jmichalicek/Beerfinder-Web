@@ -1,8 +1,10 @@
 from django.test import TestCase
+from django.utils import timezone
 from django.contrib.auth import authenticate
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from datetime import datetime
 import factory
 
 from .models import User
@@ -62,7 +64,9 @@ class AllDataUserSerializerTest(TestCase):
         self.assertEqual(serialized.data['id'], user.id)
         self.assertEqual(serialized.data['email'], user.email)
         self.assertEqual(serialized.data['username'], user.username)
-        self.assertEqual(serialized.data['date_joined'], user.date_joined)
+        dt = datetime.strptime(serialized.data['date_joined'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        dt = timezone.make_aware(dt, timezone.utc)
+        self.assertEqual(dt, user.date_joined)
         self.assertEqual(serialized.data['first_name'], user.first_name)
         self.assertEqual(serialized.data['last_name'], user.last_name)
         self.assertEqual(serialized.data['show_name_on_sightings'], user.show_name_on_sightings)
@@ -82,7 +86,9 @@ class UserProfileAPIViewTest(APITestCase):
         self.assertEqual(response.data['id'], self.user.id)
         self.assertEqual(response.data['email'], self.user.email)
         self.assertEqual(response.data['username'], self.user.username)
-        self.assertEqual(response.data['date_joined'], self.user.date_joined)
+        dt = datetime.strptime(response.data['date_joined'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        dt = timezone.make_aware(dt, timezone.utc)
+        self.assertEqual(dt, self.user.date_joined)
         self.assertEqual(response.data['first_name'], self.user.first_name)
         self.assertEqual(response.data['last_name'], self.user.last_name)
         self.assertEqual(response.data['show_name_on_sightings'], self.user.show_name_on_sightings)
@@ -95,7 +101,9 @@ class UserProfileAPIViewTest(APITestCase):
         self.assertEqual(response.data['id'], self.user_2.id)
         self.assertEqual(response.data['email'], self.user_2.email)
         self.assertEqual(response.data['username'], self.user_2.username)
-        self.assertEqual(response.data['date_joined'], self.user_2.date_joined)
+        dt = datetime.strptime(response.data['date_joined'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        dt = timezone.make_aware(dt, timezone.utc)
+        self.assertEqual(dt, self.user_2.date_joined)
         self.assertEqual(response.data['first_name'], self.user_2.first_name)
         self.assertEqual(response.data['last_name'], self.user_2.last_name)
         self.assertEqual(response.data['show_name_on_sightings'], self.user_2.show_name_on_sightings)
@@ -115,7 +123,7 @@ class UserProfileAPIViewTest(APITestCase):
         self.client.login(username=self.user.email, password=DEFAULT_PASSWORD)
         response = self.client.post('/api/account/profile/me/', data={'email': self.user_2.email})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {"email": ["User with this Email address already exists."]})
+        self.assertEqual(response.data, {'email': ['This field must be unique.']} ) #{"email": ["User with this Email address already exists."]})
 
         # Make sure it really didn't change
         updated = User.objects.get(pk=self.user.pk)
