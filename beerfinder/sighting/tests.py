@@ -3,15 +3,12 @@ from django.test import TestCase
 from django.utils import timezone
 
 from django.contrib.gis.geos import Point, fromstr, GEOSGeometry
+from rest_framework.test import APITestCase
 
 import factory
 from datetime import timedelta
-import simplejson as json
 
 from .models import Sighting, SightingConfirmation
-
-from accounts.models import User
-from venue.models import Venue
 
 from beer.tests import BeerFactory
 from accounts.tests import UserFactory
@@ -62,7 +59,7 @@ class SightingTestCase(TestCase):
         self.assertEqual(past_sighting.date_sighted, past_sighting_time)
 
 
-class SightingViewSetTestCase(TestCase):
+class SightingViewSetTestCase(APITestCase):
     # legend Point("-77.4429997801781 37.5268217786912")
     # hardywood Point("-77.4419362313172 37.5254898040785")
     # the national Point("-77.4352025985718 37.5418168540823")
@@ -90,7 +87,7 @@ class SightingViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-        response_objects = json.loads(response.content)['results']
+        response_objects = response.data['results']
         self.assertEqual(len(response_objects), 4)
 
         self.assertEqual(response_objects[0]['id'], self.beer1_sighting1.id)
@@ -120,7 +117,7 @@ class SightingViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-        response_objects = json.loads(response.content)['results']
+        response_objects = response.data['results']
         self.assertEqual(len(response_objects), 2)
 
         self.assertEqual(response_objects[0]['id'], self.beer1_sighting1.id)

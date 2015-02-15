@@ -160,7 +160,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=400)
 
-    @list_route(methods=['get'])
+    @detail_route(methods=['get'])
     @cache_response(10, key_func=DefaultPaginatedListKeyConstructor())
     def comments(self, request, *args, **kwargs):
         """
