@@ -15,8 +15,8 @@ django-imagekit==3.2.4
 django-redis-cache==0.13.0
 django-require==1.0.6
 django-widget-tweaks==1.3
-djangorestframework==2.4.3
-drf-extensions==0.2.6
+djangorestframework==3.0.5
+drf-extensions==0.2.7
 ecdsa==0.11
 factory-boy==2.4.1
 foursquare==20130707
