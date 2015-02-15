@@ -41,7 +41,7 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     queryset = Beer.objects.all()
     serializer_class = BeerSerializer
     pagination_serializer_class = PaginatedBeerSerializer
-    paginator = InfinitePaginator
+    pagination_class = InfinitePaginator
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'slug'
     paginate_by = 25
@@ -129,7 +129,7 @@ class BreweryAPIView(generics.ListAPIView):
     queryset = Brewery.objects.all()
     serializer_class = BrewerySerializer
     pagination_serializer_class = PaginatedBrewerySerializer
-    paginator = InfinitePaginator
+    pagination_class = InfinitePaginator
     paginate_by = 25
 
     def get_queryset(self):
