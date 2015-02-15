@@ -3,16 +3,12 @@ from rest_framework import serializers
 from rest_framework import pagination
 
 from beer.serializers import BeerSerializer, ServingTypeSerializer
-from core.serializers import HyperlinkedImageField, InfinitePaginationSerializer
+from core.serializers import InfinitePaginationSerializer
 from venue.serializers import VenueSerializer
 
 from .models import Sighting, SightingConfirmation, Comment, SightingImage
 
 class SightingImageSerializer(serializers.ModelSerializer):
-    #original = HyperlinkedImageField(allow_empty_file=True)
-    #thumbnail = HyperlinkedImageField(allow_empty_file=True)
-    #small = HyperlinkedImageField(allow_empty_file=True)
-    #medium = HyperlinkedImageField(allow_empty_file=True)
 
     class Meta:
         model = SightingImage
@@ -41,14 +37,11 @@ class DistanceSightingSerializer(SightingSerializer):
     Possibly this should just always be used and Sighting should always return distance.
     """
 
-    #distance = serializers.Field()
+    distance = serializers.FloatField(source='distance.mi')
 
     class Meta:
         model = Sighting
         fields = SightingSerializer.Meta.fields + ('distance', )
-
-    def transform_distance(self, obj, value):
-        return obj.distance.mi
 
 
 class SightingConfirmationSerializer(serializers.ModelSerializer):

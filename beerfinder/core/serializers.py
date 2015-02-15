@@ -2,14 +2,6 @@ from rest_framework import serializers, pagination
 from rest_framework.fields import ImageField
 
 
-class HyperlinkedImageField(ImageField):
-    """
-    An ImageField which returns the actual url to the image
-    """
-    def to_native(self, value):
-        return value.url if value else ''
-
-
 class NextPageNumberField(serializers.Field):
     """
     Field that returns the next page number in paginated results
