@@ -5,7 +5,7 @@ from django.db import transaction
 
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
-from rest_framework.decorators import action, link
+from rest_framework.decorators import detail_route, list_route
 
 from rest_framework_extensions.cache.decorators import cache_response
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
@@ -114,7 +114,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             queryset = queryset.prefetch_related('sighting_images', 'serving_types')
         return queryset
 
-    @action(methods=['POST'])
+    @detail_route(methods=['POST'])
     def confirm_available(self, request, *args, **kwargs):
         """
         Mark a sighting as still available
@@ -128,7 +128,7 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
-    @action(methods=['post'])
+    @detail_route(methods=['post'])
     def confirm_unavailable(self, request, *args, **kwargs):
         """
         Mark a sighting as no longer available
@@ -143,8 +143,11 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
-    @action(methods=['post'])
+    @detail_route(methods=['post'])
     def add_comment(self, request, *args, **kwargs):
+        """
+        TODO: Remove this and just use a comment resource!
+        """
         sighting = self.get_object()
         serializer_context = {'request': request}
         serializer = SightingCommentSerializer(data=request.POST, context=serializer_context)
@@ -157,11 +160,13 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=400)
 
-    @link()
+    @detail_route(methods=['get'])
     @cache_response(10, key_func=DefaultPaginatedListKeyConstructor())
     def comments(self, request, *args, **kwargs):
         """
         Get the comments for a sighting
+
+        TODO: Remove this and use a comments resource
         """
         sighting = self.get_object()
         queryset = sighting.comments.all()

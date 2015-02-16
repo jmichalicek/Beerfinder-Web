@@ -4,7 +4,6 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.decorators import action, link
 
 from .models import WatchedBeer
 from .serializers import WatchedBeerSerializer, PaginatedWatchedBeerSerializer, WatchedBeerWriteableSerializer
@@ -16,8 +15,8 @@ class WatchListViewSet(viewsets.ModelViewSet):
     paginate_by = 25
     paginate_by_param = 'page_size'
 
-    def pre_save(self, obj):
-        obj.user = self.request.user
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         queryset = self.queryset

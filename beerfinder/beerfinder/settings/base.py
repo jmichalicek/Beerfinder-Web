@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'djcelery',
     'django_extensions',
     'widget_tweaks',
+    'rest_framework',
     'require',
     # my apps
     'accounts',

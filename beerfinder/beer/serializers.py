@@ -30,10 +30,11 @@ class BeerStyleSerializer(serializers.ModelSerializer):
 class BeerSerializer(serializers.HyperlinkedModelSerializer):
     brewery = BrewerySerializer()
     style = BeerStyleSerializer() # make this SlugRelatedField?
-    watcher_count = serializers.IntegerField(source='watcher_count')
+    #watcher_count = serializers.IntegerField()
 
     class Meta:
         model = Beer
+        lookup_field = 'slug'
         fields = ('url', 'id', 'name', 'brewery', 'style',  'slug', 'watcher_count')
 
 

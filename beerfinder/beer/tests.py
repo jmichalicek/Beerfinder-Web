@@ -139,7 +139,7 @@ class BeerViewSetTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
-        response_objects = json.loads(response.content)['results']
+        response_objects = response.data['results']
         self.assertEqual(len(response_objects), 2)
         self.assertEqual(response_objects[0]['id'], self.beer1.id)
         self.assertEqual(response_objects[0]['name'], self.beer1.name)
@@ -196,14 +196,12 @@ class BeerViewSetTestCase(APITestCase):
         response = self.client.post('/api/beer/', data=post_data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'], 'application/json')
-
-        response_object = json.loads(response.content)
-        self.assertTrue(response_object['id'])
-        self.assertEqual(response_object['name'], 'Duff Beer!')
-        self.assertEqual(response_object['slug'], 'duff-duff-beer')
-        self.assertEqual(response_object['url'], 'http://testserver/api/beer/duff-duff-beer/')
-        self.assertEqual(response_object['brewery']['name'], 'Duff')
-        self.assertEqual(response_object['brewery']['slug'], 'duff')
+        self.assertTrue(response.data['id'])
+        self.assertEqual(response.data['name'], 'Duff Beer!')
+        self.assertEqual(response.data['slug'], 'duff-duff-beer')
+        self.assertEqual(response.data['url'], 'http://testserver/api/beer/duff-duff-beer/')
+        self.assertEqual(response.data['brewery']['name'], 'Duff')
+        self.assertEqual(response.data['brewery']['slug'], 'duff')
 
     def test_get_detail(self):
         """
@@ -237,7 +235,7 @@ class BeerViewSetTestCase(APITestCase):
                      'brewery': 'Duff\t'
                      }
         response = self.client.post('/api/beer/', data=post_data)
-        # returns a 403 rather than 401 when not logged in due to tastypie internals
+        # returns a 403 rather than 401 when not logged in due to django internals
         # probably because anonymouse user is "authenticated" as being the anonymous user?
         self.assertEqual(response.status_code, 403)
 
