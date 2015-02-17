@@ -76,20 +76,23 @@ class SightingImage(models.Model):
     sighting = models.ForeignKey('Sighting', related_name='sighting_images')
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
 
-    original = models.ImageField(max_length=250, upload_to='sighting_images/%Y/%m/%d', height_field='original_height',
-                                 width_field='original_width')
+    original = models.ImageField(max_length=250, upload_to='sighting_images/%Y/%m/%d',
+                                 height_field='original_height', width_field='original_width')
     original_height = models.IntegerField(blank=True, null=True)
     original_width = models.IntegerField(blank=True, null=True)
 
-    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
+    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d',
+                                  blank=True, default='')
     thumbnail_height = models.IntegerField(blank=True, null=True)
     thumbnail_width = models.IntegerField(blank=True, null=True)
 
-    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
+    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d',
+                              blank=True, default='')
     small_height = models.IntegerField(blank=True, null=True)
     small_width = models.IntegerField(blank=True, null=True)
 
-    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
+    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d',
+                               blank=True, default='')
     medium_height = models.IntegerField(blank=True, null=True)
     medium_width = models.IntegerField(blank=True, null=True)
 
