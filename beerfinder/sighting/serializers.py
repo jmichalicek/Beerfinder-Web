@@ -1,6 +1,7 @@
 from django.forms import widgets
 from rest_framework import serializers
 from rest_framework import pagination
+from rest_framework.validators import CurrentUserDefault, UniqueTogetherValidator
 
 from beer.serializers import BeerSerializer, ServingTypeSerializer
 from core.serializers import InfinitePaginationSerializer
@@ -10,9 +11,36 @@ from .models import Sighting, SightingConfirmation, Comment, SightingImage
 
 class SightingImageSerializer(serializers.ModelSerializer):
 
+    user = serializers.HiddenField(default=CurrentUserDefault())
+
     class Meta:
         model = SightingImage
-        fields = ('id', 'original', 'thumbnail', 'small', 'medium', 'original_height', 'original_width')
+        fields = ('id', 'original', 'thumbnail', 'small', 'medium',
+                  'original_height', 'original_width', 'sighting', 'user')
+
+    def __init__(self, *args, **kwargs):
+        super(SightingImageSerializer, self).__init__(*args, **kwargs)
+        self.fields['thumbnail'].read_only = True
+        self.fields['small'].read_only = True
+        self.fields['medium'].read_only = True
+        self.fields['original_height'].read_only = True
+        self.fields['original_width'].read_only = True
+
+        # validate unique here, but not set on the model because I am
+        # likely to allow multiple images in the future
+        self.fields['sighting'].validators = [
+            UniqueValidator(queryset=SightingImage.objects.all(),
+                            message='Only one image allowed per Sighting')
+        ]
+
+    def validate(self, data):
+        """
+        Ensure that the uploader is the owner of the sighting
+        """
+        if data['sighting'] and data['user']:
+            if not data['sighting'].user == user:
+                raise serializers.ValidationError("You may only upload images for your own sighting.")
+        return data
 
 
 class SightingSerializer(serializers.HyperlinkedModelSerializer):
@@ -76,3 +104,11 @@ class PaginatedSightingSerializer(InfinitePaginationSerializer):
     """
     class Meta:
         object_serializer_class = SightingSerializer
+
+
+class PaginatedSightingImageSerializer(InfinitePaginationSerializer):
+    """
+    Paginated version of SightingImageSerializer set up for Infinite Pagination
+    """
+    class Meta:
+        object_serializer_class = SightingImageSerializer

@@ -65,7 +65,6 @@ class SightingViewSetTestCase(APITestCase):
     # the national Point("-77.4352025985718 37.5418168540823")
 
     def setUp(self):
-        self.beer1 = BeerFactory()
         self.beer2 = BeerFactory.create()
         self.user = get_user_model().objects.create_user('user@example.com', 'password')
 
@@ -146,3 +145,25 @@ class SightingViewSetTestCase(APITestCase):
         self.assertEqual(response['Content-Type'], 'application/json')
         updated_unavailable_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=False).count()
         self.assertTrue(updated_unavailable_count == unavailable_confirmation_count + 1)
+
+
+class SightingImageViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.beer2 = BeerFactory.create()
+        self.user = get_user_model().objects.create_user('user@example.com', 'password')
+
+        self.venue = VenueFactory()
+        self.beer1_sighting1 = SightingFactory(beer=self.beer1, venue=self.venue)
+        self.beer2_sighting1 = SightingFactory(beer=self.beer2, venue=self.venue,
+                                               date_sighted=timezone.now() - timedelta(minutes=1))
+        self.beer1_sighting2 = SightingFactory(beer=self.beer1,
+                                               venue=VenueFactory.create(point=fromstr("POINT(77.29 37.33)")),
+                                               date_sighted=timezone.now() - timedelta(minutes=2))
+        self.beer2_sighting2 = SightingFactory(beer=self.beer2,
+                                               venue=VenueFactory.create(
+                                                   point=fromstr("Point(-77.4419362313172 37.5254898040785)")),
+                                               user=UserFactory(show_name_on_sightings=False),
+                                               date_sighted=timezone.now() - timedelta(minutes=3))
+
+    def test_post(self):
+        self.client.login(username=self.user.email, password='password')

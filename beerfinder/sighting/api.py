@@ -23,7 +23,8 @@ from .models import Sighting, SightingConfirmation
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
-                          SightingImageSerializer, PaginatedSightingSerializer)
+                          SightingImageSerializer, PaginatedSightingSerializer,
+                          PaginatedSightingImageSerializer)
 
 
 class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
@@ -228,17 +229,24 @@ class NearbySightingAPIView(generics.ListAPIView):
         return super(NearbySightingAPIView, self).get(request, *args, **kwargs)
 
 
-class SightingImageViewset(viewsets.ModelViewSet):
+class SightingImageViewSet(viewsets.ModelViewSet):
     # TODO: Make this just use CreateModelMixin and whatever it depends on until/if
     # supporting other methods is desired?
     serializer_class = SightingImageSerializer
+    paginator = InfinitePaginator
+    pagination_serializer_class = PaginatedSightingImageSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
 
-    def pre_save(self, obj):
-        obj.user = self.request.user
-    
-    def create(self, *args, **kwargs):
-        """
-        Create a SightingImage.  Ensures that the sighting was created by the user
-        and will only allow 1 image upload.
-        """
-        pass
+    def get_queryset(self):
+        sighting = self.request.QUERY_PARAMS.get('sighting', None)
+        user = self.request.QUERY_PARAMS.get('user', None)
+
+        queryset = super(SightingImageViewSet, self).get_queryset()
+
+        if sighting:
+            queryset = queryset.filter(sighting_id=sighting)
+
+        if user:
+            queryset = queryset.filter(user_id=user)
+
+        return queryset
