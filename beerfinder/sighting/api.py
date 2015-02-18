@@ -19,7 +19,7 @@ from core.cache_keys import DefaultPaginatedListKeyConstructor
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
-from .models import Sighting, SightingConfirmation
+from .models import Sighting, SightingConfirmation, SightingImage
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
@@ -232,6 +232,7 @@ class NearbySightingAPIView(generics.ListAPIView):
 class SightingImageViewSet(viewsets.ModelViewSet):
     # TODO: Make this just use CreateModelMixin and whatever it depends on until/if
     # supporting other methods is desired?
+    queryset = SightingImage.objects.all()
     serializer_class = SightingImageSerializer
     paginator = InfinitePaginator
     pagination_serializer_class = PaginatedSightingImageSerializer
@@ -250,3 +251,11 @@ class SightingImageViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(user_id=user)
 
         return queryset
+
+    def perform_create(self, serializer):
+        """
+        Calls serializer.save() to create the image and then
+        generates the different image sizes
+        """
+        image = serializer.save()
+        image.generate_images()

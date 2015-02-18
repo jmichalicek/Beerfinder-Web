@@ -1,7 +1,8 @@
 from django.forms import widgets
 from rest_framework import serializers
 from rest_framework import pagination
-from rest_framework.validators import CurrentUserDefault, UniqueTogetherValidator
+from rest_framework.fields import CurrentUserDefault
+from rest_framework.validators import UniqueValidator
 
 from beer.serializers import BeerSerializer, ServingTypeSerializer
 from core.serializers import InfinitePaginationSerializer
@@ -38,7 +39,7 @@ class SightingImageSerializer(serializers.ModelSerializer):
         Ensure that the uploader is the owner of the sighting
         """
         if data['sighting'] and data['user']:
-            if not data['sighting'].user == user:
+            if not data['sighting'].user == data['user']:
                 raise serializers.ValidationError("You may only upload images for your own sighting.")
         return data
 
