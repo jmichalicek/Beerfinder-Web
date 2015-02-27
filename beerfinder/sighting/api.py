@@ -16,14 +16,16 @@ import foursquare
 from beer.models import Beer
 from core.paginator import InfinitePaginator, InfinitePage
 from core.cache_keys import DefaultPaginatedListKeyConstructor
+from core.permissions import IsOwnerOrReadOnlyPermssions
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
-from .models import Sighting, SightingConfirmation
+from .models import Sighting, SightingConfirmation, SightingImage
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
-                          SightingImageSerializer, PaginatedSightingSerializer)
+                          SightingImageSerializer, PaginatedSightingSerializer,
+                          PaginatedSightingImageSerializer)
 
 
 class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
@@ -226,3 +228,37 @@ class NearbySightingAPIView(generics.ListAPIView):
         Return a list of sightings sorted by distance from the point specified.
         """
         return super(NearbySightingAPIView, self).get(request, *args, **kwargs)
+
+
+class SightingImageViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for :class:`sighting.models.SightingImage`
+    """
+
+    queryset = SightingImage.objects.all()
+    serializer_class = SightingImageSerializer
+    paginator = InfinitePaginator
+    pagination_serializer_class = PaginatedSightingImageSerializer
+    permission_classes = (IsOwnerOrReadOnlyPermssions, )
+
+    def get_queryset(self):
+        sighting = self.request.QUERY_PARAMS.get('sighting', None)
+        user = self.request.QUERY_PARAMS.get('user', None)
+
+        queryset = super(SightingImageViewSet, self).get_queryset()
+
+        if sighting:
+            queryset = queryset.filter(sighting_id=sighting)
+
+        if user:
+            queryset = queryset.filter(user_id=user)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        """
+        Calls serializer.save() to create the image and then
+        generates the different image sizes
+        """
+        image = serializer.save()
+        image.generate_images()

@@ -76,63 +76,66 @@ class SightingImage(models.Model):
     sighting = models.ForeignKey('Sighting', related_name='sighting_images')
     date_created = models.DateTimeField(auto_now_add=True, blank=True)
 
-    original = models.ImageField(max_length=250, upload_to='sighting_images/%Y/%m/%d', height_field='original_height',
-                                 width_field='original_width')
+    original = models.ImageField(max_length=250, upload_to='sighting_images/%Y/%m/%d',
+                                 height_field='original_height', width_field='original_width')
     original_height = models.IntegerField(blank=True, null=True)
     original_width = models.IntegerField(blank=True, null=True)
 
-    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
+    thumbnail = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d',
+                                  blank=True, default='')
     thumbnail_height = models.IntegerField(blank=True, null=True)
     thumbnail_width = models.IntegerField(blank=True, null=True)
 
-    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
+    small = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d',
+                              blank=True, default='')
     small_height = models.IntegerField(blank=True, null=True)
     small_width = models.IntegerField(blank=True, null=True)
 
-    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d', blank=True, default='')
+    medium = models.ImageField(max_length=250, upload_to='sighting/images/%Y/%m/%d',
+                               blank=True, default='')
     medium_height = models.IntegerField(blank=True, null=True)
     medium_width = models.IntegerField(blank=True, null=True)
 
-    def generate_images(self):
+    def generate_images(self, force_create=False):
         """
         Generate resized images from the master
+
+        :param bool force_create: Create thumbnail, small, and medium
+            images even if they already exist
         """
         if self.original:
             base_name = self.original.name
 
-            if not self.thumbnail:
+            if force_create or not self.thumbnail:
                 try:
                     image_generator = SightingImageThumbnail(source=self.original)
-                    filename = base_name + '.thumbnail.jpg'
+                    filename = u'%s.thumbnail.jpg' % base_name
                     result = ImageCacheFile(image_generator, name=filename) #.generate()
                     result.generate()
-                    #self.thumbnail.save(base_name + '.thumbnail.jpg', result)
                     self.thumbnail.name = filename
                     self.save()
                 finally:
                     self.original.close()
                     #self.thumbnail.close()
 
-            if not self.small:
+            if force_create or not self.small:
                 try:
                     image_generator = SightingImageSmall(source=self.original)
-                    filename = base_name + '.small.jpg'
+                    filename = u'%s.small.jpg' % base_name
                     result = ImageCacheFile(image_generator, name=filename) #.generate()
                     result.generate()
-                    #self.small.save(base_name + '.small.jpg', result)
                     self.small.name = filename
                     self.save()
                 finally:
                     self.original.close()
                     #self.small.close()
 
-            if not self.medium:
+            if force_create or not self.medium:
                 try:
                     image_generator = SightingImageMedium(source=self.original)
-                    filename = base_name + '.medium.jpg'
+                    filename = u'%s.medium.jpg' % base_name
                     result = ImageCacheFile(image_generator, name=filename) #.generate()
                     result.generate()
-                    #self.medium.save(base_name + '.medium.jpg', result)
                     self.medium.name = filename
                     self.save()
                 finally:
@@ -145,15 +148,12 @@ class SightingImage(models.Model):
         imagekit's generate on them if they do not exist.  This is done
         rather than using ProcessedImageField for the sake of cleaner
         migrations which do not rely on imagekit being installed by referencing ProcessedImageField.
+        Django 1.7 migrations may work more cleanly with ProcessedImageField
 
         :param generate_images: Automatically generate the resized images on save if True.  This can be problematic
           with the async backend and atomic transactions
         :type generate_images: bool
         """
-        try:
-            super(SightingImage, self).save(*args, **kwargs)
-        except Exception, e:
-            print e
-            raise
+        super(SightingImage, self).save(*args, **kwargs)
         if generate_images:
             self.generate_images()

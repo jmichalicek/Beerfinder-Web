@@ -1,14 +1,19 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.urlresolvers import reverse
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils import timezone
 
 from django.contrib.gis.geos import Point, fromstr, GEOSGeometry
+from rest_framework import status
 from rest_framework.test import APITestCase
 
 import factory
 from datetime import timedelta
+import os
 
-from .models import Sighting, SightingConfirmation
+from .models import Sighting, SightingConfirmation, SightingImage
 
 from beer.tests import BeerFactory
 from accounts.tests import UserFactory
@@ -65,7 +70,7 @@ class SightingViewSetTestCase(APITestCase):
     # the national Point("-77.4352025985718 37.5418168540823")
 
     def setUp(self):
-        self.beer1 = BeerFactory()
+        self.beer1 = BeerFactory.create()
         self.beer2 = BeerFactory.create()
         self.user = get_user_model().objects.create_user('user@example.com', 'password')
 
@@ -146,3 +151,107 @@ class SightingViewSetTestCase(APITestCase):
         self.assertEqual(response['Content-Type'], 'application/json')
         updated_unavailable_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=False).count()
         self.assertTrue(updated_unavailable_count == unavailable_confirmation_count + 1)
+
+
+@override_settings(MEDIA_ROOT='/tmp/djangotests/')
+@override_settings(CELERY_ALWAYS_EAGER=True)
+class SightingImageViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.beer = BeerFactory.create()
+        self.user = get_user_model().objects.create_user('user@example.com', 'password')
+        self.user2 = get_user_model().objects.create_user('user2@example.com', 'password')
+
+        self.venue = VenueFactory()
+        self.sighting1 = SightingFactory(beer=self.beer, venue=self.venue, user=self.user)
+        self.sighting2 = SightingFactory(beer=self.beer,
+                                         venue=VenueFactory.create(point=fromstr("POINT(77.29 37.33)")),
+                                         date_sighted=timezone.now() - timedelta(minutes=2))
+
+    def test_post(self):
+        self.client.login(username=self.user.email, password='password')
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        original_image = os.path.join(current_directory, 'test_files/1000x1000.jpg')
+        with open(original_image) as fp:
+            post_data = {'sighting': self.sighting1.id,
+                         'original': fp}
+            response = self.client.post('/api/sighting_images/', post_data)
+
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        sighting_image = SightingImage.objects.get(id=response.data['id'])
+        self.assertEqual(self.user, sighting_image.user)
+        self.assertEqual(1000, sighting_image.original_height)
+        self.assertEqual(1000, sighting_image.original_width)
+        self.assertEqual(self.sighting1, sighting_image.sighting)
+
+        self.assertEqual('http://testserver%s' % (sighting_image.original.url), response.data['original'])
+        self.assertEqual('http://testserver%s' % (sighting_image.thumbnail.url), response.data['thumbnail'])
+        self.assertEqual('http://testserver%s' % (sighting_image.small.url),response.data['small'])
+        self.assertEqual('http://testserver%s' % (sighting_image.medium.url),response.data['medium'])
+        self.assertEqual(self.sighting1.id, response.data['sighting'])
+        self.assertEqual(sighting_image.id, response.data['id'])
+
+    def test_post_logged_out(self):
+        self.client.logout()
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        original_image = os.path.join(current_directory, 'test_files/1000x1000.jpg')
+        with open(original_image) as fp:
+            post_data = {'sighting': self.sighting1.id,
+                         'original': fp}
+            response = self.client.post('/api/sighting_images/', post_data)
+
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+
+    def test_post_wrong_user(self):
+        """
+        Post an image for a sighting the user did not create
+        """
+        self.client.login(username=self.user.email, password='password')
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        original_image = os.path.join(current_directory, 'test_files/1000x1000.jpg')
+        with open(original_image) as fp:
+            post_data = {'sighting': self.sighting2.id,
+                         'original': fp}
+            response = self.client.post('/api/sighting_images/', post_data)
+
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, response.status_code)
+        self.assertEqual({"non_field_errors":["You may only upload images for your own sighting."]}, response.data)
+
+    def test_delete(self):
+        # TODO:  factory boy factory to create SightingImage?
+        # have to be careful due to need to manually copy file
+        # or watch out for real file delete when object is deleted if
+        # the fiel from test_files is used directly.  This seems like
+        # the least amount of work for now.
+        self.client.login(username=self.user.email, password='password')
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        original_image = os.path.join(current_directory, 'test_files/1000x1000.jpg')
+        with open(original_image) as fp:
+            post_data = {'sighting': self.sighting1.id,
+                         'original': fp}
+            response = self.client.post('/api/sighting_images/', post_data)
+
+            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+        sighting_id = response.data['id']
+        response = self.client.delete(reverse('sightingimage-detail', args=[sighting_id]))
+        self.assertEqual(status.HTTP_204_NO_CONTENT, response.status_code)
+        self.assertFalse(SightingImage.objects.filter(id=sighting_id).exists())
+
+    def test_delete_not_owner(self):
+        self.client.login(username=self.user.email, password='password')
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        original_image = os.path.join(current_directory, 'test_files/1000x1000.jpg')
+        with open(original_image) as fp:
+            post_data = {'sighting': self.sighting1.id,
+                         'original': fp}
+            response = self.client.post('/api/sighting_images/', post_data)
+
+            self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+
+        sighting_id = response.data['id']
+
+        self.client.logout()
+        self.client.login(username=self.user2.email, password='password')
+        response = self.client.delete(reverse('sightingimage-detail', args=[sighting_id]))
+        self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
+        self.assertTrue(SightingImage.objects.filter(id=sighting_id).exists())
