@@ -36,7 +36,8 @@ class SightingImageSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         """
-        Ensure that the uploader is the owner of the sighting
+        Ensure that the uploader is the owner of the sighting (which should really be
+        a permissions and http 403 response situation)
         """
         if data['sighting'] and data['user']:
             if not data['sighting'].user == data['user']:

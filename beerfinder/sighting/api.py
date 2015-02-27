@@ -16,6 +16,7 @@ import foursquare
 from beer.models import Beer
 from core.paginator import InfinitePaginator, InfinitePage
 from core.cache_keys import DefaultPaginatedListKeyConstructor
+from core.permissions import IsOwnerOrReadOnlyPermssions
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
@@ -230,13 +231,15 @@ class NearbySightingAPIView(generics.ListAPIView):
 
 
 class SightingImageViewSet(viewsets.ModelViewSet):
-    # TODO: Make this just use CreateModelMixin and whatever it depends on until/if
-    # supporting other methods is desired?
+    """
+    ViewSet for :class:`sighting.models.SightingImage`
+    """
+
     queryset = SightingImage.objects.all()
     serializer_class = SightingImageSerializer
     paginator = InfinitePaginator
     pagination_serializer_class = PaginatedSightingImageSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsOwnerOrReadOnlyPermssions, )
 
     def get_queryset(self):
         sighting = self.request.QUERY_PARAMS.get('sighting', None)
