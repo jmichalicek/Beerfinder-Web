@@ -16,7 +16,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.searchTerm = ko.observable('');
 
         this.activeNavSection = ko.observable('');
-        this.selectedVenue = ko.observable(new FoursquareVenueModel({location: ''}));
+        this.selectedVenue = ko.observable(null);
         this.location = data.location || {};
         this.selectedServingTypes = ko.observableArray([]);
 
@@ -30,7 +30,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.servingTypes = ko.observableArray([]);
         this.submitInProgress = ko.observable(false);
         this.discoverView = ko.observable(true); // determine whether to show discover or search lists
-        this.venueSelected = ko.observable(false);
+        this.venueSelected = ko.observable(false);  // probably unnecessary now that selectedVenue usage is fixed
 
         this.sighting = ko.observable(null); // assigned after successfully submitting a sighting
 
@@ -192,7 +192,12 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
         this.clearSelectedVenue = function () {
             self.venueSelected(false);
-            self.selectedVenue(new FoursquareVenueModel({'location': ''}));
+            self.selectedVenue(null);
+            // force data into displayItems() and then updateViewportDimensions()
+            // to work around weird bug where displayItems() is not being repopulated
+            // when the view becomes visible again.
+            self.venues.infinitescroll.displayItems(self.venues().slice(0,50));
+            updateViewportDimensions();
         };
 
         this.geoLocationCallback = function (position) {
@@ -308,7 +313,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
         this.geoLocationSuccessMessageHandler = function (msg, data) {
             /* data is going to be a location object with coords, etc */
-            self.selectedVenue(new FoursquareVenueModel({location: {}}));
+            self.selectedVenue(null);
             self.venues([]);
             self.location = data;
             self.getNearbyVenues();
