@@ -21,6 +21,8 @@ class SightingImageSerializer(serializers.ModelSerializer):
         model = SightingImage
         fields = ('id', 'original', 'thumbnail', 'small', 'medium',
                   'original_height', 'original_width', 'sighting', 'user')
+        read_only_fields = ('thumbnail', 'small', 'medium', 'original_height',
+                            'original_width')
 
     def __init__(self, *args, **kwargs):
         super(SightingImageSerializer, self).__init__(*args, **kwargs)
