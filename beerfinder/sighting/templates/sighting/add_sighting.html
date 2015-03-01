@@ -11,7 +11,7 @@
       <button type="submit" class="btn">Search</button>
     </form>
   </div>
-  
+
   <div id="venue_list_container" data-bind="visible: venueListVisible">
     <ul id="venue_list" data-bind="foreach: venues.infinitescroll.displayItems" class="list-unstyled venue-list">
       <li class="venue_item">
@@ -45,15 +45,17 @@
       </li>
     </ul>
   </div>
-  
+
   <div style="display: none" data-bind="visible: venueSelected">
     <div id="selected_venue" data-bind="visible: venueSelected" style="display: none">
       <div class="form-group">
         <address>
+          <!-- ko if: selectedVenue() -->
           <strong><span data-bind="text: selectedVenue().name"></span></strong><br>
           <span data-bind="text: selectedVenue().location().address"></span><br>
           <span data-bind="text: selectedVenue().location().city"></span>, <span data-bind="text: selectedVenue().location().state"></span><br>
           <span data-bind="text: selectedVenue().location().postalCode"></span><br>
+          <!-- /ko -->
         </address>
         <a href="#" class="btn btn-default" data-bind="click: clearSelectedVenue"><small>Change Location</small></a></div>
     </div>

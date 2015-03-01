@@ -16,7 +16,7 @@ import foursquare
 from beer.models import Beer
 from core.paginator import InfinitePaginator, InfinitePage
 from core.cache_keys import DefaultPaginatedListKeyConstructor
-from core.permissions import IsOwnerOrReadOnlyPermssions
+from core.permissions import IsOwnerOrReadOnlyPermissions
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
@@ -29,78 +29,23 @@ from .serializers import (SightingSerializer, SightingConfirmationSerializer,
 
 
 class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
+    """
+    ViewSet to list and create sightings.
+    """
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
     serializer_class = SightingSerializer
     pagination_serializer_class = PaginatedSightingSerializer
     paginator = InfinitePaginator
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    permission_classes = (IsOwnerOrReadOnlyPermissions, )
     paginate_by = 25
     paginate_by_param = 'page_size'
 
-    def create(self, request, *args, **kwargs):
+    def perform_create(self, serializer):
         """
-        Does a whole bunch of extra special stuff
+        Ensures that the user is set on the saved sighting.
+        This could also be moved to living on the serializer
         """
-        try:
-            beer = Beer.objects.get(slug=request.DATA.get('beer'))
-        except Beer.DoesNotExist:
-            return Response({'error': 'Beer does not exist'}, status=400)
-
-        foursquare_id = request.DATA.get('foursquare_venue_id')
-        try:
-            venue = Venue.objects.get(foursquare_id=foursquare_id)
-        except Venue.DoesNotExist:
-            venue = Venue.retrieve_from_foursquare(foursquare_id)
-            venue.save()
-
-        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id,
-                     'comment': request.DATA.get('comment', ''),
-                     'serving_types': request.DATA.getlist('serving_types', [])}
-
-        transaction.set_autocommit(False)
-        try:
-            sighting_form = SightingModelForm(form_data)
-            # This should be doable using the serializer as the form, but I'm missing something
-            # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
-            if sighting_form.is_valid():
-                sighting = sighting_form.save()
-            else:
-                transaction.rollback()
-                return Response({'form_errors': sighting_form.errors}, status=400)
-
-            if request.FILES:
-                # muck with the files dict because we receive the image in a param called 'image'
-                # but the form needs it to be named 'original'
-                file_dict = {'original': request.FILES.get('image')}
-                image_form = SightingImageForm({'sighting': sighting.id, 'user': request.user.id}, file_dict)
-                if image_form.is_valid():
-                    image = image_form.save()
-                    transaction.commit()
-
-                    # commit before generate_images in case of imagekit async backend
-                    try:
-                        image.generate_images()
-                    except Exception, e:
-                        transaction.rollback()
-                        raise
-                    else:
-                        # extra commit here in case imagekit backend is not async
-                        # or CELERY_ALWAYS_EAGER=True so that the updated model will be saved
-                        transaction.commit()
-                else:
-                    transaction.rollback()
-                    return Response({'form_errors': image_form.errors}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                # no files to try to save, just commit the sighting
-                transaction.commit()
-        finally:
-            transaction.set_autocommit(True)
-
-        serialized = self.get_serializer(sighting)
-        return Response(serialized.data, status=201)
-
-    def pre_save(self, obj):
-        obj.user = self.request.user
+        serializer.save(user=self.request.user)
 
     def get_queryset(self, prefetch=True):
         queryset = self.queryset
@@ -120,6 +65,8 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     def confirm_available(self, request, *args, **kwargs):
         """
         Mark a sighting as still available
+
+        TODO: REMOVE
         """
         sighting = self.get_object()
         confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': True}, context={'request': request})
@@ -134,6 +81,8 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     def confirm_unavailable(self, request, *args, **kwargs):
         """
         Mark a sighting as no longer available
+
+        TODO: REMOVE
         """
         sighting = self.get_object()
         serializer_context = {'request': request}
@@ -239,7 +188,7 @@ class SightingImageViewSet(viewsets.ModelViewSet):
     serializer_class = SightingImageSerializer
     paginator = InfinitePaginator
     pagination_serializer_class = PaginatedSightingImageSerializer
-    permission_classes = (IsOwnerOrReadOnlyPermssions, )
+    permission_classes = (IsOwnerOrReadOnlyPermissions, )
 
     def get_queryset(self):
         sighting = self.request.QUERY_PARAMS.get('sighting', None)

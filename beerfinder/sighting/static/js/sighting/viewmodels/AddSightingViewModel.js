@@ -12,17 +12,17 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
         this.venuesPerRequest = 50;
         this.maxResults = null;
-        
+
         this.searchTerm = ko.observable('');
-        
+
         this.activeNavSection = ko.observable('');
-        this.selectedVenue = ko.observable(new FoursquareVenueModel({location: ''}));
+        this.selectedVenue = ko.observable(null);
         this.location = data.location || {};
         this.selectedServingTypes = ko.observableArray([]);
-        
+
         this.venues = ko.observableArray();
         this.searchVenues = ko.observableArray(); // for venues returned via search
-        
+
         this.comment = ko.observable("");
         this.beer = ko.observable(new BeerModel(data.beer));
         this.image = ko.observable(null);
@@ -30,7 +30,9 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.servingTypes = ko.observableArray([]);
         this.submitInProgress = ko.observable(false);
         this.discoverView = ko.observable(true); // determine whether to show discover or search lists
-        this.venueSelected = ko.observable(false);
+        this.venueSelected = ko.observable(false);  // probably unnecessary now that selectedVenue usage is fixed
+
+        this.sighting = ko.observable(null); // assigned after successfully submitting a sighting
 
         this.searchListVisible = ko.computed(function () {
             return !self.venueSelected() && !self.discoverView();
@@ -45,7 +47,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             var x = data;
             var element = e.currentTarget;
             var files = !!element.files ? element.files : [];
-            
+
             if(!files.length || !window.FileReader) {
                 return;
             }
@@ -67,29 +69,29 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             fileField.files = [];
             self.image(undefined);
         };
-        
+
         // stuff to enable infinite scroll
         this.venues.extend({
             infinitescroll: {}
         });
-        
+
         // detect resize
         $(window).resize(function() {
             debouncedUpdateViewport();
         });
-        
+
         this.handleScroll = _.debounce(function () {
             self.venues.infinitescroll.scrollY($(window).scrollTop());
             // add more items if scroll reaches the last 15 items
             if (self.venues.peek().length - self.venues.infinitescroll.lastVisibleIndex.peek() <= 20) {
                 self.debouncedNearbyVenues();
             }
-            
+
             updateViewportDimensions();
         }, 250);
         $(document).scroll(self.handleScroll);
 
-        
+
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
             var itemsRef = $(window),//$('#venue_list'),
@@ -98,71 +100,106 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             itemsHeight = itemsRef.height(),
             itemWidth = itemRef.outerWidth(),
             itemHeight = itemRef.outerHeight();
-            
+
             self.venues.infinitescroll.viewportWidth(itemsWidth);
             self.venues.infinitescroll.viewportHeight(itemsHeight);
             self.venues.infinitescroll.itemWidth(itemWidth);
             self.venues.infinitescroll.itemHeight(itemHeight);
-            
+
         }
         updateViewportDimensions();
         var debouncedUpdateViewport = _.debounce(updateViewportDimensions, 250);
-        
+
         // end infinite scroll stuff
-        
+
         this.sightingReady = ko.computed(function () {
             return self.selectedVenue() && self.beer() && !self.submitInProgress(); // probably will add more checks/conditions here
         });
-        
+
         this.showSpinner = ko.observable(false);
-        this.submitSighting = function () {
-          
-            self.showLoadingSpinner(true);
-            self.submitInProgress(true);
-            var i = $('#sighting_image');
-            var im = document.getElementById('sighting_image');
+
+        this.postSighting = function () {
+            // Could make these 2 separate forms now and really simplify things
+
             var formData = new FormData();
             // find a way to do this without using formdata?
             // currently using formdata due to the image upload
-            formData.append('foursquare_venue_id', self.selectedVenue().id());
+            formData.append('venue_foursquare_id', self.selectedVenue().id());
             formData.append('comment', self.comment());
-            formData.append('beer', self.beer().slug());
-            formData.append('image', $('#sighting_image')[0].files[0]);
-
+            formData.append('beer_slug', self.beer().slug());
             // cannot just append an array with FormData objects
             ko.utils.arrayForEach(self.selectedServingTypes(), function (item) {
-                formData.append('serving_types', item);
+                formData.append('serving_type_ids', item);
             });
-            
-            $.ajax({url: '/api/sightings/',
-                    type: 'POST',
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                   }).done(function (data) {
-                       var sighting = new SightingModel(data);
-                       window.location = sighting.webUrl();
-                   }).error(function (data) {
-                       // todo: real error handling for varying errors.  Trying again may be pointless.
-                       // also, display this in a better manner
-                       alert('There was an error addinging your sighting. Please try again.');
-                   }).always(function (data) {
-                       self.showLoadingSpinner(false);
-                       self.submitInProgress(false);
-                   });
+
+            return $.ajax({url: '/api/sightings/',
+                           type: 'POST',
+                           data: formData,
+                           cache: false,
+                           contentType: false,
+                           processData: false,
+                          });
         };
-        
+
+        this.postImage = function () {
+            var i = $('#sighting_image');
+            var im = document.getElementById('sighting_image');
+            var formData = new FormData();
+            // should just be able to use im here...
+            // rename this field to 'image' on the serializer?
+            formData.append('original', $('#sighting_image')[0].files[0]);
+            formData.append('sighting', self.sighting().id());
+
+            return $.ajax({url: '/api/sighting_images/',
+                           type: 'POST',
+                           data: formData,
+                           cache: false,
+                           contentType: false,
+                           processData: false,
+                          });
+        };
+        this.submitSighting = function () {
+            // TODO: Save created sighting on viewmodel, then if image upload fails
+            // display html with button to retry uploading the image
+            self.showLoadingSpinner(true);
+            self.submitInProgress(true);
+            self.postSighting().done(function (data) {
+                self.sighting(new SightingModel(data));
+                if(!$('#sighting_image')[0].files[0]) {
+                    window.location = self.sighting().webUrl();
+                } else {
+                    self.postImage().done(function (data) {
+                        window.location = self.sighting().webUrl();
+                    }).error(function (data) {
+                        //TODO: SHOW ERROR AND BUTTON TO RETRY
+                        alert('There was an error uploading your image. Please try again.');
+                        self.showLoadingSpinner(false);
+                        self.submitInProgress(false);
+                    });
+                }
+            }).error(function (data) {
+                self.showLoadingSpinner(false);
+                self.submitInProgress(false);
+                // TODO: show real error in the page, not a js alert
+                alert('There was an error addinging your sighting. Please try again.');
+            });
+        };
+
         this.setSelectedVenue = function (venue) {
             self.selectedVenue(venue);
             self.venueSelected(true);
         };
-        
+
         this.clearSelectedVenue = function () {
             self.venueSelected(false);
-            self.selectedVenue(new FoursquareVenueModel({}));
+            self.selectedVenue(null);
+            // force data into displayItems() and then updateViewportDimensions()
+            // to work around weird bug where displayItems() is not being repopulated
+            // when the view becomes visible again.
+            self.venues.infinitescroll.displayItems(self.venues().slice(0,50));
+            updateViewportDimensions();
         };
-        
+
         this.geoLocationCallback = function (position) {
             self.location = position;
             PubSub.publish(PubSubChannels.GEOLOCATION_SUCCESS, position);
@@ -185,16 +222,16 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
             PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
         };
-        
-        this.getNearbyVenues = function () { 
+
+        this.getNearbyVenues = function () {
             var offset = self.venues.peek().length;
             if(!self.requestInProgress && (self.maxResults == null || offset < self.maxResults)) {
                 self.requestInProgress = true;
-                
-                
+
+
                 var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
                                      offset: offset};
-                
+
                 $.ajax({url: '/api/foursquare_venues/',
                         type: 'GET',
                         data: requestParams,
@@ -216,9 +253,9 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                        });
             }
         };
-        
+
         this.debouncedNearbyVenues = _.debounce(self.getNearbyVenues, 250);
-        
+
         this.submitSearchHandler = function () {
             // maybe this should be renamed now.  It is used when not searching as well.
             if(self.searchTerm().length < 1) {
@@ -242,11 +279,11 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             self.venues.infinitescroll.displayItems(self.venues());
             updateViewportDimensions();
         };
-        
+
         this.searchForVenue = function () {
             var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude,
                                  query: self.searchTerm()};
-            
+
             $.ajax({url: '/api/foursquare_venues/search/',
                     type: 'GET',
                     data: requestParams,
@@ -276,7 +313,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
         this.geoLocationSuccessMessageHandler = function (msg, data) {
             /* data is going to be a location object with coords, etc */
-            self.selectedVenue(new FoursquareVenueModel({location: {}}));
+            self.selectedVenue(null);
             self.venues([]);
             self.location = data;
             self.getNearbyVenues();
@@ -293,7 +330,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                 PubSub.publish(PubSubChannels.GEOLOCATION_TIMEOUT, data);
                 PubSub.publish(PubSubChannels.ERRORS_SET, [Constants.GEOLOCATION_TIMEOUT_MESSAGE]);
             }
-            
+
             PubSub.publish(PubSubChannels.GEOLOCATION_DONE, data);
         };
 
@@ -308,7 +345,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
             self.showLoadingSpinner(true);
             PubSub.subscribe(PubSubChannels.GEOLOCATION_SUCCESS, self.geoLocationSuccessMessageHandler);
 
-            
+
             PubSub.publish(PubSubChannels.GEOLOCATION_START, {});
             navigator.geolocation.getCurrentPosition(self.geoLocationCallback, self.geoLocationLowAccuracy, {enableHighAccuracy: true, timeout: 10000, maximumAge: 30000});
         };
