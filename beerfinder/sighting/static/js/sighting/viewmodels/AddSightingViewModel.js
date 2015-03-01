@@ -192,7 +192,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
 
         this.clearSelectedVenue = function () {
             self.venueSelected(false);
-            self.selectedVenue(new FoursquareVenueModel({}));
+            self.selectedVenue(new FoursquareVenueModel({'location': ''}));
         };
 
         this.geoLocationCallback = function (position) {

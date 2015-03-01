@@ -7,7 +7,7 @@ Django Rest Framework custom permissions
 from rest_framework import permissions
 
 # what about for querysets?
-class IsOwnerOrReadOnlyPermssions(permissions.IsAuthenticatedOrReadOnly):
+class IsOwnerOrReadOnlyPermissions(permissions.IsAuthenticatedOrReadOnly):
     """
     Object-level permission for Django Rest Framework to only allow owners of an object to edit it.
     Assumes the model instance has an `user` attribute.
