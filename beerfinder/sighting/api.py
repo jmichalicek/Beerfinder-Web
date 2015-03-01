@@ -41,66 +41,71 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         """
         Does a whole bunch of extra special stuff
         """
-        try:
-            beer = Beer.objects.get(slug=request.DATA.get('beer'))
-        except Beer.DoesNotExist:
-            return Response({'error': 'Beer does not exist'}, status=400)
+        return super(SightingViewSet, self).create(request, *args, **kwargs)
+#        try:
+#            beer = Beer.objects.get(slug=request.DATA.get('beer'))
+#        except Beer.DoesNotExist:
+#            return Response({'error': 'Beer does not exist'}, status=400)
 
-        foursquare_id = request.DATA.get('foursquare_venue_id')
-        try:
-            venue = Venue.objects.get(foursquare_id=foursquare_id)
-        except Venue.DoesNotExist:
-            venue = Venue.retrieve_from_foursquare(foursquare_id)
-            venue.save()
+#        foursquare_id = request.DATA.get('foursquare_venue_id')
+#        try:
+#            venue = Venue.objects.get(foursquare_id=foursquare_id)
+#        except Venue.DoesNotExist:
+#            venue = Venue.retrieve_from_foursquare(foursquare_id)
+#            venue.save()
 
-        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id,
-                     'comment': request.DATA.get('comment', ''),
-                     'serving_types': request.DATA.getlist('serving_types', [])}
+#        form_data = {'beer': beer.id, 'venue': venue.id, 'user': request.user.id,
+#                     'comment': request.DATA.get('comment', ''),
+#                     'serving_types': request.DATA.getlist('serving_types', [])}
 
-        transaction.set_autocommit(False)
-        try:
-            sighting_form = SightingModelForm(form_data)
-            # This should be doable using the serializer as the form, but I'm missing something
-            # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
-            if sighting_form.is_valid():
-                sighting = sighting_form.save()
-            else:
-                transaction.rollback()
-                return Response({'form_errors': sighting_form.errors}, status=400)
+#        transaction.set_autocommit(False)
+#        try:
+#            sighting_form = SightingModelForm(form_data)
+#            # This should be doable using the serializer as the form, but I'm missing something
+#            # sighting_form = self.get_serializer(data=form_data, files=request.FILES)
+#            if sighting_form.is_valid():
+#                sighting = sighting_form.save()
+#            else:
+#                transaction.rollback()
+#                return Response({'form_errors': sighting_form.errors}, status=400)
 
-            if request.FILES:
-                # muck with the files dict because we receive the image in a param called 'image'
-                # but the form needs it to be named 'original'
-                file_dict = {'original': request.FILES.get('image')}
-                image_form = SightingImageForm({'sighting': sighting.id, 'user': request.user.id}, file_dict)
-                if image_form.is_valid():
-                    image = image_form.save()
-                    transaction.commit()
+#            if request.FILES:
+#                # muck with the files dict because we receive the image in a param called 'image'
+#                # but the form needs it to be named 'original'
+#                file_dict = {'original': request.FILES.get('image')}
+#                image_form = SightingImageForm({'sighting': sighting.id, 'user': request.user.id}, file_dict)
+#                if image_form.is_valid():
+#                    image = image_form.save()
+#                    transaction.commit()
 
-                    # commit before generate_images in case of imagekit async backend
-                    try:
-                        image.generate_images()
-                    except Exception, e:
-                        transaction.rollback()
-                        raise
-                    else:
-                        # extra commit here in case imagekit backend is not async
-                        # or CELERY_ALWAYS_EAGER=True so that the updated model will be saved
-                        transaction.commit()
-                else:
-                    transaction.rollback()
-                    return Response({'form_errors': image_form.errors}, status=status.HTTP_400_BAD_REQUEST)
-            else:
-                # no files to try to save, just commit the sighting
-                transaction.commit()
-        finally:
-            transaction.set_autocommit(True)
+#                    # commit before generate_images in case of imagekit async backend
+#                    try:
+#                        image.generate_images()
+#                    except Exception, e:
+#                        transaction.rollback()
+#                        raise
+#                    else:
+#                        # extra commit here in case imagekit backend is not async
+#                        # or CELERY_ALWAYS_EAGER=True so that the updated model will be saved
+#                        transaction.commit()
+#                else:
+#                    transaction.rollback()
+#                    return Response({'form_errors': image_form.errors}, status=status.HTTP_400_BAD_REQUEST)
+#            else:
+#                # no files to try to save, just commit the sighting
+#                transaction.commit()
+#        finally:
+#            transaction.set_autocommit(True)
+#
+#        serialized = self.get_serializer(sighting)
+#        return Response(serialized.data, status=201)
 
-        serialized = self.get_serializer(sighting)
-        return Response(serialized.data, status=201)
-
-    def pre_save(self, obj):
-        obj.user = self.request.user
+    def perform_create(self, serializer):
+        """
+        Ensures that the user is set on the saved sighting.
+        This could also be moved to living on the serializer
+        """
+        serializer.save(user=self.request.user)
 
     def get_queryset(self, prefetch=True):
         queryset = self.queryset
