@@ -26,12 +26,6 @@ class SightingImageSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(SightingImageSerializer, self).__init__(*args, **kwargs)
-        self.fields['thumbnail'].read_only = True
-        self.fields['small'].read_only = True
-        self.fields['medium'].read_only = True
-        self.fields['original_height'].read_only = True
-        self.fields['original_width'].read_only = True
-
         # validate unique here, but not set on the model because I am
         # likely to allow multiple images in the future
         self.fields['sighting'].validators = [
