@@ -46,8 +46,8 @@
     </ul>
   </div>
 
-  <div style="display: none" data-bind="visible: venueSelected">
-    <div id="selected_venue" data-bind="visible: venueSelected" style="display: none">
+  <div style="display: none" data-bind="visible: selectedVenue">
+       <div id="selected_venue" data-bind="visible: venueSelected" style="display: none">
       <div class="form-group">
         <address>
           <!-- ko if: selectedVenue() -->
@@ -85,7 +85,11 @@
            <!-- /ko -->
          </ul>
        </div>
-       <button class="btn btn-primary btn-lg" disabled data-bind="enable: sightingReady, click: submitSighting">Add Sighting</button>
+       <button class="btn btn-primary btn-lg btn-block" disabled data-bind="enable: sightingReady, click: submitSighting, visible: !sighting()">Add Sighting</button>
+       <div data-bind="visible: imageUploadError" style="display: none">
+         <div class="alert alert-danger">There was an error uploading your image.</div>
+         <button data-bind="click: postImage" class="btn btn-lg btn-block btn-danger">Try Again</button>
+       </div>
        {% csrf_token %}
      </form>
   </div>

@@ -31,6 +31,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         this.submitInProgress = ko.observable(false);
         this.discoverView = ko.observable(true); // determine whether to show discover or search lists
         this.venueSelected = ko.observable(false);  // probably unnecessary now that selectedVenue usage is fixed
+        this.imageUploadError = ko.observable(false);
 
         this.sighting = ko.observable(null); // assigned after successfully submitting a sighting
 
@@ -142,6 +143,8 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
         };
 
         this.postImage = function () {
+            self.showLoadingSpinner(true);
+            self.imageUploadError(false);
             var i = $('#sighting_image');
             var im = document.getElementById('sighting_image');
             var formData = new FormData();
@@ -156,8 +159,15 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                            cache: false,
                            contentType: false,
                            processData: false,
-                          });
+                          }).done(function (data) {
+                              window.location = self.sighting().webUrl();
+                          }).error(function (data) {
+                              self.showLoadingSpinner(false);
+                              self.submitInProgress(false);
+                              self.imageUploadError(true);
+                          });;
         };
+
         this.submitSighting = function () {
             // TODO: Save created sighting on viewmodel, then if image upload fails
             // display html with button to retry uploading the image
@@ -168,14 +178,8 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'pubsub', '
                 if(!$('#sighting_image')[0].files[0]) {
                     window.location = self.sighting().webUrl();
                 } else {
-                    self.postImage().done(function (data) {
-                        window.location = self.sighting().webUrl();
-                    }).error(function (data) {
-                        //TODO: SHOW ERROR AND BUTTON TO RETRY
-                        alert('There was an error uploading your image. Please try again.');
-                        self.showLoadingSpinner(false);
-                        self.submitInProgress(false);
-                    });
+                    // postImage will handle redirect or showing image error
+                    self.postImage();
                 }
             }).error(function (data) {
                 self.showLoadingSpinner(false);
