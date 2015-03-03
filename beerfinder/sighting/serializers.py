@@ -112,10 +112,13 @@ class SightingConfirmationSerializer(serializers.ModelSerializer):
 
 
 class SightingCommentSerializer(serializers.ModelSerializer):
-    #comment_by = serializers.Field()
+    """
+    Serialize a comment made on a sighting.
+    """
+
     class Meta:
         model = Comment
-        fields = ('date_created', 'text', 'comment_by')
+        fields = ('date_created', 'text', 'comment_by', 'sighting')
 
 
 class PaginatedSightingCommentSerializer(InfinitePaginationSerializer):

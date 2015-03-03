@@ -191,6 +191,7 @@ class SightingImageViewSet(viewsets.ModelViewSet):
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
 
     def get_queryset(self):
+        # Filter by username/email instead of by user id?
         sighting = self.request.QUERY_PARAMS.get('sighting', None)
         user = self.request.QUERY_PARAMS.get('user', None)
 
@@ -211,3 +212,40 @@ class SightingImageViewSet(viewsets.ModelViewSet):
         """
         image = serializer.save()
         image.generate_images()
+
+
+class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
+    """
+    ViewSet to list and create sightings.
+    """
+    # TODO: Really no need for edit or delete functionality currently.
+    # Perhaps this should be a Create/Retrieve/List view?
+    queryset = SightingComment.objects.select_related('user', 'sighting').all()
+    serializer_class = SightingCommentSerializer
+    pagination_serializer_class = PaginatedSightingCommentSerializer
+    paginator = InfinitePaginator
+    permission_classes = (IsOwnerOrReadOnlyPermissions, )
+    paginate_by = 100
+    paginate_by_param = 'page_size'
+
+    def get_queryset(self):
+        # filter by username/email instead of user id?
+        sighting = self.request.QUERY_PARAMS.get('sighting', None)
+        user = self.request.QUERY_PARAMS.get('user', None)
+
+        queryset = super(SightingCommentViewSet, self).get_queryset()
+
+        if sighting:
+            queryset = queryset.filter(sighting_id=sighting)
+
+        if user:
+            queryset = queryset.filter(user_id=user)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        """
+        Ensures that the user is set on the saved comment.
+        This could also be moved to living on the serializer
+        """
+        serializer.save(user=self.request.user)
