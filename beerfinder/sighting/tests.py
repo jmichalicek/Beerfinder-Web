@@ -13,7 +13,7 @@ import factory
 from datetime import timedelta
 import os
 
-from .models import Sighting, SightingConfirmation, SightingImage
+from .models import Sighting, SightingConfirmation, SightingImage, Comment
 
 from beer.tests import BeerFactory
 from accounts.tests import UserFactory
@@ -255,3 +255,31 @@ class SightingImageViewSetTestCase(APITestCase):
         response = self.client.delete(reverse('sightingimage-detail', args=[sighting_id]))
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         self.assertTrue(SightingImage.objects.filter(id=sighting_id).exists())
+
+
+@override_settings(CELERY_ALWAYS_EAGER=True)
+class SightingCommentViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.beer = BeerFactory.create()
+        self.user = get_user_model().objects.create_user('user@example.com', 'password')
+        self.user2 = get_user_model().objects.create_user('user2@example.com', 'password')
+
+        self.venue = VenueFactory()
+        self.sighting1 = SightingFactory(beer=self.beer, venue=self.venue, user=self.user)
+        self.sighting2 = SightingFactory(
+            beer=self.beer,
+            venue=VenueFactory.create(point=fromstr("POINT(77.29 37.33)")),
+            date_sighted=timezone.now() - timedelta(minutes=2))
+
+    def test_post(self):
+        self.client.login(username=self.user.email, password='password')
+        post_data = {'sighting': self.sighting1.id,
+                     'text': "Wheeeee!"}
+        response = self.client.post(reverse('sighting_comments-list'), post_data)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        expected_keys = ['id', 'sighting', 'text', 'date_created', 'comment_by']
+        self.assertEqual(sorted(expected_keys), sorted(response.data.keys()))
+        self.assertTrue(Comment.objects.filter(
+            id=response.data['id'], sighting=self.sighting1,user=self.user).exists())
+        comment = Comment.objects.get(id=response.data['id'])
+        self.assertEqual(comment.comment_by, response.data['comment_by'])

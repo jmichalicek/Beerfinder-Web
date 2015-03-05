@@ -116,9 +116,12 @@ class SightingCommentSerializer(serializers.ModelSerializer):
     Serialize a comment made on a sighting.
     """
 
+    user = serializers.HiddenField(default=CurrentUserDefault())
+
     class Meta:
         model = Comment
-        fields = ('date_created', 'text', 'comment_by', 'sighting')
+        fields = ('id', 'date_created', 'text', 'comment_by', 'sighting', 'user')
+        read_only_fields = ('comment_by', 'date_created')
 
 
 class PaginatedSightingCommentSerializer(InfinitePaginationSerializer):

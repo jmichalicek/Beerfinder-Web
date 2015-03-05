@@ -20,7 +20,7 @@ from core.permissions import IsOwnerOrReadOnlyPermissions
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
-from .models import Sighting, SightingConfirmation, SightingImage
+from .models import Sighting, SightingConfirmation, SightingImage, Comment
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
@@ -220,7 +220,7 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     # TODO: Really no need for edit or delete functionality currently.
     # Perhaps this should be a Create/Retrieve/List view?
-    queryset = SightingComment.objects.select_related('user', 'sighting').all()
+    queryset = Comment.objects.select_related('user', 'sighting').all()
     serializer_class = SightingCommentSerializer
     pagination_serializer_class = PaginatedSightingCommentSerializer
     paginator = InfinitePaginator
