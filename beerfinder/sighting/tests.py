@@ -309,3 +309,27 @@ class SightingCommentViewSetTestCase(APITestCase):
         response = self.client.delete(reverse('sighting_comment-detail', args=[comment.id]))
         self.assertEqual(status.HTTP_405_METHOD_NOT_ALLOWED, response.status_code)
         self.assertTrue(Comment.objects.filter(id=comment.id).exists())
+
+    def test_get(self):
+        comment1 = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        comment2 = SightingCommentFactory(user=self.user2, sighting=self.sighting1)
+        comment3 = SightingCommentFactory(user=self.user, sighting=self.sighting2)
+
+        response = self.client.get(reverse('sighting_comment-list'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(3, len(response.data['results']))
+
+        response = self.client.get(reverse('sighting_comment-list'), data={'sighting': self.sighting1.id})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(response.data['results']))
+        for comment in response.data['results']:
+            self.assertEqual(comment['sighting'], self.sighting1.id)
+
+    def test_get_detail(self):
+        comment1 = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        comment2 = SightingCommentFactory(user=self.user2, sighting=self.sighting1)
+        response = self.client.get(reverse('sighting_comment-detail', args=[comment1.id]))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(comment1.id, response.data['id'])
+        expected_keys = ['id', 'date_created', 'text', 'comment_by', 'sighting']
+        self.assertEqual(sorted(expected_keys), sorted(response.data))
