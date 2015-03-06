@@ -29,11 +29,14 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
         }
 
         this.getComments = function () {
-            var url = '/api/sightings/' + self.sighting().id() + '/comments/';
-            var params = {};
+            var url = '/api/sighting_comments/';
+            var params = {
+                sighting: self.sighting().id(),
+                page: self.nextCommentPage()
+            };
             $.ajax({
                 url: url,
-                data: {page: self.nextCommentPage()}
+                data: params,
             }).done(function (data) {
                 var currentComments = self.comments()
                 ko.utils.arrayForEach(data.results, function(comment) {
@@ -47,7 +50,7 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
         this.addComment = function (formElement) {
             var formData = new FormData(formElement);
             $.ajax({
-                url: self.sighting().url() + 'add_comment/',
+                url: '/api/sighting_comments/',
                 type: 'POST',
                 data: formData,
                 contentType: false,
