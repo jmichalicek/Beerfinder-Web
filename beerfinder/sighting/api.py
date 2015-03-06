@@ -249,3 +249,15 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         This could also be moved to living on the serializer
         """
         serializer.save(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Not allowing update for now, return HTTP 405
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Not allowing delete for now, return HTTP 405
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

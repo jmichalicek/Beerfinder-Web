@@ -19,6 +19,7 @@ from beer.tests import BeerFactory
 from accounts.tests import UserFactory
 from venue.tests import VenueFactory
 
+
 class AnonymousUserFactory(UserFactory):
     show_name_on_sightings = False
 
@@ -31,6 +32,13 @@ class AnonymousSightingFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Sighting
 
     user = factory.SubFactory(AnonymousUserFactory)
+
+
+class SightingCommentFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = Comment
+    user = factory.SubFactory(UserFactory)
+    sighting = factory.SubFactory(SightingFactory)
+    text = 'wheee!'
 
 
 class SightingTestCase(TestCase):
@@ -275,7 +283,7 @@ class SightingCommentViewSetTestCase(APITestCase):
         self.client.login(username=self.user.email, password='password')
         post_data = {'sighting': self.sighting1.id,
                      'text': "Wheeeee!"}
-        response = self.client.post(reverse('sighting_comments-list'), post_data)
+        response = self.client.post(reverse('sighting_comment-list'), post_data)
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         expected_keys = ['id', 'sighting', 'text', 'date_created', 'comment_by']
         self.assertEqual(sorted(expected_keys), sorted(response.data.keys()))
@@ -283,3 +291,21 @@ class SightingCommentViewSetTestCase(APITestCase):
             id=response.data['id'], sighting=self.sighting1,user=self.user).exists())
         comment = Comment.objects.get(id=response.data['id'])
         self.assertEqual(comment.comment_by, response.data['comment_by'])
+
+    def test_put(self):
+        self.client.login(username=self.user.email, password='password')
+        comment = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        post_data = {'sighting': self.sighting1.id,
+                     'text': 'updating your text',
+                     }
+        response = self.client.put(reverse('sighting_comment-detail', args=[comment.id]),
+                                   post_data)
+        self.assertEqual(status.HTTP_405_METHOD_NOT_ALLOWED, response.status_code)
+        self.assertTrue(Comment.objects.filter(id=comment.id, text=comment.text).exists())
+
+    def test_delete(self):
+        self.client.login(username=self.user.email, password='password')
+        comment = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        response = self.client.delete(reverse('sighting_comment-detail', args=[comment.id]))
+        self.assertEqual(status.HTTP_405_METHOD_NOT_ALLOWED, response.status_code)
+        self.assertTrue(Comment.objects.filter(id=comment.id).exists())
