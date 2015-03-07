@@ -193,7 +193,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL')
 IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = 'imagekit.cachefiles.backends.Celery'
 
 REST_FRAMEWORK_EXTENSIONS = {
-    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 5
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
