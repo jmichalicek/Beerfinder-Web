@@ -218,3 +218,9 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         Not allowing delete for now, return HTTP 405
         """
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class SightingConfirmationAPIView(generics.CreateAPIView):
+    permissions = (IsOwnerOrReadOnly, )
+    queryset = SightingConfirmation.objects.all()
+    serializer_class = SightingConfirmationSerializer
