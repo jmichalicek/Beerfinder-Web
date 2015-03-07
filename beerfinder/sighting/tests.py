@@ -13,11 +13,12 @@ import factory
 from datetime import timedelta
 import os
 
-from .models import Sighting, SightingConfirmation, SightingImage
+from .models import Sighting, SightingConfirmation, SightingImage, Comment
 
 from beer.tests import BeerFactory
 from accounts.tests import UserFactory
 from venue.tests import VenueFactory
+
 
 class AnonymousUserFactory(UserFactory):
     show_name_on_sightings = False
@@ -31,6 +32,13 @@ class AnonymousSightingFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = Sighting
 
     user = factory.SubFactory(AnonymousUserFactory)
+
+
+class SightingCommentFactory(factory.django.DjangoModelFactory):
+    FACTORY_FOR = Comment
+    user = factory.SubFactory(UserFactory)
+    sighting = factory.SubFactory(SightingFactory)
+    text = 'wheee!'
 
 
 class SightingTestCase(TestCase):
@@ -255,3 +263,73 @@ class SightingImageViewSetTestCase(APITestCase):
         response = self.client.delete(reverse('sightingimage-detail', args=[sighting_id]))
         self.assertEqual(status.HTTP_403_FORBIDDEN, response.status_code)
         self.assertTrue(SightingImage.objects.filter(id=sighting_id).exists())
+
+
+@override_settings(CELERY_ALWAYS_EAGER=True)
+class SightingCommentViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.beer = BeerFactory.create()
+        self.user = get_user_model().objects.create_user('user@example.com', 'password')
+        self.user2 = get_user_model().objects.create_user('user2@example.com', 'password')
+
+        self.venue = VenueFactory()
+        self.sighting1 = SightingFactory(beer=self.beer, venue=self.venue, user=self.user)
+        self.sighting2 = SightingFactory(
+            beer=self.beer,
+            venue=VenueFactory.create(point=fromstr("POINT(77.29 37.33)")),
+            date_sighted=timezone.now() - timedelta(minutes=2))
+
+    def test_post(self):
+        self.client.login(username=self.user.email, password='password')
+        post_data = {'sighting': self.sighting1.id,
+                     'text': "Wheeeee!"}
+        response = self.client.post(reverse('sighting_comment-list'), post_data)
+        self.assertEqual(status.HTTP_201_CREATED, response.status_code)
+        expected_keys = ['id', 'sighting', 'text', 'date_created', 'comment_by']
+        self.assertEqual(sorted(expected_keys), sorted(response.data.keys()))
+        self.assertTrue(Comment.objects.filter(
+            id=response.data['id'], sighting=self.sighting1,user=self.user).exists())
+        comment = Comment.objects.get(id=response.data['id'])
+        self.assertEqual(comment.comment_by, response.data['comment_by'])
+
+    def test_put(self):
+        self.client.login(username=self.user.email, password='password')
+        comment = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        post_data = {'sighting': self.sighting1.id,
+                     'text': 'updating your text',
+                     }
+        response = self.client.put(reverse('sighting_comment-detail', args=[comment.id]),
+                                   post_data)
+        self.assertEqual(status.HTTP_405_METHOD_NOT_ALLOWED, response.status_code)
+        self.assertTrue(Comment.objects.filter(id=comment.id, text=comment.text).exists())
+
+    def test_delete(self):
+        self.client.login(username=self.user.email, password='password')
+        comment = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        response = self.client.delete(reverse('sighting_comment-detail', args=[comment.id]))
+        self.assertEqual(status.HTTP_405_METHOD_NOT_ALLOWED, response.status_code)
+        self.assertTrue(Comment.objects.filter(id=comment.id).exists())
+
+    def test_get(self):
+        comment1 = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        comment2 = SightingCommentFactory(user=self.user2, sighting=self.sighting1)
+        comment3 = SightingCommentFactory(user=self.user, sighting=self.sighting2)
+
+        response = self.client.get(reverse('sighting_comment-list'))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(3, len(response.data['results']))
+
+        response = self.client.get(reverse('sighting_comment-list'), data={'sighting': self.sighting1.id})
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(response.data['results']))
+        for comment in response.data['results']:
+            self.assertEqual(comment['sighting'], self.sighting1.id)
+
+    def test_get_detail(self):
+        comment1 = SightingCommentFactory(user=self.user, sighting=self.sighting1)
+        comment2 = SightingCommentFactory(user=self.user2, sighting=self.sighting1)
+        response = self.client.get(reverse('sighting_comment-detail', args=[comment1.id]))
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(comment1.id, response.data['id'])
+        expected_keys = ['id', 'date_created', 'text', 'comment_by', 'sighting']
+        self.assertEqual(sorted(expected_keys), sorted(response.data))

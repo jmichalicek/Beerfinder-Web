@@ -20,7 +20,7 @@ from core.permissions import IsOwnerOrReadOnlyPermissions
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
-from .models import Sighting, SightingConfirmation, SightingImage
+from .models import Sighting, SightingConfirmation, SightingImage, Comment
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
                           PaginatedSightingCommentSerializer, SightingCommentSerializer,
                           PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
@@ -94,49 +94,6 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
-    @detail_route(methods=['post'])
-    def add_comment(self, request, *args, **kwargs):
-        """
-        TODO: Remove this and just use a comment resource!
-        """
-        sighting = self.get_object()
-        serializer_context = {'request': request}
-        serializer = SightingCommentSerializer(data=request.POST, context=serializer_context)
-        if serializer.is_valid():
-            serializer.object.user = request.user
-            serializer.object.sighting = sighting
-            comment = serializer.save()
-            return Response(serializer.data, status=201)
-
-        else:
-            return Response(serializer.errors, status=400)
-
-    @detail_route(methods=['get'])
-    @cache_response(10, key_func=DefaultPaginatedListKeyConstructor())
-    def comments(self, request, *args, **kwargs):
-        """
-        Get the comments for a sighting
-
-        TODO: Remove this and use a comments resource
-        """
-        sighting = self.get_object()
-        queryset = sighting.comments.all()
-        paginator = InfinitePaginator(queryset, 10)
-
-        page = request.QUERY_PARAMS.get('page')
-        try:
-            comments = paginator.page(page)
-        except PageNotAnInteger:
-            comments = paginator.page(1)
-        except EmptyPage:
-            comments = paginator.page(1)
-
-        serializer_context = {'request': request}
-        serializer = PaginatedSightingCommentSerializer(comments,
-                                                        context=serializer_context)
-
-        return Response(serializer.data)
-
 
 class NearbySightingAPIView(generics.ListAPIView):
     """
@@ -191,6 +148,7 @@ class SightingImageViewSet(viewsets.ModelViewSet):
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
 
     def get_queryset(self):
+        # Filter by username/email instead of by user id?
         sighting = self.request.QUERY_PARAMS.get('sighting', None)
         user = self.request.QUERY_PARAMS.get('user', None)
 
@@ -211,3 +169,52 @@ class SightingImageViewSet(viewsets.ModelViewSet):
         """
         image = serializer.save()
         image.generate_images()
+
+
+class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
+    """
+    ViewSet to list and create sightings.
+    """
+    # TODO: Really no need for edit or delete functionality currently.
+    # Perhaps this should be a Create/Retrieve/List view?
+    queryset = Comment.objects.select_related('user', 'sighting').all()
+    serializer_class = SightingCommentSerializer
+    pagination_serializer_class = PaginatedSightingCommentSerializer
+    paginator = InfinitePaginator
+    permission_classes = (IsOwnerOrReadOnlyPermissions, )
+    paginate_by = 100
+    paginate_by_param = 'page_size'
+
+    def get_queryset(self):
+        # filter by username/email instead of user id?
+        sighting = self.request.QUERY_PARAMS.get('sighting', None)
+        user = self.request.QUERY_PARAMS.get('user', None)
+
+        queryset = super(SightingCommentViewSet, self).get_queryset()
+
+        if sighting:
+            queryset = queryset.filter(sighting_id=sighting)
+
+        if user:
+            queryset = queryset.filter(user_id=user)
+
+        return queryset
+
+    def perform_create(self, serializer):
+        """
+        Ensures that the user is set on the saved comment.
+        This could also be moved to living on the serializer
+        """
+        serializer.save(user=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        """
+        Not allowing update for now, return HTTP 405
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Not allowing delete for now, return HTTP 405
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

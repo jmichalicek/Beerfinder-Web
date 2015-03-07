@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'sightings', api.SightingViewSet)
 router.register(r'sighting_images', api.SightingImageViewSet)
+router.register(r'sighting_comments', api.SightingCommentViewSet, base_name='sighting_comment')
 
 nearby_sightings = api.NearbySightingAPIView.as_view() #api.SightingViewSet.as_view({'get': 'get_nearby_sightings'})
 
