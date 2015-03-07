@@ -94,49 +94,6 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             # should return a more generic error here
             return Response(confirmation_serializer.errors, status=400)
 
-    @detail_route(methods=['post'])
-    def add_comment(self, request, *args, **kwargs):
-        """
-        TODO: Remove this and just use a comment resource!
-        """
-        sighting = self.get_object()
-        serializer_context = {'request': request}
-        serializer = SightingCommentSerializer(data=request.POST, context=serializer_context)
-        if serializer.is_valid():
-            serializer.object.user = request.user
-            serializer.object.sighting = sighting
-            comment = serializer.save()
-            return Response(serializer.data, status=201)
-
-        else:
-            return Response(serializer.errors, status=400)
-
-    @detail_route(methods=['get'])
-    @cache_response(10, key_func=DefaultPaginatedListKeyConstructor())
-    def comments(self, request, *args, **kwargs):
-        """
-        Get the comments for a sighting
-
-        TODO: Remove this and use a comments resource
-        """
-        sighting = self.get_object()
-        queryset = sighting.comments.all()
-        paginator = InfinitePaginator(queryset, 10)
-
-        page = request.QUERY_PARAMS.get('page')
-        try:
-            comments = paginator.page(page)
-        except PageNotAnInteger:
-            comments = paginator.page(1)
-        except EmptyPage:
-            comments = paginator.page(1)
-
-        serializer_context = {'request': request}
-        serializer = PaginatedSightingCommentSerializer(comments,
-                                                        context=serializer_context)
-
-        return Response(serializer.data)
-
 
 class NearbySightingAPIView(generics.ListAPIView):
     """
