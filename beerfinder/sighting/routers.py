@@ -11,5 +11,7 @@ nearby_sightings = api.NearbySightingAPIView.as_view() #api.SightingViewSet.as_v
 
 urlpatterns = patterns('api',
                        url(r'sightings/nearby/', nearby_sightings),
+                       url(r'^sighting_confirmations/$', api.SightingConfirmationAPIView.as_view(),
+                           name='sighting_confirmation-list'),
                        url(r'^', include(router.urls)),
                        )

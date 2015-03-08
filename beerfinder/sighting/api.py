@@ -61,39 +61,6 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
             queryset = queryset.prefetch_related('sighting_images', 'serving_types')
         return queryset
 
-    @detail_route(methods=['POST'])
-    def confirm_available(self, request, *args, **kwargs):
-        """
-        Mark a sighting as still available
-
-        TODO: REMOVE
-        """
-        sighting = self.get_object()
-        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': True}, context={'request': request})
-        if confirmation_serializer.is_valid():
-            confirmation = confirmation_serializer.save()
-            return Response(self.get_serializer(sighting).data, status=201)
-        else:
-            # should return a more generic error here
-            return Response(confirmation_serializer.errors, status=400)
-
-    @detail_route(methods=['post'])
-    def confirm_unavailable(self, request, *args, **kwargs):
-        """
-        Mark a sighting as no longer available
-
-        TODO: REMOVE
-        """
-        sighting = self.get_object()
-        serializer_context = {'request': request}
-        confirmation_serializer = SightingConfirmationSerializer(data={'sighting': sighting.pk, 'user': request.user.pk, 'is_available': False}, context=serializer_context)
-        if confirmation_serializer.is_valid():
-            confirmation = confirmation_serializer.save()
-            return Response(self.get_serializer(sighting).data, status=201)
-        else:
-            # should return a more generic error here
-            return Response(confirmation_serializer.errors, status=400)
-
 
 class NearbySightingAPIView(generics.ListAPIView):
     """
@@ -218,3 +185,9 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         Not allowing delete for now, return HTTP 405
         """
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+class SightingConfirmationAPIView(generics.CreateAPIView):
+    permissions = (permissions.IsAuthenticatedOrReadOnly, )
+    queryset = SightingConfirmation.objects.all()
+    serializer_class = SightingConfirmationSerializer

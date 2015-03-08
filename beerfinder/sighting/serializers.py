@@ -106,9 +106,12 @@ class DistanceSightingSerializer(SightingSerializer):
 
 
 class SightingConfirmationSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=CurrentUserDefault())
+
     class Meta:
         model = SightingConfirmation
-        fields = ('is_available', 'date_created', 'user', 'sighting',)
+        fields = ('is_available', 'user', 'sighting',)
+        read_only_fields = ('date_created', )
 
 
 class SightingCommentSerializer(serializers.ModelSerializer):
