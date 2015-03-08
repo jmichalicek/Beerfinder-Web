@@ -142,23 +142,44 @@ class SightingViewSetTestCase(APITestCase):
         self.assertEqual(response_objects[1]['sighted_by'], self.beer1_sighting2.user.email)
         self.assertEqual(response_objects[1]['beer']['slug'], self.beer1.slug)
 
+
+class SightingConfirmationAPIViewTest(APITestCase):
+    # legend Point("-77.4429997801781 37.5268217786912")
+    # hardywood Point("-77.4419362313172 37.5254898040785")
+    # the national Point("-77.4352025985718 37.5418168540823")
+
+    def setUp(self):
+        self.beer1 = BeerFactory.create()
+        self.beer2 = BeerFactory.create()
+        self.user = get_user_model().objects.create_user('user@example.com', 'password')
+        self.venue = VenueFactory()
+        self.sighting = SightingFactory(beer=self.beer1, venue=self.venue)
+
     def test_confirm_available(self):
         self.client.login(username=self.user.email, password='password')
-        current_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=True).count()
-        response = self.client.post('/api/sightings/{0}/confirm_available/'.format( self.beer1_sighting1.id))
+        current_confirmation_count = self.sighting.sightingconfirmation_set.filter(is_available=True).count()
+        self.assertEqual(0, current_confirmation_count,
+                         "Sighting should have no confirmations at the start of this tests")
+        response = self.client.post(
+            reverse('sighting_confirmation-list'),
+            data={'sighting': self.sighting.id, 'is_available': True})
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'], 'application/json')
-        updated_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=True).count()
-        self.assertTrue(updated_confirmation_count == current_confirmation_count + 1)
+        updated_confirmation_count = self.sighting.sightingconfirmation_set.filter(is_available=True).count()
+        self.assertEqual(1, updated_confirmation_count)
 
     def test_confirm_unavailable(self):
         self.client.login(username=self.user.email, password='password')
-        unavailable_confirmation_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=False).count()
-        response = self.client.post('/api/sightings/{0}/confirm_unavailable/'.format( self.beer1_sighting1.id))
+        unavailable_confirmation_count = self.sighting.sightingconfirmation_set.filter(is_available=False).count()
+        self.assertEqual(0, unavailable_confirmation_count,
+                         "Sighting should have no confirmations at the start of this tests")
+        response = self.client.post(
+            reverse('sighting_confirmation-list'),
+            data={'sighting': self.sighting.id, 'is_available': False})
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response['Content-Type'], 'application/json')
-        updated_unavailable_count = self.beer1_sighting1.sightingconfirmation_set.filter(is_available=False).count()
-        self.assertTrue(updated_unavailable_count == unavailable_confirmation_count + 1)
+        updated_unavailable_count = self.sighting.sightingconfirmation_set.filter(is_available=False).count()
+        self.assertEqual(1, updated_unavailable_count)
 
 
 @override_settings(MEDIA_ROOT='/tmp/djangotests/')
