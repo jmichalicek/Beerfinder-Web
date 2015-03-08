@@ -79,7 +79,7 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
                 pic.onerror = function () {
                     // prevent infinite loop if this url is bad by using
                     // variable so that we only try it once
-                    pic.src = self.tryMasterImage ? image.originalUrl() '';
+                    pic.src = self.tryMasterImage ? image.originalUrl() : '';
                     self.tryMasterImage = false;
                 };
             }
