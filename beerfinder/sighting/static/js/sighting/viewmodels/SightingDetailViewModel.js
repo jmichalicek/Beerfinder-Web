@@ -4,6 +4,9 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
         var self = this;
         data = typeof data !== 'undefined' ? data : {};
 
+        // used to prevent infinite loop if there is an image specified
+        // but the url returns a 404
+        this.tryMasterImage = true;
         this.showLoadingSpinner = ko.observable(false);
         this.nextCommentPage = ko.observable(1);
         this.sighting = ko.observable(new SightingModel(data.sighting));
@@ -74,7 +77,10 @@ define(['jquery', 'knockout', 'sighting/models/SightingModel', 'sighting/models/
             var pic = document.getElementById('sighting_image');
             if(pic) {
                 pic.onerror = function () {
-                    pic.src = image.originalUrl();
+                    // prevent infinite loop if this url is bad by using
+                    // variable so that we only try it once
+                    pic.src = self.tryMasterImage ? image.originalUrl() '';
+                    self.tryMasterImage = false;
                 };
             }
             return image.mediumUrl() ? image.mediumUrl() : image.originalUrl();
