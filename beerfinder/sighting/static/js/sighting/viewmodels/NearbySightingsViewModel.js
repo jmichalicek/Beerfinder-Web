@@ -8,13 +8,13 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
         this.location = data.location || {};
         this.activeNavSection = ko.observable('nearby_sightings');
         this.sightings = ko.observableArray();
-    
+
         //new
         this.requestInProgress = false;  // for determining whether or not to request more data based on scrolling
-        
+
         this.sightings = ko.observableArray();
         this.queryString = new QueryStringParser(window.location.href);
-    
+
         // stuff to enable infinite scroll
         this.nextPage = '';
         this.previousPage = '';
@@ -44,7 +44,7 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
         $(document).scroll(function() {
             self.handleScroll();
         });
-        
+
         // update dimensions of infinite-scroll viewport and item
         function updateViewportDimensions() {
             //var itemsRef = $('#sighting_list'),
@@ -54,7 +54,7 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
             itemsHeight = itemsRef.height(),
             itemWidth = itemRef.outerWidth(true),
             itemHeight = itemRef.outerHeight(true);
-            
+
             self.sightings.infinitescroll.viewportWidth(itemsWidth);
             self.sightings.infinitescroll.viewportHeight(itemsHeight);
             // normally infinitescroll.itemWidth would use itemWidth from above,
@@ -65,7 +65,7 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
             self.sightings.infinitescroll.itemHeight(itemHeight);
         }
         updateViewportDimensions();
-        
+
 
         // end infinite scroll stuff
 
@@ -74,7 +74,7 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
 
         this.getSightings = function() {
             // TODO: pagination
-            var url = '/api/sightings/nearby/';
+            var url = '/api/nearby_sightings/';
 
             var dfd = new $.Deferred();
             self.showLoadingSpinner(true);

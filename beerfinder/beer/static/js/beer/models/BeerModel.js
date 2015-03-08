@@ -12,7 +12,7 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleMode
         this.slug = ko.observable(data.slug);
         this.style = ko.observable(data.style ? new StyleModel(ko.toJS(data.style)) : undefined);
         this.watcherCount = ko.observable(data.watcher_count);
-        
+
         this.viewUrl = ko.computed(function () {
             return '/beer/'.concat(self.slug(), '/');
         });
@@ -34,7 +34,7 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleMode
 
         this.getNearbySightings = function (latitude, longitude) {
             var requestParams = {latitude:latitude, longitude: longitude, beer: self.slug()};
-            return $.ajax({url: '/api/sightings/nearby/',
+            return $.ajax({url: '/api/nearby_sightings/',
                            method: 'GET',
                            data: requestParams,
                           });
@@ -56,7 +56,7 @@ define(['jquery', 'knockout', 'beer/models/BreweryModel', 'beer/models/StyleMode
             if(self.slug() && self.id()) {
                 var url = self.detailUrl();
             }
-            
+
             var id = self.id();
             var name = self.name();
             var slug = self.slug();
