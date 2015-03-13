@@ -6,7 +6,7 @@ api for potential native apps for logging and locating beers, primarily with sea
 release brews in mind.
 
 ## What tech is it using?
-* Django (1.6 as of the time of writing, but will move to 1.7 asap)
+* Django 1.7
 * GeoDjango
 * PostgreSQL with PostGIS
 * Django REST Framework
@@ -18,5 +18,4 @@ release brews in mind.
 ## Other stuff
 
 * Why are you comitting scss and compiled css?
-    > Because that's the easiest way to use compass with Django and it is the
-    > recommended method of the compass developers - http://compass-style.org/blog/2011/05/09/compass-django/.
+    * Because that's the easiest way to use compass with Django and it is the recommended method of the compass developers - http://compass-style.org/blog/2011/05/09/compass-django/.
