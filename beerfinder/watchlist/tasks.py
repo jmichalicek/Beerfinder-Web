@@ -26,7 +26,7 @@ def send_watchlist_email(sighting_id):
     text_template_path = 'watchlist/email/beer_sighted.txt'
 
     try:
-        sighting = Sighting.objects.select_related('beer', 'beer_brewery').get(id=sighting_id)
+        sighting = Sighting.objects.select_related('beer', 'beer__brewery').get(id=sighting_id)
     except Sighting.DoesNotExist:
         # happens if the task runs but the db commit has not occured where the sighting was added
         # 60 seconds should be WAY more than enough.  Really we probably need a fraction of a second.
@@ -39,10 +39,6 @@ def send_watchlist_email(sighting_id):
     text_email = render_to_string(text_template_path, {}, context_instance=context)
     html_email = render_to_string(html_template_path, {}, context_instance=context)
 
-    # use a single smtp connection to send all emails
-    connection = mail.get_connection()
-    connection.open()
-
     messages = []
     for email in emails:
         msg = EmailMultiAlternatives('A beer on your watchlist has been seen!', text_email, settings.DEFAULT_FROM_EMAIL, [email])
@@ -50,5 +46,8 @@ def send_watchlist_email(sighting_id):
         messages.append(msg)
 
     if messages:
+        # use a single smtp connection to send all emails
+        connection = mail.get_connection()
+        connection.open()
         connection.send_messages(messages)
-    connection.close()
+        connection.close()

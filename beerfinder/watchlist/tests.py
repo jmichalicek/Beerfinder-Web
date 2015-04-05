@@ -22,7 +22,7 @@ class WatchedBeerFactory(factory.django.DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
 
 
-@override_settings(CELERY_ALWAYS_EAGER=True)
+@override_settings(CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 class APIWatchListTest(APITestCase):
 
     def setUp(self):
@@ -71,7 +71,7 @@ class APIWatchListTest(APITestCase):
         self.assertEqual(response.status_code, 404)
 
 
-@override_settings(CELERY_ALWAYS_EAGER=True)
+@override_settings(CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 class SendWatchlistEmailTest(TestCase):
 
     def setUp(self):
@@ -139,7 +139,7 @@ class SendWatchlistEmailTest(TestCase):
             self.assertEqual(m.to, [user_2.email])
 
 
-@override_settings(CELERY_ALWAYS_EAGER=True)
+@override_settings(CELERY_ALWAYS_EAGER=True, CELERY_EAGER_PROPAGATES_EXCEPTIONS=True)
 class WatchlistTest(TestCase):
     def setUp(self):
         self.venue = VenueFactory()
