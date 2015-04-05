@@ -5,7 +5,7 @@ Unidecode==0.04.16
 amqp==1.4.6
 anyjson==0.3.3
 billiard==3.3.0.18
-celery==3.1.16
+celery==3.1.17
 dj-database-url==0.3.0
 django-allauth==0.19.1
 django-appconf==0.6
