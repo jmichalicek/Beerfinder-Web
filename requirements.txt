@@ -1,4 +1,4 @@
-Django==1.7
+Django==1.8
 Fabric==1.10.0
 Pillow==2.6.1
 Unidecode==0.04.16
@@ -7,7 +7,7 @@ anyjson==0.3.3
 billiard==3.3.0.18
 celery==3.1.16
 dj-database-url==0.3.0
-django-allauth==0.18.0
+django-allauth==0.19.1
 django-appconf==0.6
 django-celery==3.1.16
 django-extensions==1.4.4

@@ -11,7 +11,7 @@ class Venue(gis_models.Model):
 
     foursquare_id = models.CharField(max_length=100)
     date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True, auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=100, blank=True)
     street_address = models.CharField(max_length=100, blank=True)
     city = models.CharField(max_length=100, blank=True)

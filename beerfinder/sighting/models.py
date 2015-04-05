@@ -1,10 +1,11 @@
 from django.db import models
+from django.db.models.signals import post_delete
 from django.conf import settings
 from django.utils import timezone
-
 from django.contrib.gis.db import models as gis_models
 
 from .imagekit_generators import *
+from imagekit import ImageSpec, register
 from imagekit.cachefiles import ImageCacheFile, LazyImageCacheFile
 
 class Sighting(gis_models.Model):
@@ -157,3 +158,19 @@ class SightingImage(models.Model):
         super(SightingImage, self).save(*args, **kwargs)
         if generate_images:
             self.generate_images()
+
+
+# stuff that isn't really models, but works with models and needs to reference them
+# and causes django 1.8+ to complain if it is loaded by __init__ because the models
+# have not yet been loaded and so app_label cannot be determined
+
+def cleanup_sightingimage(sender, instance, **kwargs):
+    instance.thumbnail.delete(save=False)
+    instance.small.delete(save=False)
+    instance.medium.delete(save=False)
+    instance.original.delete(save=False)
+
+post_delete.connect(cleanup_sightingimage, sender=SightingImage, dispatch_uid='cleanup_sightingimage_post_delete')
+register.generator('sighting:thumbnail', SightingImageThumbnail)
+register.generator('sighting:small', SightingImageSmall)
+register.generator('sighting:medium', SightingImageMedium)
