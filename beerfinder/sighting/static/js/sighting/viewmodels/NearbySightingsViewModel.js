@@ -83,7 +83,9 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
             var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
 
             if(self.nextPage) {
-                requestParams['page'] = self.nextPage;
+                // drf 3.1 change
+                //requestParams['page'] = self.nextPage;
+                url = self.nextPage;
             }
 
             if (self.queryString.params['beer']) {

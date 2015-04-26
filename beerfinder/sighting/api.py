@@ -9,23 +9,20 @@ from rest_framework.decorators import detail_route, list_route
 
 from rest_framework_extensions.cache.decorators import cache_response
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
-from rest_framework_extensions.key_constructor.constructors import DefaultListKeyConstructor
 
 import foursquare
 
 from beer.models import Beer
-from core.paginator import InfinitePaginator, InfinitePage
-from core.cache_keys import DefaultPaginatedListKeyConstructor
+from core.cache_keys import QueryParamsKeyConstructor
 from core.permissions import IsOwnerOrReadOnlyPermissions
+from core.viewsets import CreateListRetrieveViewSet
 from venue.models import Venue
 
 from .forms import SightingModelForm, SightingImageForm
 from .models import Sighting, SightingConfirmation, SightingImage, Comment
 from .serializers import (SightingSerializer, SightingConfirmationSerializer,
-                          PaginatedSightingCommentSerializer, SightingCommentSerializer,
-                          PaginatedDistanceSightingSerializer, DistanceSightingSerializer,
-                          SightingImageSerializer, PaginatedSightingSerializer,
-                          PaginatedSightingImageSerializer)
+                          SightingCommentSerializer, DistanceSightingSerializer,
+                          SightingImageSerializer)
 
 
 class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
@@ -34,10 +31,10 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
     serializer_class = SightingSerializer
-    pagination_serializer_class = PaginatedSightingSerializer
-    paginator = InfinitePaginator
+#    pagination_serializer_class = PaginatedSightingSerializer
+#    paginator = InfinitePaginator
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
-    paginate_by = 25
+    page_size = 25
     paginate_by_param = 'page_size'
 
     def perform_create(self, serializer):
@@ -69,9 +66,9 @@ class NearbySightingAPIView(generics.ListAPIView):
 
     queryset = Sighting.objects.all()
     serializer_class = DistanceSightingSerializer
-    pagination_serializer_class = PaginatedDistanceSightingSerializer
-    paginator = InfinitePaginator
-    paginate_by = 50
+#    pagination_serializer_class = PaginatedDistanceSightingSerializer
+#    paginator = InfinitePaginator
+    page_size = 50
     paginate_by_param = 'page_size'
 
     def get_queryset(self):
@@ -95,7 +92,7 @@ class NearbySightingAPIView(generics.ListAPIView):
         return queryset
 
     # this cache will end up more or less per user due to location awareness
-    @cache_response(60 * 5, key_func=DefaultListKeyConstructor())
+    @cache_response(60 * 5, key_func=QueryParamsKeyConstructor())
     def get(self, request, *args, **kwargs):
         """
         Return a list of sightings sorted by distance from the point specified.
@@ -110,8 +107,9 @@ class SightingImageViewSet(viewsets.ModelViewSet):
 
     queryset = SightingImage.objects.all()
     serializer_class = SightingImageSerializer
-    paginator = InfinitePaginator
-    pagination_serializer_class = PaginatedSightingImageSerializer
+    page_size = 50
+#    paginator = InfinitePaginator
+#    pagination_serializer_class = PaginatedSightingImageSerializer
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
 
     def get_queryset(self):
@@ -146,10 +144,10 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     # Perhaps this should be a Create/Retrieve/List view?
     queryset = Comment.objects.select_related('user', 'sighting').all()
     serializer_class = SightingCommentSerializer
-    pagination_serializer_class = PaginatedSightingCommentSerializer
-    paginator = InfinitePaginator
+#    pagination_serializer_class = PaginatedSightingCommentSerializer
+#    paginator = InfinitePaginator
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
-    paginate_by = 100
+    page_size = 100
     paginate_by_param = 'page_size'
 
     def get_queryset(self):

@@ -6,13 +6,13 @@ from rest_framework import permissions
 from rest_framework.response import Response
 
 from .models import WatchedBeer
-from .serializers import WatchedBeerSerializer, PaginatedWatchedBeerSerializer, WatchedBeerWriteableSerializer
+from .serializers import WatchedBeerSerializer, WatchedBeerWriteableSerializer
 
 class WatchListViewSet(viewsets.ModelViewSet):
     queryset = WatchedBeer.objects.select_related('user', 'beer', 'beer__brewery').all()
     serializer_class = WatchedBeerSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    paginate_by = 25
+    page_size = 25
     paginate_by_param = 'page_size'
 
     def perform_create(self, serializer):

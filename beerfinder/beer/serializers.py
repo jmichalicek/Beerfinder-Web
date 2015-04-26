@@ -2,7 +2,7 @@ from django.forms import widgets
 from rest_framework import serializers
 
 #from account.serializers import UserSerializer
-from core.serializers import InfinitePaginationSerializer
+#from core.serializers import InfinitePaginationSerializer
 from .models import Beer, Brewery, ServingType, Style
 
 class BrewerySerializer(serializers.ModelSerializer):
@@ -12,9 +12,9 @@ class BrewerySerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'slug',)
 
 
-class PaginatedBrewerySerializer(InfinitePaginationSerializer):
-    class Meta:
-        object_serializer_class = BrewerySerializer
+#class PaginatedBrewerySerializer(InfinitePaginationSerializer):
+#    class Meta:
+#        object_serializer_class = BrewerySerializer
 
 
 class BeerStyleSerializer(serializers.ModelSerializer):
@@ -38,9 +38,9 @@ class BeerSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'id', 'name', 'brewery', 'style',  'slug', 'watcher_count')
 
 
-class PaginatedBeerSerializer(InfinitePaginationSerializer):
-    class Meta:
-        object_serializer_class = BeerSerializer
+#class PaginatedBeerSerializer(InfinitePaginationSerializer):
+#    class Meta:
+#        object_serializer_class = BeerSerializer
 
 
 class ServingTypeSerializer(serializers.ModelSerializer):

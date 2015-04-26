@@ -163,7 +163,7 @@ class BeerViewSetTestCase(APITestCase):
         self.assertEqual('application/json', response['Content-Type'])
         page1 = response.data
         self.assertEqual(25, len(page1['results']))
-        self.assertEqual(2, page1['next'])
+        self.assertEqual('http://testserver/api/beer/?page=2', page1['next'])
         self.assertIsNone(page1['previous'])
 
         response = self.client.get('/api/beer/', {'page': 2})
@@ -171,8 +171,8 @@ class BeerViewSetTestCase(APITestCase):
         self.assertEqual('application/json', response['Content-Type'])
         page2 = response.data
         self.assertEqual(25, len(page2['results']))
-        self.assertEqual(3, page2['next'])
-        self.assertEqual(1, page2['previous'])
+        self.assertEqual('http://testserver/api/beer/?page=3', page2['next'])
+        self.assertEqual('http://testserver/api/beer/', page2['previous'])
 
         self.assertNotEqual(page2['results'], page1['results'])
 
@@ -181,7 +181,7 @@ class BeerViewSetTestCase(APITestCase):
         self.assertEqual('application/json', response['Content-Type'])
         page3 = response.data
         self.assertEqual(7, len(page3['results']))
-        self.assertEqual(2, page3['previous'])
+        self.assertEqual('http://testserver/api/beer/?page=2', page3['previous'])
         self.assertIsNone(page3['next'])
 
     def test_create(self):

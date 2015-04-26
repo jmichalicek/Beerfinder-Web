@@ -4,34 +4,13 @@ from rest_framework.response import Response
 
 from rest_framework_extensions.cache.decorators import cache_response
 from rest_framework_extensions.cache.mixins import CacheResponseMixin
-from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
-from rest_framework_extensions.key_constructor.bits import (
-    KeyBitBase,
-    RetrieveSqlQueryKeyBit,
-    ListSqlQueryKeyBit,
-    PaginationKeyBit,
-    UserKeyBit,
-    QueryParamsKeyBit
-)
 
-from core.paginator import InfinitePaginator, InfinitePage
-from core.cache_keys import DefaultPaginatedListKeyConstructor
+#from core.paginator import InfinitePaginator, InfinitePage
+from core.cache_keys import QueryParamsKeyConstructor
 
 from .forms import AddBeerForm
 from .models import Beer, Brewery, ServingType, Style
-from .serializers import (BeerSerializer, BrewerySerializer, ServingTypeSerializer, BeerStyleSerializer,
-                          PaginatedBrewerySerializer, PaginatedBeerSerializer)
-
-
-
-class BreweryListKeyConstructor(DefaultPaginatedListKeyConstructor):
-    name = QueryParamsKeyBit(
-        ['name'])
-
-
-class BeerListKeyConstructor(DefaultPaginatedListKeyConstructor):
-    name = QueryParamsKeyBit(
-        ['name', 'brewery_name', 'search', 'page_size'])
+from .serializers import (BeerSerializer, BrewerySerializer, ServingTypeSerializer, BeerStyleSerializer)
 
 
 class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
@@ -40,13 +19,13 @@ class BeerViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     queryset = Beer.objects.all()
     serializer_class = BeerSerializer
-    pagination_serializer_class = PaginatedBeerSerializer
-    pagination_class = InfinitePaginator
+#    pagination_serializer_class = PaginatedBeerSerializer
+#    pagination_class = InfinitePaginator
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'slug'
-    paginate_by = 25
+    page_size = 25
     paginate_by_param = 'page_size'
-    list_cache_key_func = BeerListKeyConstructor()
+    list_cache_key_func = QueryParamsKeyConstructor()
 
     def perform_create(self, serializer):
         """
@@ -128,9 +107,9 @@ class BreweryAPIView(generics.ListAPIView):
     """
     queryset = Brewery.objects.all()
     serializer_class = BrewerySerializer
-    pagination_serializer_class = PaginatedBrewerySerializer
-    pagination_class = InfinitePaginator
-    paginate_by = 25
+#    pagination_serializer_class = PaginatedBrewerySerializer
+#    pagination_class = InfinitePaginator
+    page_size = 25
 
     def get_queryset(self):
         # implementing search here, but may move to its own endpoint
@@ -143,7 +122,7 @@ class BreweryAPIView(generics.ListAPIView):
 
         return queryset
 
-    @cache_response(60 * 15, key_func=BreweryListKeyConstructor())
+    @cache_response(60 * 15, key_func=QueryParamsKeyConstructor())
     def get(self, request, *args, **kwargs):
         return super(BreweryAPIView, self).get(request, *args, **kwargs)
 
@@ -158,7 +137,7 @@ class ServingTypeAPIView(generics.ListAPIView):
     lookup_field = 'slug'
 
     # fudging the pagination here as well because it's not really paginated
-    paginate_by = 1000
+    page_size = 1000
 
     # again, not really paginated, so the caching does not take the page into account
     @cache_response(60 * 15)
@@ -178,7 +157,7 @@ class BeerStyleAPIView(generics.ListAPIView):
     # while paginated returns {'results': [obj1, obj2,...]} so for consistency
     # this is paginated, but to a number that should not be hit for some time,
     # possibly not ever
-    paginate_by = 1000
+    page_size = 1000
 
     @cache_response(60 * 15)
     def get(self, request, *args, **kwargs):
