@@ -17,6 +17,7 @@ from core.cache_keys import QueryParamsKeyConstructor
 from core.permissions import IsOwnerOrReadOnlyPermissions
 from core.viewsets import CreateListRetrieveViewSet
 from venue.models import Venue
+from core.cache_keys import QueryParamsKeyConstructor
 
 from .forms import SightingModelForm, SightingImageForm
 from .models import Sighting, SightingConfirmation, SightingImage, Comment
@@ -31,11 +32,10 @@ class SightingViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     queryset = Sighting.objects.select_related('user', 'beer', 'beer__brewery', 'venue').all()
     serializer_class = SightingSerializer
-#    pagination_serializer_class = PaginatedSightingSerializer
-#    paginator = InfinitePaginator
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
     page_size = 25
     paginate_by_param = 'page_size'
+    list_cache_key_func = QueryParamsKeyConstructor()
 
     def perform_create(self, serializer):
         """
@@ -66,10 +66,6 @@ class NearbySightingAPIView(generics.ListAPIView):
 
     queryset = Sighting.objects.all()
     serializer_class = DistanceSightingSerializer
-#    pagination_serializer_class = PaginatedDistanceSightingSerializer
-#    paginator = InfinitePaginator
-    page_size = 50
-    paginate_by_param = 'page_size'
 
     def get_queryset(self):
         # implementing search here, but may move to its own endpoint
@@ -108,8 +104,6 @@ class SightingImageViewSet(viewsets.ModelViewSet):
     queryset = SightingImage.objects.all()
     serializer_class = SightingImageSerializer
     page_size = 50
-#    paginator = InfinitePaginator
-#    pagination_serializer_class = PaginatedSightingImageSerializer
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
 
     def get_queryset(self):
@@ -142,13 +136,13 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
     """
     # TODO: Really no need for edit or delete functionality currently.
     # Perhaps this should be a Create/Retrieve/List view?
+
+    # TODO: Override paginator to account for custom page size... maybe
     queryset = Comment.objects.select_related('user', 'sighting').all()
     serializer_class = SightingCommentSerializer
-#    pagination_serializer_class = PaginatedSightingCommentSerializer
-#    paginator = InfinitePaginator
     permission_classes = (IsOwnerOrReadOnlyPermissions, )
-    page_size = 100
-    paginate_by_param = 'page_size'
+    list_cache_key_func = QueryParamsKeyConstructor()
+    cache_timeout = 2
 
     def get_queryset(self):
         # filter by username/email instead of user id?
@@ -171,6 +165,12 @@ class SightingCommentViewSet(CacheResponseMixin, viewsets.ModelViewSet):
         This could also be moved to living on the serializer
         """
         serializer.save(user=self.request.user)
+
+    # override the caching here because CacheResponseMixin does not
+    # seem to allow configuring the timeout
+    @cache_response(10, key_func=QueryParamsKeyConstructor())
+    def list(self, request, *args, **kwargs):
+        return super(SightingCommentViewSet, self).list(request, *args, **kwargs)
 
     def update(self, request, *args, **kwargs):
         """
