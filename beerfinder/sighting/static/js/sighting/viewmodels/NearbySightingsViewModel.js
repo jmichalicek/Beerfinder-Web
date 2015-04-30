@@ -80,12 +80,15 @@ define(['jquery', 'knockout', 'underscore', 'vendor/infinitescroll', 'pubsub', '
             self.showLoadingSpinner(true);
             self.requestInProgress = true;
 
-            var requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
+            var requestParams = {};
 
             if(self.nextPage) {
                 // drf 3.1 change
                 //requestParams['page'] = self.nextPage;
                 url = self.nextPage;
+            } else {
+                // with drf 3.1, our next url already has this
+                requestParams = {latitude: self.location.coords.latitude, longitude: self.location.coords.longitude};
             }
 
             if (self.queryString.params['beer']) {
