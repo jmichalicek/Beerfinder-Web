@@ -14,7 +14,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
 
         this.sightings = ko.observableArray();
         this.queryString = new QueryStringParser(window.location.href);
-    
+
         // stuff to enable infinite scroll
         this.nextPage = '';
         this.previousPage = '';
@@ -39,7 +39,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
 
         }, 250);
         $(document).scroll(function() {
-            self.handleScroll();            
+            self.handleScroll();
         });
 
         // update dimensions of infinite-scroll viewport and item
@@ -51,14 +51,14 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
             itemsHeight = itemsRef.height(),
             itemWidth = itemRef.outerWidth(true),
             itemHeight = itemRef.outerHeight(true);
-            
+
             self.sightings.infinitescroll.viewportWidth(itemsWidth);
             self.sightings.infinitescroll.viewportHeight(itemsHeight);
             self.sightings.infinitescroll.itemWidth(itemWidth);
             self.sightings.infinitescroll.itemHeight(itemHeight);
         }
         updateViewportDimensions();
-    
+
         // end infinite scroll stuff
 
         this.getSightings = function() {
@@ -69,7 +69,9 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
 
             var requestParams = {}
             if(self.nextPage) {
-                requestParams['page'] = self.nextPage;
+                // drf 3.1 change
+                //requestParams['page'] = self.nextPage;
+                url = self.nextPage;
             }
 
             if (self.queryString.params['beer']) {
@@ -108,7 +110,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'core/Query
         };
         this.prefillSightingList();
 
-        
+
 
         // end initialization
     };

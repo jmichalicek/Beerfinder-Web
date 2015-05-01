@@ -13,9 +13,3 @@ from rest_framework_extensions.key_constructor.bits import (
 
 class QueryParamsKeyConstructor(DefaultKeyConstructor):
     query_params = QueryParamsKeyBit('*')
-
-
-class DefaultPaginatedListKeyConstructor(DefaultKeyConstructor):
-    page = QueryParamsKeyBit(
-        ['page',]
-    )

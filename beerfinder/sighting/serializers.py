@@ -6,7 +6,9 @@ from rest_framework.validators import UniqueValidator
 
 from beer.models import Beer, ServingType
 from beer.serializers import BeerSerializer, ServingTypeSerializer
-from core.serializers import InfinitePaginationSerializer
+
+#from core.serializers import InfinitePaginationSerializer
+
 from venue.fields import FoursquareIdRelatedField
 from venue.models import Venue
 from venue.serializers import VenueSerializer
@@ -127,30 +129,30 @@ class SightingCommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('comment_by', 'date_created')
 
 
-class PaginatedSightingCommentSerializer(InfinitePaginationSerializer):
-    """
-    Does exactly what the name sounds like.  It's for paginating SightCommentSerializer
-    """
-    class Meta:
-        object_serializer_class = SightingCommentSerializer
+#class PaginatedSightingCommentSerializer(InfinitePaginationSerializer):
+#    """
+#    Does exactly what the name sounds like.  It's for paginating SightCommentSerializer
+#    """
+#    class Meta:
+#        object_serializer_class = SightingCommentSerializer
 
 
-class PaginatedDistanceSightingSerializer(InfinitePaginationSerializer):
-    class Meta:
-        object_serializer_class = DistanceSightingSerializer
+#class PaginatedDistanceSightingSerializer(InfinitePaginationSerializer):
+#    class Meta:
+#        object_serializer_class = DistanceSightingSerializer
 
 
-class PaginatedSightingSerializer(InfinitePaginationSerializer):
-    """
-    Paginated version of SightingSerializer set up for Infinite Pagination
-    """
-    class Meta:
-        object_serializer_class = SightingSerializer
+#class PaginatedSightingSerializer(InfinitePaginationSerializer):
+#    """
+#    Paginated version of SightingSerializer set up for Infinite Pagination
+#    """
+#    class Meta:
+#        object_serializer_class = SightingSerializer
 
 
-class PaginatedSightingImageSerializer(InfinitePaginationSerializer):
-    """
-    Paginated version of SightingImageSerializer set up for Infinite Pagination
-    """
-    class Meta:
-        object_serializer_class = SightingImageSerializer
+#class PaginatedSightingImageSerializer(InfinitePaginationSerializer):
+#    """
+#    Paginated version of SightingImageSerializer set up for Infinite Pagination
+#    """
+#    class Meta:
+#        object_serializer_class = SightingImageSerializer

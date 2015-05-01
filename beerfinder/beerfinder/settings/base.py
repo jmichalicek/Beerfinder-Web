@@ -196,9 +196,13 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 25,
+}
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 ACCOUNT_SESSION_REMEMBER = True
-
 
 # django-require stuff
 STATICFILES_STORAGE = 'require.storage.OptimizedStaticFilesStorage'

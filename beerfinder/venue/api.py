@@ -16,13 +16,15 @@ from rest_framework_extensions.key_constructor.bits import (
 
 import foursquare
 
+from core.viewsets import CreateListRetrieveViewSet
 from .models import Venue
 from .serializers import VenueSerializer
 
-class VenueViewSet(viewsets.ModelViewSet):
+class VenueViewSet(CreateListRetrieveViewSet):
     queryset = Venue.objects.all()
     serializer_class = VenueSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
+    page_size = 100
 
 
 # Is there some way that the lat and lon could be generalized a bit so

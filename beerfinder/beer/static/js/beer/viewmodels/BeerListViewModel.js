@@ -20,7 +20,7 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
         this.activeNavSection = ko.observable('beer_list');
         this.beers = ko.observableArray();
         //this.beer_list = ko.observableArray();
-        
+
         // stuff to enable infinite scroll
         this.nextPage = '';
         this.previousPage = '';
@@ -84,7 +84,9 @@ define(['jquery', 'underscore', 'knockout', 'vendor/infinitescroll', 'beer/model
             }
 
             if(self.nextPage) {
-                requestParams['page'] = self.nextPage;
+                // drf 3.1 change
+                //requestParams['page'] = self.nextPage;
+                url = self.nextPage;
             }
 
             $.ajax({url: url,

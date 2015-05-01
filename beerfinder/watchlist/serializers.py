@@ -32,9 +32,9 @@ class WatchedBeerWriteableSerializer(WatchedBeerSerializer):
         fields = ('url', 'id', 'date_added', 'beer')
 
 
-class PaginatedWatchedBeerSerializer(pagination.PaginationSerializer):
-    """
-    Does exactly what the name sounds like.  It's for paginating WatchedBeerSerializer
-    """
-    class Meta:
-        object_serializer_class = WatchedBeerSerializer
+#class PaginatedWatchedBeerSerializer(pagination.PaginationSerializer):
+#    """
+#    Does exactly what the name sounds like.  It's for paginating WatchedBeerSerializer
+#    """
+#    class Meta:
+#        object_serializer_class = WatchedBeerSerializer
